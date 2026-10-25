@@ -35,20 +35,27 @@ li:hover{padding-left:10px;color:var(--cy)}li small{display:block;color:var(--di
 footer{position:relative;z-index:2;text-align:center;padding:40px 20px 60px;color:var(--dim);font-size:12px}
 @media(max-width:760px){header{padding:10px 12px}.logo{font-size:15px}section,section.r{justify-content:center;padding:80px 14px}.card{padding:22px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+#atlasView{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+#atlasView.on{opacity:1;visibility:visible}
+#atlasBar{display:flex;align-items:center;gap:14px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:#03040a;border-bottom:1px solid var(--line)}
+#atlasBar span{font:700 14px "Bodoni Moda",serif;letter-spacing:.2em;color:var(--tx)}#atlasBar b{color:var(--ac)}
+#atlasClose{font:500 12px "DM Mono",monospace;color:var(--tx);background:transparent;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}#atlasClose:hover{border-color:var(--ac)}
+#atlasFrame{flex:1;width:100%;border:0;display:block;background:#000}
 </style></head><body>
 <canvas id="gl" aria-hidden="true"></canvas><div id="bar"></div>
 <header><a class="logo" href="#top">✦ COSMOS</a>
-<nav aria-label="Main"><a href="#news">News</a><a href="#observing">Observing</a><a href="#missions">Exploration</a><a href="#learn">Learn</a><a class="atl" href="#atlas">Cosmos Atlas</a></nav></header>
+<nav aria-label="Main"><a href="#news">News</a><a href="#observing">Observing</a><a href="#missions">Exploration</a><a href="#learn">Learn</a><a class="atl" href="atlas.html" data-atlas>Cosmos Atlas</a></nav></header>
 <main id="top">
-<section id="home"><div class="card" data-o="stars"><p class="eye">A space for deeper looking and bolder observing</p><h1>The Cosmos After Dark</h1><p class="l">Astronomy news, observing guides and a live 3D map of the universe, for people who look up.</p><a class="btn" href="#atlas">Open the Cosmos Atlas</a><a class="btn g" href="#news">Read the latest</a></div></section>
+<section id="home"><div class="card" data-o="stars"><p class="eye">A space for deeper looking and bolder observing</p><h1>The Cosmos After Dark</h1><p class="l">Astronomy news, observing guides and a live 3D map of the universe, for people who look up.</p><a class="btn" href="atlas.html" data-atlas>Open the Cosmos Atlas</a><a class="btn g" href="#news">Read the latest</a></div></section>
 <section id="news" class="r"><div class="card" data-o="galaxy"><p class="eye">Latest news</p><h2>Galaxies &amp; skies</h2><ul><li><small>Galaxies</small>How galaxies grow filaments of hot gas</li><li><small>Earth</small>Earth from orbit: why our atmosphere glows</li><li><small>The Sun</small>Solar cycles explained, from spots to storms</li></ul></div></section>
 <section id="observing"><div class="card" data-o="moon"><p class="eye">Sky this week</p><h2>Observing</h2><p class="l">Look south after dusk for the brightest planets.</p><ul><li><small>Tip</small>Give your eyes 20 minutes to dark-adapt</li><li><small>Moon</small>Check the phase before planning dark-sky sessions</li></ul></div></section>
 <section id="missions" class="r"><div class="card" data-o="planets"><p class="eye">Space exploration</p><h2>Worlds beyond Earth</h2><ul><li><small>Mars</small>The long search for life on Mars</li><li><small>Giants</small>Gas giants versus ice giants</li><li><small>Rings</small>Saturn’s rings: young, thin and temporary?</li></ul></div></section>
 <section id="learn"><div class="card" data-o="nebula"><p class="eye">Learn astronomy</p><h2>Stellar nurseries</h2><ul><li><small>Nebulae</small>Nebulae: nurseries and graveyards of stars</li><li><small>Milky Way</small>Walking through the spiral arms</li><li><small>Newsletter</small>The night sky, in your inbox</li></ul></div></section>
-<section id="atlas" class="r"><div class="card" data-o="web"><p class="eye">Cosmos Atlas</p><h2>Zoom out to the cosmic web</h2><p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p><a class="btn" href="#top">Back to the start</a></div></section>
+<section id="atlas" class="r"><div class="card" data-o="web"><p class="eye">Cosmos Atlas</p><h2>Zoom out to the cosmic web</h2><p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p><a class="btn" href="atlas.html" data-atlas>Launch the Cosmos Atlas</a><a class="btn g" href="#top">Back to the start</a></div></section>
 </main>
 <div class="hint" id="hint">Scroll to travel ↓</div>
 <footer>© Cosmos Magazine · Fly through space with your scroll wheel, move the mouse to look around.</footer>
+<div id="atlasView" aria-hidden="true"><div id="atlasBar"><button id="atlasClose">&larr; Back to Magazine</button><span>COSMOS <b>ATLAS</b></span></div><iframe id="atlasFrame" title="Cosmos Atlas" allow="fullscreen"></iframe></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -113,6 +120,15 @@ if(!rm){gal.rotation.y+=dt*.06;moon.rotation.y+=dt*.1;mars.rotation.y+=dt*.2;sat
 if(!mob)for(var k in O){var h=hov[k]?1.22:1,o=O[k];o.scale.x+=(h-o.scale.x)*.08;o.scale.y=o.scale.z=o.scale.x}
 R.render(S,cam);requestAnimationFrame(frame)}
 frame();
+})();
+</script>
+<script>
+(function(){var v=document.getElementById('atlasView'),f=document.getElementById('atlasFrame'),c=document.getElementById('atlasClose');
+function open(e){if(e)e.preventDefault();if(!f.getAttribute('src'))f.src='atlas.html';v.classList.add('on');v.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';c.focus()}
+function close(){v.classList.remove('on');v.setAttribute('aria-hidden','true');document.body.style.overflow='';f.removeAttribute('src')}
+document.querySelectorAll('[data-atlas]').forEach(function(a){a.addEventListener('click',open)});
+c.addEventListener('click',close);
+addEventListener('keydown',function(e){if(e.key==='Escape'&&v.classList.contains('on'))close()});
 })();
 </script>
 </body></html>
