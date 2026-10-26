@@ -52,6 +52,10 @@ button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy
 @media(pointer:coarse){button,select,input{min-height:44px;min-width:44px}}
 .note{color:var(--dim);font-size:12px;border-top:1px solid var(--line);padding-top:10px}
 #hint{position:fixed;left:50%;bottom:calc(var(--barh,60px) + 28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);padding:10px 16px;z-index:6;font-size:12px;color:var(--dim);text-align:center;max-width:calc(100% - 24px);transition:opacity .8s;pointer-events:none}#hint.off{opacity:0}
+select{color-scheme:dark;background-color:#0a0f1e;color:#e6ecff}
+select option,select optgroup{background-color:#0a0f1e;color:#e6ecff}
+select option:checked,select option:hover{background-color:#5ee1ff;color:#02030a}
+button:disabled{opacity:.5;cursor:not-allowed}
 </style><script>
 (function(){function show(msg){var l=document.getElementById('load');if(!l)return;l.innerHTML='<h1 style="letter-spacing:.3em;color:#5ee1ff;font-family:sans-serif">COSMOS ATLAS</h1><p style="max-width:520px;margin:12px auto;color:#e6ecff;font:16px/1.6 sans-serif">The universe could not start.</p><p style="font:12px monospace;color:#ffb454;max-width:520px;margin:0 auto 14px;word-break:break-word">'+msg+'</p><p style="font:14px sans-serif"><a href="javascript:location.reload()" style="color:#5ee1ff">Reload</a> · <a href="index.html" target="_top" style="color:#5ee1ff">Back to the magazine</a></p>';l.style.opacity=1}
 addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)show('Could not load '+t.src);else if(e.message)show(String(e.message).replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':''))},true);
@@ -64,7 +68,7 @@ setTimeout(function(){if(document.getElementById('load')&&!window.__cosmosReady)
 <div id="side" class="glass"><input id="q" placeholder="Search the cosmos…" aria-label="Search"><div id="list"></div></div>
 <div id="learn" class="glass" aria-live="polite"></div>
 <div id="panel" class="glass" role="region" aria-label="Object details" aria-hidden="true" inert></div>
-<div id="bar" class="glass" role="toolbar" aria-label="Controls"><div class="g"><button id="bp">❚❚ Pause</button><select id="sp" aria-label="Time speed"><option value="1">1×</option><option value="10">10×</option><option value="100">100×</option><option value="1000" selected>1,000×</option><option value="10000">10,000×</option><option value="100000">100,000×</option></select></div><div class="g" role="group" aria-label="Zoom level"><button data-r="300">Solar System</button><button data-r="6000">Stars</button><button data-r="1.6e6">Milky Way</button><button data-r="4e7">Local Group</button><button data-r="2.5e8">Universe</button></div><div class="g"><button id="bo" class="on">Orbits</button><button id="bl" class="on">Labels</button><select id="qs" aria-label="Graphics quality"><option value="low">Low</option><option value="med">Medium</option><option value="high">High</option></select><button id="blr" aria-label="Open Learn mode">🎓 Learn</button><button id="bh">Reset view</button></div></div>
+<div id="bar" class="glass" role="toolbar" aria-label="Controls"><div class="g"><button id="bp">❚❚ Pause</button><select id="sp" aria-label="Time speed"><option value="1">1×</option><option value="10">10×</option><option value="100" selected>100×</option><option value="1000">1,000×</option><option value="10000">10,000×</option><option value="100000">100,000×</option></select></div><div class="g" role="group" aria-label="Zoom level"><button data-r="300">Solar System</button><button data-r="6000">Stars</button><button data-r="1.6e6">Milky Way</button><button data-r="4e7">Local Group</button><button data-r="2.5e8">Universe</button></div><div class="g"><button id="bo" class="on">Orbits</button><button id="bl" class="on">Labels</button><select id="qs" aria-label="Graphics quality"><option value="low">Low</option><option value="med">Medium</option><option value="high">High</option></select><button id="blr" aria-label="Open Learn mode">🎓 Learn</button><button id="bh">Reset view</button></div></div>
 <div id="hint" class="glass" role="note">Drag to rotate · Scroll or pinch to zoom · Tap a planet · WASD to fly</div><div id="live" class="sr" aria-live="polite"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -205,7 +209,7 @@ try{history.replaceState(null,"","#"+id)}catch(e){}crumb();renderList($("q").val
 $("q").oninput=e=>renderList(e.target.value.toLowerCase());
 $("q").onkeydown=e=>{if(e.key=="Enter"){const m=D.find(b=>b.n.toLowerCase().includes(e.target.value.toLowerCase()));if(m)select(m.id)}};
 const setSide=h=>{$("side").classList.toggle("hide",h);$("side").inert=h;$("bs").setAttribute("aria-expanded",String(!h))};$("bs").onclick=()=>setSide(!$("side").classList.contains("hide"));
-let playing=!matchMedia("(prefers-reduced-motion:reduce)").matches,speed=1000;$("bp").textContent=playing?"❚❚ Pause":"▶ Play";
+let playing=!matchMedia("(prefers-reduced-motion:reduce)").matches,speed=100;$("sp").value="100";$("bp").textContent=playing?"❚❚ Pause":"▶ Play";
 $("bp").onclick=()=>{playing=!playing;$("bp").textContent=playing?"❚❚ Pause":"▶ Play"};$("sp").onchange=e=>speed=+e.target.value;
 let showLab=true;$("bo").onclick=e=>{showOrb=!showOrb;e.target.classList.toggle("on")};
 $("bl").onclick=e=>{showLab=!showLab;e.target.classList.toggle("on")};
@@ -284,50 +288,25 @@ const TOUR=[["sun"],["mercury"],["venus"],["earth"],["moon"],["mars"],["jupiter"
 ["r",1.6e6,"The Milky Way","Our galaxy is a giant spinning spiral of roughly 200 billion stars. The Sun sits in a smaller arm called the Orion Arm.","The Sun takes about 230 million years to circle the galaxy once."],
 ["r",4e7,"The Local Group","The Milky Way shares its neighbourhood with Andromeda, Triangulum and dozens of small galaxies, all held together by gravity.","Andromeda is about 2.5 million light-years away and is slowly moving toward us."],
 ["r",2.5e8,"The Universe","On the largest scales, galaxies form a cosmic web of long filaments with huge empty voids between them.","The observable universe contains hundreds of billions of galaxies."]];
-/* Quiz: [difficulty, question, correctId, explanation] */
-const LQ=[
-["Easy","Click the largest planet.","jupiter","Jupiter is about 11 times wider than Earth."],
-["Easy","Click the red planet.","mars","Iron-rich dust (rust) gives Mars its red colour."],
-["Easy","Click the planet famous for its rings.","saturn","Saturn's bright rings are made of ice and rock."],
-["Easy","Click the star at the centre of our Solar System.","sun","The Sun holds over 99% of the Solar System's mass."],
-["Easy","Click Earth's only natural satellite.","moon","The Moon orbits Earth about every 27 days."],
-["Easy","Click the smallest planet.","mercury","Mercury is only a little bigger than our Moon."],
-["Medium","Click the hottest planet.","venus","Venus' thick CO₂ atmosphere traps heat, reaching about 465 °C, hotter than Mercury."],
-["Medium","Click the planet that rolls on its side.","uranus","Uranus is tilted about 98°, so it spins almost sideways."],
-["Medium","Click the planet farthest from the Sun.","neptune","Neptune is about 4.5 billion km from the Sun."],
-["Medium","Click the planet with the shortest day (about 10 hours).","jupiter","Jupiter spins faster than any other planet."],
-["Medium","Click the planet with the shortest year (88 days).","mercury","Mercury is closest to the Sun, so it has the smallest, fastest orbit."],
-["Medium","Click the planet with the longest day (243 Earth days).","venus","Venus spins very slowly, and backwards."],
-["Hard","Click the planet whose day is longer than its year.","venus","One Venus day (243 Earth days) is longer than its year (225 Earth days)."],
-["Hard","Click the planet that is less dense than water.","saturn","Saturn is mostly hydrogen and helium; it would float in a big enough bathtub."],
-["Hard","Click the planet with the fastest winds (over 2,000 km/h).","neptune","Neptune's winds are the fastest measured in the Solar System."],
-["Hard","Click the only planet known to have liquid water on its surface and plate tectonics.","earth","Earth's moving plates and oceans are unique so far."]];
 
 /* ============ LEARN MODE ============ */
-const L=$("learn"),qS=s=>document.querySelector(s);let lmode=null,tIdx=0,saved=null,qOrder=[],qi=0,score=0,streak=0,qLock=false,best=0;const done=new Set();
-try{best=+localStorage.getItem("cosmosBest")||0}catch(e){}
+const L=$("learn"),qS=s=>document.querySelector(s);let lmode=null,tIdx=0,saved=null,qi=0,score=0,streak=0;const done=new Set();
 const setL=h=>{L.innerHTML=h;L.style.display="block"},fmt=n=>n.toLocaleString(undefined,{maximumFractionDigits:n<10?1:0});
 const closeInfo=()=>closePanel();
 function saveView(){if(!saved)saved={r:cam.tr,f:cam.follow,th:cam.th,ph:cam.ph,t:cam.tgt.clone()}}
 function exitL(){if(saved){cam.tr=saved.r;cam.follow=saved.f;cam.th=saved.th;cam.ph=saved.ph;cam.tgt.copy(saved.t);saved=null}
 sel=null;ring.visible=false;closeInfo();lmode=null;L.style.display="none";crumb();renderList($("q").value.toLowerCase())}
-function hub(){lmode=null;setL('<h3>🎓 Learn</h3><p class="dim">Modules done: '+done.size+'/3 · Click best: '+best+'/'+LQ.length+' · MCQ best: '+bestM+'/'+MQ.length+' · ←/→ steps, Esc exits, Space pauses</p><div class="lrow"><button data-a="tour" aria-label="Start guided tour">Guided Tour</button><button data-a="quiz" aria-label="Start click quiz">Click Quiz</button><button data-a="mcq" aria-label="Start multiple choice quiz">MCQ Quiz</button><button data-a="scale" aria-label="Open scale lab">Scale Lab</button><button data-a="x" aria-label="Close Learn">Close</button></div>')}
+function hub(){lmode=null;setL('<h3>🎓 Learn</h3><p class="dim">Modules done: '+done.size+'/3 · Quiz best: '+bestM+'/'+MQ.length+' · ←/→ steps, Esc exits, Space pauses</p><div class="lrow"><button data-a="tour" aria-label="Start guided tour">Guided Tour</button><button data-a="mcq" aria-label="Start quiz">Quiz</button><button data-a="scale" aria-label="Open scale lab">Scale Lab</button><button data-a="x" aria-label="Close Learn">Close</button></div>')}
 /* Module 1: Guided Tour */
 function tour(i){lmode="tour";saveView();tIdx=clamp(i,0,TOUR.length-1);const s=TOUR[tIdx];let t,x,f;
 if(s.length==1){const b=byId[s[0]];select(b.id);closeInfo();t=b.n;x=b.desc;f=b.fact}else{qS('[data-r="'+s[1]+'"]').click();t=s[2];x=s[3];f=s[4]}
 const last=tIdx==TOUR.length-1;setL('<h3>'+t+'</h3><div class="bar"><i style="width:'+(tIdx+1)/TOUR.length*100+'%"></i></div><p>'+x+'</p><div id="fact"><b>Did you know?</b><br>'+f+'</div><div class="lrow"><button data-a="back" aria-label="Previous step"'+(tIdx?'':' disabled')+'>← Back</button><button data-a="'+(last?"finish":"next")+'" aria-label="Next step">'+(last?"Finish ✓":"Next →")+'</button><button data-a="menu">Menu</button><button data-a="x" aria-label="Exit Learn">Exit</button></div>')}
-/* Module 2: Quiz (clicks in 3D are intercepted from select) */
-function quiz(start){lmode="quiz";saveView();if(start){qS('[data-r="300"]').click();qOrder=LQ.map((_,i)=>i).sort(()=>rd()-.5);qi=0;score=0;streak=0}
-if(qi>=qOrder.length){if(score>best){best=score;try{localStorage.setItem("cosmosBest",best)}catch(e){}}done.add("quiz");setL('<h3>Quiz complete</h3><p>You scored '+score+'/'+LQ.length+'. Best: '+best+'.</p><div class="lrow"><button data-a="quiz">Play again</button><button data-a="menu">Menu</button><button data-a="x">Exit</button></div>');return}
-const q=LQ[qOrder[qi]];qLock=false;setL('<small class="dim">'+q[0]+' · Question '+(qi+1)+'/'+LQ.length+' · Score '+score+' · Streak '+streak+'</small><h3>'+q[1]+'</h3><p class="dim">Click the object in the 3D scene (use the catalog or zoom if needed).</p><div class="lrow"><button data-a="menu">Menu</button><button data-a="x" aria-label="Exit Learn">Exit</button></div>')}
-function answer(id){qLock=true;const q=LQ[qOrder[qi]],ok=id==q[2];ok?(score++,streak++):streak=0;_sel(q[2]);closeInfo();
-setL('<h3>'+(ok?"✅ Correct!":"❌ Not quite. It was "+byId[q[2]].n+".")+'</h3><p>'+q[3]+'</p><p class="dim">Score '+score+' · Streak '+streak+'</p><div class="lrow"><button data-a="qnext">'+(qi+1<LQ.length?"Next question →":"See results")+'</button><button data-a="x">Exit</button></div>')}
 /* Module 3: Scale Lab (flat comparison + flies to the larger body) */
 function scale(){lmode="scale";saveView();const o=D.map(b=>'<option value="'+b.id+'">'+b.n+'</option>').join("");
 setL('<h3>How big is it really?</h3><div class="lrow"><select id="sa" aria-label="First object">'+o+'</select><select id="sb" aria-label="Second object">'+o+'</select></div><div class="sc" id="sv"></div><p id="sr"></p><div class="lrow"><button data-a="menu">Menu</button><button data-a="x" aria-label="Exit Learn">Exit</button></div>');
 $("sa").value="earth";$("sb").value="jupiter";const u=()=>{const a=byId[$("sa").value],b=byId[$("sb").value],[g,m]=a.dk>=b.dk?[a,b]:[b,a],r=g.dk/m.dk;
 $("sv").innerHTML=[g,m].map(z=>'<i title="'+z.n+'" style="background:'+z.c+';width:'+Math.max(2,140*z.dk/g.dk)+'px;height:'+Math.max(2,140*z.dk/g.dk)+'px"></i>').join("");
-$("sr").textContent=r==1?"Same size.":g.n+" is "+fmt(r)+"× wider than "+m.n+". About "+fmt(r**3)+" "+m.n+"s would fit inside it.";_sel(g.id);closeInfo();done.add("scale")};
+$("sr").textContent=r==1?"Same size.":g.n+" is "+fmt(r)+"× wider than "+m.n+". About "+fmt(r**3)+" "+m.n+"s would fit inside it.";select(g.id);closeInfo();done.add("scale")};
 $("sa").onchange=$("sb").onchange=u;u()}
 /* MCQ bank: [difficulty, question, correct answer, [3 wrong answers], explanation]. Add a line to add a question. */
 const MQ=[
@@ -350,10 +329,9 @@ if(qi>=mq.length){if(score>bestM){bestM=score;try{localStorage.setItem("cosmosBe
 const m=mq[qi],q=m.q;setL('<small class="dim">'+q[0]+' · Question '+(qi+1)+'/'+mq.length+' · Score '+score+' · Streak '+streak+'</small><h3>'+q[1]+'</h3><div class="lrow" style="flex-direction:column;align-items:stretch">'+m.o.map((o,i)=>'<button data-a="opt" data-i="'+i+'" aria-label="Option '+"ABCD"[i]+": "+o+'" style="text-align:left">'+"ABCD"[i]+". "+o+'</button>').join("")+'</div><div class="lrow"><button data-a="menu">Menu</button><button data-a="x" aria-label="Exit Learn">Exit</button></div><p class="dim">Tip: press 1–4 to answer.</p>')}
 function mAns(i){const m=mq[qi],q=m.q,ok=m.o[i]==q[2];ok?(score++,streak++):streak=0;
 setL('<h3>'+(ok?"✅ Correct!":"❌ Not quite. The answer is "+q[2]+".")+'</h3><p>'+q[4]+'</p><p class="dim">Score '+score+' · Streak '+streak+'</p><div class="lrow"><button data-a="mnext">'+(qi+1<mq.length?"Next question →":"See results")+'</button><button data-a="x">Exit</button></div>')}
-const _sel=select;select=function(id){lmode=="quiz"&&!qLock?answer(id):_sel(id)};
 L.onclick=e=>{const t=e.target.closest("button[data-a]");if(!t)return;const a=t.dataset.a;
-if(a=="x")exitL();else if(a=="menu"){exitL();hub()}else if(a=="tour")tour(0);else if(a=="quiz")quiz(true);else if(a=="scale")scale();
-else if(a=="next")tour(tIdx+1);else if(a=="back")tour(tIdx-1);else if(a=="finish"){done.add("tour");exitL();hub()}else if(a=="qnext"){qi++;quiz(false)}else if(a=="mcq")mcq(true);else if(a=="opt")mAns(+t.dataset.i);else if(a=="mnext"){qi++;mcq(false)}};
+if(a=="x")exitL();else if(a=="menu"){exitL();hub()}else if(a=="tour")tour(0);else if(a=="scale")scale();
+else if(a=="next")tour(tIdx+1);else if(a=="back")tour(tIdx-1);else if(a=="finish"){done.add("tour");exitL();hub()}else if(a=="mcq")mcq(true);else if(a=="opt")mAns(+t.dataset.i);else if(a=="mnext"){qi++;mcq(false)}};
 addEventListener("keydown",e=>{if(L.style.display!="block"||e.target.tagName=="INPUT")return;const k=e.key;
 if(k=="Escape"){exitL();e.stopPropagation()}else if(lmode=="tour"&&(k=="ArrowRight"||k=="ArrowLeft")){tour(tIdx+(k=="ArrowRight"?1:-1));e.stopPropagation()}
 else if(lmode=="mcq"&&/^[1-4]$/.test(k)&&L.querySelector('[data-a="opt"]')){mAns(+k-1);e.stopPropagation()}else if(k==" "&&e.target.tagName!="BUTTON"&&e.target.tagName!="SELECT"){$("bp").click();e.preventDefault()}},true);
