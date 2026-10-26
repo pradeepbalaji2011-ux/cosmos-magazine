@@ -138,7 +138,7 @@ raf=requestAnimationFrame(frame);
 <script>
 (function(){var v=document.getElementById('atlasView'),f=document.getElementById('atlasFrame'),c=document.getElementById('atlasClose'),opener=null,bg=document.querySelectorAll('.skip,header,main,.hint,footer');
 function setBg(x){bg.forEach(function(e){if(x)e.setAttribute('inert','');else e.removeAttribute('inert')})}
-function open(e){if(e)e.preventDefault();opener=(e&&e.currentTarget)||document.activeElement;if(!f.getAttribute('src'))f.src='atlas.html?v=4';v.classList.add('on');v.setAttribute('aria-hidden','false');setBg(true);document.body.style.overflow='hidden';window.__atlasOpen=true;if(window.cosmosPause)window.cosmosPause(true);c.focus()}
+function open(e){if(e)e.preventDefault();opener=(e&&e.currentTarget)||document.activeElement;if(!f.getAttribute('src'))f.src='atlas.html?v=5';v.classList.add('on');v.setAttribute('aria-hidden','false');setBg(true);document.body.style.overflow='hidden';window.__atlasOpen=true;if(window.cosmosPause)window.cosmosPause(true);c.focus()}
 function close(){if(!v.classList.contains('on'))return;v.classList.remove('on');v.setAttribute('aria-hidden','true');setBg(false);document.body.style.overflow='';f.removeAttribute('src');window.__atlasOpen=false;if(window.cosmosPause)window.cosmosPause(document.hidden);if(opener&&opener.focus)opener.focus()}
 document.querySelectorAll('[data-atlas]').forEach(function(a){a.addEventListener('click',open)});
 c.addEventListener('click',close);
