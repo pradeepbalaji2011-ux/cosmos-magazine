@@ -37,12 +37,12 @@ button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy
 @media(max-width:760px){#panel{left:10px;width:auto;top:auto;height:46%;bottom:calc(var(--barh,60px) + 22px + env(safe-area-inset-bottom,0px));transform:translateY(120%)}#side{width:200px}#crumb{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 /* LEARN MODE */
-#learn{display:none;position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(560px,calc(100% - 20px));max-height:50vh;overflow:auto;padding:14px 16px;z-index:6}
+#learn{display:none;position:fixed;left:50%;bottom:calc(var(--barh,60px) + 24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(560px,calc(100% - 20px));max-height:50vh;overflow:auto;padding:14px 16px;z-index:6}
 #learn h3{font-size:20px;color:var(--cy)}#learn p{margin:6px 0}#learn .dim{color:var(--dim);font-size:12px}#learn .lrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
 #learn button:focus-visible,#learn select:focus-visible,#blr:focus-visible{outline:2px solid var(--am);outline-offset:2px}
 #learn .sc{display:flex;align-items:flex-end;justify-content:center;gap:24px;height:150px;margin:8px 0}#learn .sc i{display:block;border-radius:50%;min-width:2px;min-height:2px}
-#lhint{position:fixed;bottom:calc(138px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);padding:6px 14px;z-index:6;color:var(--am);animation:p 2s infinite}
-@media(max-width:760px){#learn{bottom:calc(130px + env(safe-area-inset-bottom,0px))}#lhint{bottom:calc(180px + env(safe-area-inset-bottom,0px))}}
+#lhint{position:fixed;bottom:calc(var(--barh,60px) + 78px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);padding:6px 14px;z-index:6;color:var(--am);animation:p 2s infinite}
+@media(max-width:760px){#learn{bottom:calc(var(--barh,60px) + 24px + env(safe-area-inset-bottom,0px))}#lhint{bottom:calc(var(--barh,60px) + 78px + env(safe-area-inset-bottom,0px))}}
 
 :focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -59,7 +59,7 @@ button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy
 <div id="side" class="glass"><input id="q" placeholder="Search the cosmos…" aria-label="Search"><div id="list"></div></div>
 <div id="learn" class="glass" aria-live="polite"></div>
 <div id="panel" class="glass" role="region" aria-label="Object details" aria-hidden="true" inert></div>
-<div id="bar" class="glass" role="toolbar" aria-label="Controls"><div class="g"><button id="bp">❚❚ Pause</button><select id="sp" aria-label="Time speed"><option value="1">1×</option><option value="10">10×</option><option value="100">100×</option><option value="1000" selected>1,000×</option><option value="10000">10,000×</option><option value="100000">100,000×</option></select></div><div class="g" role="group" aria-label="Zoom level"><button data-r="300">Solar System</button><button data-r="6000">Stars</button><button data-r="1.6e6">Milky Way</button><button data-r="4e7">Local Group</button><button data-r="2.5e8">Universe</button></div><div class="g"><button id="bo" class="on">Orbits</button><button id="bl" class="on">Labels</button><select id="qs" aria-label="Graphics quality"><option value="low">Low</option><option value="med">Medium</option><option value="high">High</option></select><button id="bh">Reset view</button></div></div>
+<div id="bar" class="glass" role="toolbar" aria-label="Controls"><div class="g"><button id="bp">❚❚ Pause</button><select id="sp" aria-label="Time speed"><option value="1">1×</option><option value="10">10×</option><option value="100">100×</option><option value="1000" selected>1,000×</option><option value="10000">10,000×</option><option value="100000">100,000×</option></select></div><div class="g" role="group" aria-label="Zoom level"><button data-r="300">Solar System</button><button data-r="6000">Stars</button><button data-r="1.6e6">Milky Way</button><button data-r="4e7">Local Group</button><button data-r="2.5e8">Universe</button></div><div class="g"><button id="bo" class="on">Orbits</button><button id="bl" class="on">Labels</button><select id="qs" aria-label="Graphics quality"><option value="low">Low</option><option value="med">Medium</option><option value="high">High</option></select><button id="blr" aria-label="Open Learn mode">🎓 Learn</button><button id="bh">Reset view</button></div></div>
 <div id="hint" class="glass" role="note">Drag to rotate · Scroll or pinch to zoom · Tap a planet · WASD to fly</div><div id="live" class="sr" aria-live="polite"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
