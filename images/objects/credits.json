@@ -1,0 +1,198 @@
+{
+  "orion-nebula": {
+    "title": "The Orion Nebula (M42)",
+    "credit": "NASA, ESA, M. Robberto (STScI/ESA) and the Hubble Space Telescope Orion Treasury Project Team",
+    "license": "Public Domain",
+    "source": "https://esahubble.org/images/heic0601a/",
+    "isIllustration": false
+  },
+  "crab-nebula": {
+    "title": "The Crab Nebula (M1)",
+    "credit": "NASA, ESA, J. Hester and A. Loll (Arizona State University)",
+    "license": "Public Domain",
+    "source": "https://esahubble.org/images/heic0515a/",
+    "isIllustration": false
+  },
+  "eagle-nebula": {
+    "title": "Pillars of Creation (Eagle Nebula / M16)",
+    "credit": "NASA, ESA, CSA, STScI, J. DePasquale, A. Pagan, A. M. Koekemoer",
+    "license": "CC BY 4.0 / Public Domain",
+    "source": "https://esawebb.org/images/weic2216a/",
+    "isIllustration": false
+  },
+  "ring-nebula": {
+    "title": "The Ring Nebula (M57)",
+    "credit": "ESA/Webb, NASA, CSA, M. Barlow (UCL), N. Cox (ACRI-ST), R. Wesson (Cardiff University)",
+    "license": "CC BY 4.0 / Public Domain",
+    "source": "https://esawebb.org/images/weic2320a/",
+    "isIllustration": false
+  },
+  "helix-nebula": {
+    "title": "The Helix Nebula (NGC 7293)",
+    "credit": "ESO/VISTA/J. Emerson. Acknowledgment: Cambridge Astronomical Survey Unit",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso1205a/",
+    "isIllustration": false
+  },
+  "horsehead-nebula": {
+    "title": "The Horsehead Nebula (Barnard 33)",
+    "credit": "ESA/Webb, NASA, CSA, K. Misselt (University of Arizona) and A. Abergel (IAS/Université Paris-Saclay)",
+    "license": "CC BY 4.0 / Public Domain",
+    "source": "https://esawebb.org/images/weic2411a/",
+    "isIllustration": false
+  },
+  "carina-nebula": {
+    "title": "Cosmic Cliffs in the Carina Nebula (NGC 3372)",
+    "credit": "NASA, ESA, CSA, STScI",
+    "license": "CC BY 4.0 / Public Domain",
+    "source": "https://esawebb.org/images/weic2205a/",
+    "isIllustration": false
+  },
+  "pleiades": {
+    "title": "The Pleiades Star Cluster (M45)",
+    "credit": "NASA, ESA, AURA/Caltech, Palomar Observatory",
+    "license": "Public Domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Pleiades_large.jpg",
+    "isIllustration": false
+  },
+  "hyades": {
+    "title": "The Hyades Star Cluster (Melotte 25)",
+    "credit": "NOIRLab/NSF/AURA/Digitized Sky Survey 2. Acknowledgment: Davide De Martin",
+    "license": "CC BY 4.0",
+    "source": "https://noirlab.edu/public/images/noirlab2018e/",
+    "isIllustration": false
+  },
+  "omega-centauri": {
+    "title": "Omega Centauri (NGC 5139)",
+    "credit": "ESO/INAF-VST/OmegaCAM. Acknowledgment: A. Grado/INAF-Capodimonte Observatory",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso1119a/",
+    "isIllustration": false
+  },
+  "m31": {
+    "title": "Andromeda Galaxy (M31)",
+    "credit": "ESO/G. Beccari",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso1517a/",
+    "isIllustration": false
+  },
+  "m33": {
+    "title": "Triangulum Galaxy (M33)",
+    "credit": "ESO/VPHAS+ team. Acknowledgment: Cambridge Astronomical Survey Unit",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso1424a/",
+    "isIllustration": false
+  },
+  "m51": {
+    "title": "Whirlpool Galaxy (M51)",
+    "credit": "NASA, ESA, S. Beckwith (STScI), and The Hubble Heritage Team (STScI/AURA)",
+    "license": "Public Domain",
+    "source": "https://esahubble.org/images/heic0506a/",
+    "isIllustration": false
+  },
+  "m104": {
+    "title": "Sombrero Galaxy (M104)",
+    "credit": "ESA/Webb, NASA, CSA, STScI",
+    "license": "CC BY 4.0 / Public Domain",
+    "source": "https://esawebb.org/images/weic2428a/",
+    "isIllustration": false
+  },
+  "milky-way": {
+    "title": "Milky Way Galaxy Panorama",
+    "credit": "ESO/S. Brunier",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso0932a/",
+    "isIllustration": false
+  },
+  "m87-star": {
+    "title": "First Image of Supermassive Black Hole M87*",
+    "credit": "Event Horizon Telescope (EHT) Collaboration",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso1907a/",
+    "isIllustration": false
+  },
+  "sgr-a-star": {
+    "title": "First Image of Supermassive Black Hole Sagittarius A*",
+    "credit": "Event Horizon Telescope (EHT) Collaboration",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso2208-eht-mwa/",
+    "isIllustration": false
+  },
+  "trappist-1": {
+    "title": "The TRAPPIST-1 Planetary System",
+    "credit": "ESO/M. Kornmesser",
+    "license": "CC BY 4.0",
+    "source": "https://www.eso.org/public/images/eso1805a/",
+    "isIllustration": true
+  },
+  "sun": {
+    "title": "The Sun in Multi-Wavelength Ultra-HD (304, 211, 171 Å)",
+    "credit": "NASA/SDO (Solar Dynamics Observatory) and the AIA Science Team",
+    "license": "Public Domain (NASA)",
+    "source": "https://sdo.gsfc.nasa.gov/",
+    "isIllustration": false
+  },
+  "mercury": {
+    "title": "Mercury Global Mosaic",
+    "credit": "Solar System Scope / NASA MESSENGER (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "venus": {
+    "title": "Venus Atmosphere",
+    "credit": "Solar System Scope / NASA Magellan/Pioneer (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "earth": {
+    "title": "Earth Blue Marble Global Map",
+    "credit": "Solar System Scope / NASA Visible Earth (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "moon": {
+    "title": "The Moon Global Albedo Map",
+    "credit": "Solar System Scope / NASA LRO (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "mars": {
+    "title": "Mars Global Color Mosaic",
+    "credit": "Solar System Scope / NASA MGS/Viking (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "jupiter": {
+    "title": "Jupiter Banded Atmosphere",
+    "credit": "Solar System Scope / NASA Cassini/Hubble (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "saturn": {
+    "title": "Saturn Global Atmosphere",
+    "credit": "Solar System Scope / NASA Cassini (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "uranus": {
+    "title": "Uranus Atmosphere",
+    "credit": "Solar System Scope / NASA Voyager 2 (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  },
+  "neptune": {
+    "title": "Neptune Atmosphere",
+    "credit": "Solar System Scope / NASA Voyager 2 (CC BY 4.0)",
+    "license": "CC BY 4.0",
+    "source": "https://www.solarsystemscope.com/textures/",
+    "isIllustration": false
+  }
+}

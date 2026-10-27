@@ -67,6 +67,27 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #vlm{position:fixed;z-index:7;width:min(310px,calc(100% - 16px));max-height:60vh;overflow:auto;padding:6px;display:flex;flex-direction:column;gap:2px}#vlm[hidden]{display:none}#vlm button{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;border:1px solid transparent;background:transparent;min-height:40px;white-space:normal}#vlm button small{color:var(--dim);font-size:11px;text-align:right}#vlm button:hover,#vlm button:focus-visible{background:rgba(94,225,255,.12)}#vlm button.on{border-color:var(--cy);color:var(--cy)}#bvl{max-width:60vw}
 @media(pointer:coarse){#vlm button{min-height:48px}}@media(max-width:760px){#bvl .pre{display:none}}
 #tmr{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top,0px));transform:translateX(-50%);padding:6px 14px;z-index:4;font-size:12px;max-width:min(560px,calc(100% - 24px));text-align:center;pointer-events:none}#tmr[hidden],#mm[hidden]{display:none}#tm{width:110px;padding:0;min-width:0}#tmo{font:11px "JetBrains Mono",monospace;min-width:74px;color:var(--cy)}#mm{display:block;margin-bottom:6px;border-radius:8px}
+.panel-media{margin:12px 0 14px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:rgba(0,0,0,.4);position:relative}
+.panel-thumb{width:100%;height:155px;object-fit:cover;display:block;cursor:pointer;transition:transform .3s,filter .3s}
+.panel-thumb:hover{transform:scale(1.02);filter:brightness(1.1)}
+.panel-media-meta{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(4,8,20,.85);font-size:11px}
+.photo-badge{color:var(--cy);font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.illus-badge{color:var(--am);font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.expand-btn{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--tx);cursor:pointer}
+.expand-btn:hover{border-color:var(--cy);color:var(--cy)}
+.panel-media-credit{padding:6px 10px;font-size:10px;color:var(--dim);background:rgba(4,8,20,.95);border-top:1px solid rgba(150,170,255,.1);line-height:1.4}
+.panel-media-credit a{color:var(--cy);text-decoration:none}
+.panel-media-credit a:hover{text-decoration:underline}
+#imgModal{position:fixed;inset:0;background:rgba(2,3,10,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:30;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .3s}
+#imgModal.active{opacity:1;pointer-events:auto}
+#imgModal img{max-width:min(1200px,calc(100vw - 48px));max-height:calc(85vh - 70px);object-fit:contain;border-radius:10px;border:1px solid var(--line);box-shadow:0 0 40px rgba(0,0,0,.8);cursor:zoom-out}
+#imgModal-info{margin-top:12px;text-align:center;max-width:800px;font-size:13px;color:var(--tx)}
+#imgModal-info h3{color:var(--cy);font-size:16px;margin-bottom:4px}
+#imgModal-info p{color:var(--dim);font-size:12px;margin:2px 0}
+#imgModal-close{position:absolute;top:18px;right:22px;font-size:18px;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid var(--line);color:var(--tx);cursor:pointer;z-index:31}
+#imgModal-close:hover{border-color:var(--cy);color:var(--cy)}
+#credits-obj-list{display:grid;gap:8px;margin-top:10px}
+#credits-obj-list div{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12px}
 </style><script>
 (function(){function show(msg){var l=document.getElementById('load');if(!l)return;l.innerHTML='<h1 style="letter-spacing:.3em;color:#5ee1ff;font-family:sans-serif">COSMOS ATLAS</h1><p style="max-width:520px;margin:12px auto;color:#e6ecff;font:16px/1.6 sans-serif">The universe could not start.</p><p style="font:12px monospace;color:#ffb454;max-width:520px;margin:0 auto 14px;word-break:break-word">'+msg+'</p><p style="font:14px sans-serif"><a href="javascript:location.reload()" style="color:#5ee1ff">Reload</a> · <a href="index.html" target="_top" style="color:#5ee1ff">Back to the magazine</a></p>';l.style.opacity=1}
 addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)show('Could not load '+t.src);else if(e.message)show(String(e.message).replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':''))},true);
@@ -91,6 +112,7 @@ setTimeout(function(){if(document.getElementById('load')&&!window.__cosmosReady)
 <p><b>Galaxies and clusters</b>: about 53 named galaxies and 10 clusters at real positions (RA, Dec, distance and size rounded from NED, SIMBAD and Wikipedia-level references; distances carry roughly 10% uncertainty). <b>Galaxy survey</b>: optional <code>data/2mrs.csv</code> from the 2MASS Redshift Survey (Huchra et al. 2012, VizieR J/ApJS/199/26, free for research with citation). Distances use cz/H0 with H0 = 70 km/s/Mpc, which is unreliable for the nearest galaxies. Galaxy icons, the look-back shell and the cosmic microwave background shell (about 45 billion light-years, comoving) are illustrative graphics.</p>
 <p><b>Code</b>: three.js r128 (MIT).</p></div>
 <div id="hint" class="glass" role="note">Drag to rotate · Scroll or pinch to zoom (Q/E, or double-tap empty space, to jump) · Tap a planet · WASD to fly</div><div id="vlm" class="glass" role="menu" aria-label="View level" hidden><button role="menuitem" data-r="70" data-n="Solar System">Solar System<small>70 AU</small></button><button role="menuitem" data-r="3.2e7" data-n="Stars">Stars<small>500 light-years</small></button><button role="menuitem" data-r="8.4e9" data-n="Milky Way">Milky Way<small>130,000 light-years</small></button><button role="menuitem" data-r="2.1e11" data-n="Local Group">Local Group<small>3 million light-years</small></button><button role="menuitem" data-r="6e12" data-n="Supercluster">Supercluster<small>100 million light-years</small></button><button role="menuitem" data-r="3e14" data-n="Cosmic web">Cosmic web<small>5 billion light-years</small></button><button role="menuitem" data-r="6e15" data-n="Universe">Universe<small>edge of the observable universe</small></button></div><div id="tmr" class="glass" role="status" hidden></div><div id="live" class="sr" aria-live="polite"></div>
+<div id="imgModal" role="dialog" aria-label="Object Photo Fullscreen" aria-hidden="true"><button id="imgModal-close" aria-label="Close fullscreen view">✕</button><img id="imgModal-pic" src="" alt=""><div id="imgModal-info"></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 "use strict";
@@ -118,7 +140,7 @@ const byId={};D.forEach(b=>byId[b.id]=b);
 /* ============ SETUP ============ */
 let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:Qn!="low"});}catch(e){document.body.innerHTML='<div style="min-height:100vh;display:grid;place-content:center;text-align:center;padding:24px;font:16px/1.6 Inter,system-ui,sans-serif;color:#e6ecff;background:#02030a"><h1 style="font-family:\'Space Grotesk\',sans-serif;letter-spacing:.3em;color:#5ee1ff;margin:0 0 12px">COSMOS ATLAS</h1><p>Your browser can’t run WebGL, so the 3D universe can’t be shown here.<br>Try a recent version of Chrome, Firefox, Safari or Edge.</p><p><a href="index.html" target="_top" style="color:#5ee1ff">← Back to the magazine</a></p></div>';throw e}
-renderer.setPixelRatio(Math.min(devicePixelRatio,QQ.pr));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0x000000);document.body.appendChild(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio,QQ.pr));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0x000000);renderer.outputEncoding=THREE.sRGBEncoding;document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,8000);
 scene.add(new THREE.AmbientLight(0x223355,.14));
 const sunLight=new THREE.PointLight(0xffffff,2.2,0,0);scene.add(sunLight);
@@ -128,6 +150,56 @@ function starSlug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/
 (function(){const ref=new URLSearchParams(location.search).get('ref');if(ref){const a=document.createElement('a');a.href=ref;a.textContent='← Back to article';a.style.cssText='font:500 12px "JetBrains Mono",monospace;color:var(--cy);text-decoration:none;white-space:nowrap;margin-right:6px;flex:none;padding:5px 10px;border:1px solid var(--line);border-radius:8px;transition:border-color .2s';a.onmouseover=()=>a.style.borderColor='var(--cy)';a.onmouseout=()=>a.style.borderColor='var(--line)';document.getElementById('top').prepend(a)}})();
 function shareLink(url,btn){const orig=btn.textContent;if(navigator.share){navigator.share({title:'Cosmos Atlas',url}).catch(()=>{});btn.textContent='Shared!';setTimeout(()=>{btn.textContent=orig},2200)}else{try{navigator.clipboard.writeText(url);btn.textContent='Link copied!';setTimeout(()=>{btn.textContent=orig},2200)}catch(e){btn.textContent=url}}}
 const bar=p=>$("lb").style.width=p+"%";
+
+/* 4K Real Imagery & Credits Integration */
+let CREDITS_MAP={};
+fetch("images/objects/credits.json").then(r=>r.ok?r.json():{}).then(d=>{
+  CREDITS_MAP=d||{};
+  populateCredits();
+}).catch(()=>{});
+
+function populateCredits(){
+  const cEl=$("credits");if(!cEl)return;
+  let sec=$("credits-obj-section");
+  if(!sec){
+    sec=document.createElement("div");sec.id="credits-obj-section";
+    sec.innerHTML='<h3 style="color:var(--cy);margin-top:20px;margin-bottom:8px">4K Real Imagery &amp; Deep-Sky Photography</h3><p style="font-size:12px;color:var(--dim)">Direct observation photos and planetary maps with open licences from NASA, ESA/Hubble, ESA/Webb, ESO, NOIRLab, and Solar System Scope.</p><div id="credits-obj-list"></div>';
+    cEl.appendChild(sec);
+  }
+  const list=$("credits-obj-list");if(!list)return;
+  list.innerHTML=Object.entries(CREDITS_MAP).map(([id,item])=>`
+    <div>
+      <b style="color:var(--tx)">${item.title}</b> ${item.isIllustration?'<span style="color:var(--am);font-size:10px;margin-left:4px">[Artist Concept]</span>':''}
+      <div style="color:var(--dim);font-size:11px;margin-top:3px">${item.credit} · <a href="${item.source}" target="_blank" rel="noopener" style="color:var(--cy)">${item.license}</a></div>
+    </div>
+  `).join("");
+}
+
+function getMediaHtml(id){
+  const c=CREDITS_MAP[id];if(!c)return "";
+  const badge=c.isIllustration?'<span class="illus-badge">🎨 Artist Concept (Illustration)</span>':'<span class="photo-badge">📷 Real 4K Imagery</span>';
+  return '<div class="panel-media" data-id="'+id+'">'+
+    '<picture><source srcset="images/objects/'+id+'.webp" type="image/webp"><img src="images/objects/'+id+'.jpg" alt="'+c.title+'" class="panel-thumb" loading="lazy" decoding="async" onclick="openPhotoModal(\''+id+'\')"></picture>'+
+    '<div class="panel-media-meta">'+badge+'<button class="expand-btn" type="button" onclick="openPhotoModal(\''+id+'\')">⛶ Fullscreen</button></div>'+
+    '<div class="panel-media-credit">'+c.credit+' · <a href="'+c.source+'" target="_blank" rel="noopener">'+c.license+'</a></div>'+
+  '</div>';
+}
+
+function openPhotoModal(id){
+  const item=CREDITS_MAP[id];if(!item)return;
+  const m=$("imgModal");if(!m)return;
+  const pic=$("imgModal-pic"),info=$("imgModal-info");
+  pic.src="images/objects/"+id+".jpg";pic.alt=item.title;
+  info.innerHTML='<h3>'+item.title+(item.isIllustration?' <span style="color:var(--am);font-size:12px">[Artist Concept]</span>':'')+'</h3>'+
+    '<p>'+item.credit+' · <a href="'+item.source+'" target="_blank" rel="noopener" style="color:var(--cy)">'+item.license+'</a></p>';
+  m.classList.add("active");m.setAttribute("aria-hidden","false");
+}
+function closePhotoModal(){const m=$("imgModal");if(m){m.classList.remove("active");m.setAttribute("aria-hidden","true")}}
+window.openPhotoModal=openPhotoModal;window.closePhotoModal=closePhotoModal;
+document.addEventListener("DOMContentLoaded",()=>{
+  const cbtn=$("imgModal-close");if(cbtn)cbtn.onclick=closePhotoModal;
+  const m=$("imgModal");if(m)m.onclick=e=>{if(e.target===m||e.target.id=="imgModal-pic")closePhotoModal()};
+});
 
 /* Starfield: 100k GPU points coloured by spectral class, twinkle shader */
 (function(){const N=QQ.stars,pos=new Float32Array(N*3),col=new Float32Array(N*3),sz=new Float32Array(N),ph=new Float32Array(N);
@@ -268,7 +340,7 @@ function crumb(){const l=LV.find(x=>cam.r<x[0])||LV[LV.length-1];$("crumb").text
 function renderList(f){const l=$("list");l.innerHTML="";D.filter(b=>b.n.toLowerCase().includes(f||"")).forEach(b=>{const d=document.createElement("div");d.innerHTML=b.n+"<small>"+b.t.split(" · ")[0]+"</small>";if(sel==b)d.className="sel";d.onclick=()=>select(b.id);d.tabIndex=0;d.setAttribute("role","button");d.onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();select(b.id)}};l.appendChild(d)})}
 function select(id){const b=byId[id];if(!b)return;sel=b;cam.follow=b.orbit;cam.tr=b.R*3.4;ring.visible=true;
 const rel=Math.log10(b.dk/12742),pct=clamp((rel+.6)/2.65*100,3,100),x=b.dk/12742;
-$("panel").innerHTML='<div id="typ">'+b.t+'</div><h2>'+b.n+'</h2><div id="tag">'+b.tag+'</div><div class="bar"><i style="width:'+pct+'%"></i></div><small style="color:#8a96b8">Size: '+(x>=1?x.toFixed(x>10?0:1)+"× Earth":(x).toFixed(2)+"× Earth")+" (log scale)</small><div id=\"grid\">"+
+$("panel").innerHTML='<div id="typ">'+b.t+'</div><h2>'+b.n+'</h2><div id="tag">'+b.tag+'</div>'+getMediaHtml(id)+'<div class="bar"><i style="width:'+pct+'%"></i></div><small style="color:#8a96b8">Size: '+(x>=1?x.toFixed(x>10?0:1)+"× Earth":(x).toFixed(2)+"× Earth")+" (log scale)</small><div id=\"grid\">"+
 b.st.reduce((h,v,i)=>i%2?h:h+"<div><small>"+v+"</small><b>"+b.st[i+1]+"</b></div>","")+'</div><p>'+b.desc+'</p><div id="fact"><b>Did you know?</b><br>'+b.fact+'</div><div>Related</div>'+
 b.rel.map(r=>'<span class="chip" data-id="'+r+'">'+byId[r].n+'</span>').join("")+'<p><button id="fv">'+(favs.has(id)?"★ Favourited":"☆ Favourite")+'</button> <button id="sh">Share link</button></p><p class="note">Orbits use real orbital elements for the chosen date. Sizes follow the Scale toggle (exaggerated by default).</p>';
 $("panel").classList.add("open");$("panel").inert=false;$("panel").removeAttribute("aria-hidden");$("live").textContent=b.n+", "+b.t;$("panel").querySelectorAll(".chip").forEach(c=>c.onclick=()=>select(c.dataset.id));
@@ -283,7 +355,7 @@ $("bp").onclick=()=>{playing=!playing;$("bp").textContent=playing?"❚❚ Pause"
 let showLab=true;$("bo").onclick=e=>{showOrb=!showOrb;e.target.classList.toggle("on")};
 $("bl").onclick=e=>{showLab=!showLab;e.target.classList.toggle("on")};
 $("bh").onclick=()=>{sel=null;cam.follow=null;cam.tgt.set(0,0,0);cam.tr=70;ring.visible=false;closePanel();crumb();renderList($("q").value.toLowerCase())};
-addEventListener("keydown",e=>{if(e.key!="Escape")return;const atDefault=!sel&&cam.follow===null&&Math.abs(cam.tr-70)<1;if(atDefault&&window.parent!==window){const m={type:"close-atlas"};try{parent.postMessage(m,location.origin)}catch(x){parent.postMessage(m,"*")}return}$("bh").click()});
+addEventListener("keydown",e=>{if(e.key!="Escape")return;if($("imgModal")&&$("imgModal").classList.contains("active")){closePhotoModal();return}const atDefault=!sel&&cam.follow===null&&Math.abs(cam.tr-70)<1;if(atDefault&&window.parent!==window){const m={type:"close-atlas"};try{parent.postMessage(m,location.origin)}catch(x){parent.postMessage(m,"*")}return}$("bh").click()});
 addEventListener("resize",()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});
 setSide(innerWidth<760);
 
@@ -664,7 +736,7 @@ const o=showCon?.6*(1-lf(2e5,4e7,cam.r)):0;conMats.forEach(m=>{m.opacity=o;m.vis
 CON.forEach(c=>{if(!c.lab)return;let vis=false;if(o>.1&&cam.r<2e6){cv3.copy(c.c).project(camera);vis=showLab&&cv3.z<1&&Math.abs(cv3.x)<1.05&&Math.abs(cv3.y)<1.05;if(vis)c.lab.style.transform="translate("+((cv3.x*.5+.5)*innerWidth)+"px,"+((-cv3.y*.5+.5)*innerHeight)+"px)"}c.lab.style.display=vis?"block":"none"});
 if(selS&&!sel){ring.visible=true;ring.position.copy(selS.p);ring.scale.setScalar(cam.r*.03);ring.quaternion.copy(camera.quaternion)}}
 /* Credits panel */
-{const c=$("credits");$("bcr").onclick=()=>{c.hidden=!c.hidden};$("ccl").onclick=()=>{c.hidden=true};addEventListener("keydown",e=>{if(e.key=="Escape"&&!c.hidden){c.hidden=true;e.stopPropagation()}},true)}
+{const c=$("credits");$("bcr").onclick=()=>{c.hidden=!c.hidden;if(!c.hidden)populateCredits()};$("ccl").onclick=()=>{c.hidden=true};addEventListener("keydown",e=>{if(e.key=="Escape"&&!c.hidden){c.hidden=true;e.stopPropagation()}},true)}
 
 /* ============ PHASE C: textures, atmospheres, nebulae, clusters, exoplanets, black holes ============ */
 const RSUN=.004650467,RE_AU=6371/AU_KM,QF=Qn=="low"?.4:Qn=="med"?.7:1;let selD=null;
@@ -679,8 +751,8 @@ const sunDirV=(wp,o)=>o.copy(wp).negate().normalize().transformDirection(camera.
 const status2=m=>{window.__st2="<br>"+m;$("sbn").innerHTML=(window.__st1||"")+window.__st2};
 
 /* ---------- 1. REAL TEXTURES (optional files in /textures/), procedural fallback ---------- */
-const TXL=new THREE.TextureLoader(),MAXA=Math.min(8,renderer.capabilities.getMaxAnisotropy()),texState={};
-const loadTex=(name,exts)=>new Promise(res=>{let i=0;const nx=()=>{if(i>=exts.length)return res(null);TXL.load("textures/"+name+"."+exts[i++],t=>{t.anisotropy=MAXA;res(t)},undefined,nx)};nx()});
+const texDir=(Qn==="low")?"textures/2k/":"textures/";const TXL=new THREE.TextureLoader(),MAXA=Math.min(8,renderer.capabilities.getMaxAnisotropy()),texState={};
+const loadTex=(name,exts,isLinear)=>new Promise(res=>{let i=0;const nx=()=>{if(i>=exts.length)return res(null);TXL.load(texDir+name+"."+exts[i++],t=>{t.anisotropy=MAXA;if(!isLinear)t.encoding=THREE.sRGBEncoding;res(t)},undefined,nx)};nx()});
 function applyBase(id,t){const b=byId[id],m=b.mesh.material;if(m.map&&m.map!==t)m.map.dispose();m.map=t;
 if(id=="earth"){if(!m.userData.rb)m.bumpMap=null}else if(id=="mercury"||id=="moon"||id=="mars"){if(!m.userData.rb)m.bumpMap=t}m.needsUpdate=true;texState[id]=1}
 function applyBump(id,t){const m=byId[id].mesh.material;m.bumpMap=t;m.bumpScale=1;m.userData.rb=1;m.needsUpdate=true}
@@ -688,19 +760,19 @@ function applyBump(id,t){const m=byId[id].mesh.material;m.bumpMap=t;m.bumpScale=
 const nightU={t:{value:new THREE.CanvasTexture(paint(512,256,(u,v,l)=>{if(fbm(u,v,8,5)<.55)return[0,0,0];const c=fbm(u*3+11,v*3+5,24,4),p=Math.abs(l-.5)*2,k=Math.pow(cl((c-.52)*5,0,1),1.5)*(p>.85?0:1)*(fbm(u*14,v*14,112,2)>.42?1:.25)*255;return[k,k*.8,k*.5]}))},sun:{value:new THREE.Vector3(1,0,0)}};
 const nightMesh=new THREE.Mesh(new THREE.SphereGeometry(byId.earth.r*1.003,48,32),new THREE.ShaderMaterial({uniforms:nightU,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
 vertexShader:"varying vec2 vUv;varying vec3 vN;void main(){vUv=uv;vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
-fragmentShader:"uniform sampler2D t;uniform vec3 sun;varying vec2 vUv;varying vec3 vN;void main(){float nf=smoothstep(.08,-.2,dot(normalize(vN),sun));gl_FragColor=vec4(texture2D(t,vUv).rgb*vec3(1.,.82,.5)*nf*1.3,1.);}"}));
+fragmentShader:"uniform sampler2D t;uniform vec3 sun;varying vec2 vUv;varying vec3 vN;void main(){float nf=smoothstep(.08,-.2,dot(normalize(vN),sun));gl_FragColor=vec4(texture2D(t,vUv).rgb*vec3(1.,.82,.5)*nf*1.3,1.);#include <encodings_fragment>}"}));
 byId.earth.mesh.add(nightMesh);
 /* Saturn rings: planet shadow falls on the rings */
 const sat=byId.saturn,satRing=sat.tilt.children.find(o=>o.geometry&&o.geometry.type=="RingGeometry"),ringU={map:{value:satRing.material.map},sunL:{value:new THREE.Vector3(1,0,0)},rp:{value:sat.r}};
 satRing.material=new THREE.ShaderMaterial({uniforms:ringU,side:THREE.DoubleSide,transparent:true,
 vertexShader:"varying vec2 vUv;varying vec3 vP;void main(){vUv=uv;vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
-fragmentShader:"uniform sampler2D map;uniform vec3 sunL;uniform float rp;varying vec2 vUv;varying vec3 vP;void main(){vec4 t=texture2D(map,vUv);vec3 q=vec3(vP.x,0.,-vP.y);float b=dot(q,sunL),c=dot(q,q)-rp*rp,disc=b*b-c;float sh=(b<0.&&disc>0.)?smoothstep(0.,.3*rp*rp,disc):0.;gl_FragColor=vec4(t.rgb*(1.-.85*sh),t.a);}"});
+fragmentShader:"uniform sampler2D map;uniform vec3 sunL;uniform float rp;varying vec2 vUv;varying vec3 vP;void main(){vec4 t=texture2D(map,vUv);vec3 q=vec3(vP.x,0.,-vP.y);float b=dot(q,sunL),c=dot(q,q)-rp*rp,disc=b*b-c;float sh=(b<0.&&disc>0.)?smoothstep(0.,.3*rp*rp,disc):0.;gl_FragColor=vec4(t.rgb*(1.-.85*sh),t.a);#include <encodings_fragment>}"});
 function ringGeo(i0,i1){const rg=new THREE.RingGeometry(sat.r*i0,sat.r*i1,128),p=rg.attributes.position,uv=rg.attributes.uv,v=new THREE.Vector3();for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);uv.setXY(k,(v.length()-sat.r*i0)/(sat.r*(i1-i0)),.5)}return rg}
 const TXSLOTS=["mercury","venus","earth","moon","mars","jupiter","saturn","uranus","neptune"],TXX=[];
 TXSLOTS.forEach(id=>TXX.push(loadTex(id,["jpg","png"]).then(t=>{if(t)applyBase(id,t)})));
 TXX.push(loadTex("saturn_ring",["png"]).then(t=>{if(!t)return;ringU.map.value=t;satRing.geometry.dispose();satRing.geometry=ringGeo(1.24,2.33);texState.ring=1}));
-if(Qn!="low"){["mercury","moon","mars"].forEach(id=>TXX.push(loadTex(id+"_bump",["jpg","png"]).then(t=>{if(t)applyBump(id,t)})));
-TXX.push(loadTex("earth_normal",["jpg","png"]).then(t=>{if(!t)return;const m=byId.earth.mesh.material;m.normalMap=t;m.bumpMap=null;m.userData.rb=1;m.needsUpdate=true}));
+if(Qn!="low"){["mercury","moon","mars"].forEach(id=>TXX.push(loadTex(id+"_bump",["jpg","png"],true).then(t=>{if(t)applyBump(id,t)})));
+TXX.push(loadTex("earth_normal",["jpg","png"],true).then(t=>{if(!t)return;const m=byId.earth.mesh.material;m.normalMap=t;m.bumpMap=null;m.userData.rb=1;m.needsUpdate=true}));
 TXX.push(loadTex("earth_night",["jpg","png"]).then(t=>{if(t){nightU.t.value=t;texState.night=1}}));
 TXX.push(loadTex("earth_clouds",["jpg","png"]).then(t=>{if(!t)return;const o=byId.earth.cloud.material;byId.earth.cloud.material=new THREE.MeshStandardMaterial({color:0xffffff,alphaMap:t,transparent:true,depthWrite:false,roughness:1});o.dispose();texState.clouds=1}))}
 const texP=Promise.all(TXX).then(()=>{const n=TXSLOTS.filter(i=>texState[i]).length;status2("Planet textures: "+n+" of "+TXSLOTS.length+" real maps found in textures/"+(n<TXSLOTS.length?"; the rest are procedural and illustrative (see Credits).":"."))});
@@ -914,7 +986,7 @@ const dmPts=new THREE.Points(dmG,new THREE.PointsMaterial({size:10,sizeAttenuati
 
 /* ---------- 8. SELECTION, PANEL, PICKING, CATALOG, SEARCH ---------- */
 function selDSO(d){if(!d)return;selD=d;sel=null;selS=null;cam.follow=d.o;cam.tr=d.tr;ring.visible=true;const i=d.info,rel=(i.rel||[]).filter(r=>r[0]=="d"?DSOid[r.slice(2)]:CUR[r.slice(2).toLowerCase()]);
-panelOpen('<div id="typ">'+i.t+'</div><h2>'+d.n+'</h2><div id="tag">'+i.tag+'</div><div id="grid">'+i.st.map(a=>"<div><small>"+a[0]+"</small><b>"+a[1]+"</b></div>").join("")+'</div><p>'+i.desc+'</p><div id="fact"><b>Did you know?</b><br>'+i.fact+" "+lightTxt(d.ly)+"</div>"+(rel.length?"<div>Related</div>":"")+
+panelOpen('<div id="typ">'+i.t+'</div><h2>'+d.n+'</h2><div id="tag">'+i.tag+'</div>'+getMediaHtml(d.id)+'<div id="grid">'+i.st.map(a=>"<div><small>"+a[0]+"</small><b>"+a[1]+"</b></div>").join("")+'</div><p>'+i.desc+'</p><div id="fact"><b>Did you know?</b><br>'+i.fact+" "+lightTxt(d.ly)+"</div>"+(rel.length?"<div>Related</div>":"")+
 rel.map(r=>'<span class="chip" data-k="'+r+'">'+(r[0]=="d"?DSOid[r.slice(2)].n:r.slice(2))+"</span>").join("")+'<p><button id="sm">Show on map</button> <button id="sh">Share link</button></p><p class="note">'+i.note+"</p>",d.n+", "+i.t);
 $("panel").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(k[0]=="d")selDSO(DSOid[k.slice(2)]);else{const s=CUR[k.slice(2).toLowerCase()];if(s)selStar(s)}});
 $("sm").onclick=()=>{const t=d.sys?d.sys.o:d.o;t.getWorldPosition(pw);const L=pw.length();cam.follow=null;cam.tgt.copy(pw).multiplyScalar(.5);cam.tr=Math.max(L*1.3,(d.sys?d.sys.size:d.size)*6)};

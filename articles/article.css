@@ -76,6 +76,30 @@ h1 {
   color: var(--tx);
 }
 
+/* Hero image */
+.article-hero {
+  margin: 0 0 32px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.hero-img {
+  width: 100%;
+  height: auto;
+  max-height: 440px;
+  object-fit: cover;
+  display: block;
+}
+.hero-credit {
+  padding: 8px 14px;
+  font-size: 11px;
+  color: var(--dim);
+  background: rgba(8,12,30,.85);
+  border-top: 1px solid var(--line);
+  letter-spacing: .02em;
+}
+
 /* Lead paragraph */
 .lead {
   font-size: 18px;

@@ -1,0 +1,7 @@
+# Large full datasets kept locally
+data/hyg.full.csv.gitignored
+*.gitignored
+
+# Local build / utility scripts
+scripts/
+*.pdf
