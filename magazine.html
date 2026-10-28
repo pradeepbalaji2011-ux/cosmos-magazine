@@ -4,7 +4,7 @@
 <title>Cosmos Magazine — The Cosmos After Dark</title>
 <meta name="description" content="Astronomy news, observing guides and a 3D map of the universe. Scroll through space, then explore every planet, galaxy and star in the Cosmos Atlas.">
 <link rel="canonical" href="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/">
-<meta name="theme-color" content="#03040a">
+<meta name="theme-color" content="#000000">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Cosmos Magazine"><meta property="og:title" content="The Cosmos After Dark"><meta property="og:description" content="Astronomy news, observing guides and a 3D map of the universe. Scroll through space, then explore every planet, galaxy and star in the Cosmos Atlas."><meta property="og:url" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/"><meta property="og:image" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/images/og-cosmos.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="The Cosmos After Dark"><meta name="twitter:description" content="Astronomy news, observing guides and a 3D map of the universe. Scroll through space, then explore every planet, galaxy and star in the Cosmos Atlas."><meta name="twitter:image" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/images/og-cosmos.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E">
@@ -44,7 +44,16 @@ a:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 .btn.g{background:transparent;color:var(--tx);border-color:var(--line)}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(228,87,46,.3)}
 .hint{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:5;font-size:11px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;transition:opacity .4s;pointer-events:none}
 footer{position:relative;z-index:2;text-align:center;padding:40px 20px 60px;color:var(--dim);font-size:12px}
-@media(max-width:760px){header{padding:10px 12px}.logo{font-size:15px}section,section.r{justify-content:center;padding:80px 14px}.card{padding:22px}}
+@media(max-width:760px){
+  header{padding:calc(10px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) 10px calc(12px + env(safe-area-inset-left,0px))}
+  .logo{font-size:15px}
+  .btn-bh{min-height:44px;padding:10px 14px;font-size:12px}
+  nav a{min-height:44px;display:inline-flex;align-items:center;padding:8px 12px;font-size:12px}
+  section,section.r{justify-content:center;padding:80px 14px;min-height:100vh;min-height:100dvh}
+  .card{padding:22px;max-width:100%}
+  .btn{min-height:44px;display:inline-flex;align-items:center;padding:12px 20px;font-size:13px}
+  .nl-submit{min-height:44px;padding:12px 24px}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 #atlasView{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
 #atlasView.on{opacity:1;visibility:visible}

@@ -19,7 +19,10 @@ body {
   color: var(--tx);
   font: 16px/1.7 "DM Mono", ui-monospace, monospace;
   min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
 }
+img { max-width: 100%; height: auto; }
 a { color: var(--cy); }
 a:hover { color: var(--tx); }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--cy); outline-offset: 3px; }
@@ -238,10 +241,10 @@ footer {
 }
 
 @media (max-width: 600px) {
-  .article-wrap { padding: 32px 16px 60px; }
-  .site-header { padding: 10px 16px; }
+  .article-wrap { padding: 32px 16px calc(60px + env(safe-area-inset-bottom, 0px)); }
+  .site-header { padding: calc(10px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) 10px calc(16px + env(safe-area-inset-left, 0px)); }
   .article-nav { flex-direction: column; }
-  .article-nav a { max-width: 100%; }
+  .article-nav a { max-width: 100%; min-height: 44px; }
   .article-nav .next { text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) {

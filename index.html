@@ -6,7 +6,7 @@
   <title>Cosmos Magazine — The Cosmos After Dark</title>
   <meta name="description" content="Astronomy news, observing guides and a 3D map of the universe. Dive into Gargantua, explore the light strands, and navigate the Cosmos Atlas.">
   <link rel="canonical" href="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/">
-  <meta name="theme-color" content="#03040a">
+  <meta name="theme-color" content="#000000">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
@@ -66,7 +66,64 @@
       <button id="btn-quality" title="Cycle render quality">Quality: HIGH</button>
       <button id="btn-bh-switch" title="Switch black hole">Sgr A*</button>
     </div>
+    <!-- Mobile top controls (visible on <= 768px) -->
+    <div id="mobile-top-actions">
+      <button id="btn-settings" class="mobile-icon-btn" aria-label="Simulation settings" aria-haspopup="dialog" aria-expanded="false" title="Simulation settings">⋯</button>
+      <button id="btn-menu" class="mobile-icon-btn" aria-label="Open navigation menu" aria-haspopup="dialog" aria-expanded="false" title="Menu">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </div>
   </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div id="mobile-menu-drawer" class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation Menu" hidden>
+    <div class="drawer-header">
+      <span class="drawer-title">✦ COSMOS</span>
+      <button id="btn-close-menu" class="drawer-close-btn" aria-label="Close navigation menu">✕</button>
+    </div>
+    <nav class="drawer-nav" aria-label="Mobile main navigation">
+      <a href="magazine.html" class="drawer-nav-item"><span class="nav-idx">01</span> Magazine</a>
+      <a href="articles/galaxies-filaments.html" class="drawer-nav-item"><span class="nav-idx">02</span> News</a>
+      <a href="articles/dark-adapt.html" class="drawer-nav-item"><span class="nav-idx">03</span> Observing</a>
+      <a href="articles/life-on-mars.html" class="drawer-nav-item"><span class="nav-idx">04</span> Exploration</a>
+      <a href="articles/nebulae.html" class="drawer-nav-item"><span class="nav-idx">05</span> Learn</a>
+      <a href="atlas.html?ref=index.html#solar-system" id="mobile-atlas-link" class="drawer-nav-item drawer-nav-atlas"><span class="nav-idx">06</span> Cosmos Atlas ↗</a>
+      <a href="index-classic.html" class="drawer-nav-item drawer-nav-classic"><span class="nav-idx">07</span> Classic View</a>
+    </nav>
+  </div>
+  <div id="drawer-backdrop" class="drawer-backdrop" aria-hidden="true" hidden></div>
+
+  <!-- Mobile Settings Bottom Sheet -->
+  <div id="mobile-settings-sheet" class="mobile-bottom-sheet" role="dialog" aria-modal="true" aria-label="Simulation Settings" hidden>
+    <div class="sheet-drag-handle" aria-hidden="true"></div>
+    <div class="sheet-header">
+      <span class="sheet-title">Simulation Settings</span>
+      <button id="btn-close-settings" class="drawer-close-btn" aria-label="Close settings">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="setting-item">
+        <span class="setting-label">Graphics Quality</span>
+        <button id="mobile-quality-btn" class="sheet-btn" aria-label="Cycle render quality">Quality: LOW</button>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Active Black Hole</span>
+        <button id="mobile-bh-btn" class="sheet-btn" aria-label="Switch black hole">Sgr A*</button>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Lightweight View</span>
+        <a href="index-classic.html" class="sheet-link">Switch to Classic Magazine →</a>
+      </div>
+    </div>
+  </div>
+  <div id="settings-backdrop" class="drawer-backdrop" aria-hidden="true" hidden></div>
+
+  <!-- Mobile One-Time Gesture Hint -->
+  <div id="mobile-swipe-hint" class="swipe-hint" role="status" aria-live="polite" hidden>
+    <span class="hint-arrow" aria-hidden="true">↑</span>
+    <span>Swipe up to explore · Tap disk to enter</span>
+  </div>
 
   <!-- Home view interactive hotspot labels -->
   <div id="home-cta" aria-hidden="true">

@@ -10,13 +10,16 @@
      SECTION A: Config & Article Data
      ============================================================ */
 
-  var MOB = window.innerWidth < 760 || /Mobi|Android/i.test(navigator.userAgent);
+  var IS_COARSE = window.matchMedia('(pointer: coarse)').matches;
+  var IS_SMALL  = window.innerWidth <= 768;
+  var IS_LOW_SPEC = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+  var MOB = IS_COARSE || IS_SMALL || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   var RM  = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  var Q = MOB ? 'low' : 'high';
+  var Q = (MOB || IS_LOW_SPEC) ? 'low' : 'high';
   var QS = {
-    low:  { steps: 110, scale: 0.65 },
-    med:  { steps: 160, scale: 0.85 },
+    low:  { steps: 95,  scale: 0.60 },
+    med:  { steps: 140, scale: 0.80 },
     high: { steps: 220, scale: 1.00 }
   };
 
@@ -84,11 +87,20 @@
     return;
   }
 
-  var W   = window.innerWidth;
-  var H   = window.innerHeight;
+  function getViewportSize() {
+    if (window.visualViewport) {
+      return { w: Math.round(window.visualViewport.width), h: Math.round(window.visualViewport.height) };
+    }
+    return { w: window.innerWidth, h: window.innerHeight };
+  }
+
+  var vp0 = getViewportSize();
+  var W   = vp0.w;
+  var H   = vp0.h;
   var asp = W / H;
-  var DPR = Math.min(window.devicePixelRatio || 1, 2) * QS[Q].scale;
-  if (MOB) DPR = Math.min(DPR, 1.2);
+  document.documentElement.style.setProperty('--vvh', H + 'px');
+  var DPR = Math.min(window.devicePixelRatio || 1, MOB ? 1.5 : 2) * QS[Q].scale;
+  if (MOB) DPR = Math.min(DPR, 1.5);
 
   renderer.setPixelRatio(DPR);
   renderer.setSize(W, H);
@@ -396,7 +408,7 @@
     if (strandsBuilt) return;
     strandsBuilt = true;
 
-    var N_BG = 400;
+    var N_BG = (MOB || IS_LOW_SPEC) ? 120 : 400;
     var bgPos = [], bgCol = [];
     for (var i = 0; i < N_BG; i++) {
       var sx = (Math.random() - 0.5) * 15;
@@ -431,7 +443,7 @@
     strandsGroup.add(new THREE.LineSegments(bgGeo, bgMat));
 
     // Horizontal crossing threads
-    var N_H = 28;
+    var N_H = (MOB || IS_LOW_SPEC) ? 12 : 28;
     var hPos = [], hCol = [];
     for (var k = 0; k < N_H; k++) {
       var hy = (Math.random() - 0.5) * 10;
@@ -455,8 +467,9 @@
     });
     strandsGroup.add(new THREE.LineSegments(hGeo, hMat));
 
-    // Interactive article strands
+    // Interactive article strands (wider hit geometry on touch screens >= 22px)
     var strandH = 6.2;
+    var hitWidth = (MOB || IS_COARSE) ? 0.85 : 0.42;
     ARTICLES.forEach(function (art, idx) {
       var sx2 = (idx - (ARTICLES.length - 1) / 2.0) * 0.90;
 
@@ -486,7 +499,7 @@
       tMesh.position.set(sx2, strandH / 2 + 0.06, -3.0);
       strandsGroup.add(tMesh);
 
-      var hbGeo = new THREE.PlaneGeometry(0.42, strandH + 0.6);
+      var hbGeo = new THREE.PlaneGeometry(hitWidth, strandH + 0.6);
       var hbMat = new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide });
       var hbMesh = new THREE.Mesh(hbGeo, hbMat);
       hbMesh.position.set(sx2, 0, -3.0);
@@ -501,15 +514,37 @@
      SECTION F: Raycaster & Info Panel
      ============================================================ */
 
-  var raycaster = new THREE.Raycaster();
-  var mouse = new THREE.Vector2();
+  /* ============================================================
+     SECTION F: Raycaster & Info Panel
+     ============================================================ */
 
-  function showStrandLabel(art, cx, cy) {
+  var raycaster = new THREE.Raycaster();
+  if (MOB || IS_COARSE) {
+    raycaster.params.Line = { threshold: 0.8 };
+  }
+  var mouse = new THREE.Vector2();
+  var selectedTouchStrand = null;
+  var isPanelOpen = false;
+
+  function showStrandLabel(art, cx, cy, isTouch) {
     var el = document.getElementById('strand-label');
     if (!el) return;
     el.hidden = false;
-    el.innerHTML = '<div class="sl-cat" style="color:' + art.catColor + '">' + art.cat + '</div>' +
-                   '<div class="sl-title">' + art.title + '</div>';
+    if (isTouch) {
+      el.innerHTML = '<div class="sl-cat" style="color:' + art.catColor + '">' + art.cat + '</div>' +
+                     '<div class="sl-title">' + art.title + '</div>' +
+                     '<button type="button" class="sl-tap-open" style="margin-top:6px;background:rgba(200,169,110,0.2);border:1px solid rgba(200,169,110,0.5);color:#fff;border-radius:4px;padding:4px 8px;font:11px var(--font-mono);cursor:pointer;min-height:30px;width:100%">Tap again or click here to read →</button>';
+      var btn = el.querySelector('.sl-tap-open');
+      if (btn) {
+        btn.onclick = function (e) {
+          e.stopPropagation();
+          openInfoPanel(art);
+        };
+      }
+    } else {
+      el.innerHTML = '<div class="sl-cat" style="color:' + art.catColor + '">' + art.cat + '</div>' +
+                     '<div class="sl-title">' + art.title + '</div>';
+    }
     moveStrandLabel(cx, cy);
   }
 
@@ -517,10 +552,14 @@
     var el = document.getElementById('strand-label');
     if (!el || el.hidden) return;
     var ew = el.offsetWidth || 220;
+    var eh = el.offsetHeight || 60;
     var left = cx + 16;
     if (left + ew > W - 12) left = cx - ew - 16;
+    if (left < 12) left = 12;
+    var top = cy - eh - 15;
+    if (top < 60) top = cy + 25;
     el.style.left = left + 'px';
-    el.style.top  = (cy - 35) + 'px';
+    el.style.top  = top + 'px';
   }
 
   function hideStrandLabel() {
@@ -533,15 +572,18 @@
     var panel = document.createElement('aside');
     panel.id = 'info-panel';
     panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-modal', 'false');
+    panel.setAttribute('aria-modal', 'true');
     panel.setAttribute('aria-label', 'Article details');
     panel.hidden = true;
     panel.innerHTML =
-      '<button id="panel-back" aria-label="Back to strands">← Back</button>' +
-      '<button id="panel-home" aria-label="Return to home view">⌂ Home</button>' +
+      '<div class="sheet-drag-handle" aria-hidden="true"></div>' +
+      '<div id="panel-top-actions">' +
+        '<button id="panel-back" aria-label="Back to strands">← Back</button>' +
+        '<button id="panel-home" aria-label="Return to home view">⌂ Home</button>' +
+      '</div>' +
       '<div id="panel-content">' +
         '<span id="panel-cat"></span>' +
-        '<h2 id="panel-title"></h2>' +
+        '<h2 id="panel-title" tabindex="-1"></h2>' +
         '<p id="panel-summary"></p>' +
         '<img id="panel-img" src="" alt="" loading="lazy" decoding="async">' +
         '<div id="panel-links"></div>' +
@@ -553,6 +595,25 @@
       closeInfoPanel();
       goToState(0);
     };
+
+    // Swipe down on mobile bottom sheet header to close
+    var panelStartY = 0;
+    panel.addEventListener('touchstart', function (e) {
+      if (panel.scrollTop <= 5) {
+        panelStartY = e.touches[0].clientY;
+      } else {
+        panelStartY = -1;
+      }
+    }, { passive: true });
+
+    panel.addEventListener('touchend', function (e) {
+      if (panelStartY > 0 && e.changedTouches.length > 0) {
+        var pdy = e.changedTouches[0].clientY - panelStartY;
+        if (pdy > 70) {
+          closeInfoPanel();
+        }
+      }
+    }, { passive: true });
   }
 
   function openInfoPanel(art) {
@@ -575,28 +636,42 @@
     }
 
     panel.hidden = false;
-    requestAnimationFrame(function () { panel.classList.add('open'); });
-    var titleEl = document.getElementById('panel-title');
-    if (titleEl) titleEl.focus();
+    document.body.style.overflow = 'hidden';
+    isPanelOpen = true;
+    try {
+      history.pushState({ panelOpen: true, s: STATE }, '');
+    } catch (e) {}
+
+    requestAnimationFrame(function () {
+      panel.classList.add('open');
+      var titleEl = document.getElementById('panel-title');
+      if (titleEl) titleEl.focus();
+    });
   }
 
   function closeInfoPanel() {
     var p = document.getElementById('info-panel');
     if (!p) return;
     p.classList.remove('open');
+    document.body.style.overflow = '';
+    isPanelOpen = false;
+    setTimeout(function () {
+      if (!p.classList.contains('open')) p.hidden = true;
+    }, 420);
   }
 
   /* ============================================================
-     SECTION G: User Input Handlers
+     SECTION G: User Input Handlers & Gestures
      ============================================================ */
 
+  // Mouse hover (Desktop)
   window.addEventListener('mousemove', function (e) {
     if (STATE === 0) {
       camDriftTX = ((e.clientX / W) * 2 - 1) * 0.40;
       camDriftTY = -((e.clientY / H) * 2 - 1) * 0.20;
     }
 
-    if (STATE === 1) {
+    if (STATE === 1 && !IS_COARSE) {
       mouse.x =  (e.clientX / W) * 2 - 1;
       mouse.y = -((e.clientY / H) * 2 - 1);
       raycaster.setFromCamera(mouse, strandCam);
@@ -612,7 +687,7 @@
         if (hoveredStrand) {
           hoveredStrand.userData.strandMesh.material.opacity = 1.0;
           hoveredStrand.userData.strandMesh.scale.x = 2.8;
-          showStrandLabel(hoveredStrand.userData.art, e.clientX, e.clientY);
+          showStrandLabel(hoveredStrand.userData.art, e.clientX, e.clientY, false);
           canvas.style.cursor = 'pointer';
         } else {
           hideStrandLabel();
@@ -624,11 +699,13 @@
     }
   }, { passive: true });
 
+  // Desktop click on canvas
   canvas.addEventListener('click', function (e) {
-    onCanvasClick(e);
+    if (IS_COARSE) return; // Touch devices handled via pointer gestures below
+    onDesktopCanvasClick(e);
   });
 
-  function onCanvasClick(e) {
+  function onDesktopCanvasClick(e) {
     if (STATE === 2 || isPulling) return;
 
     if (STATE === 0) {
@@ -638,12 +715,21 @@
       if (dist < 0.17) {
         goToState(2); // Center shadow click -> Dive into Cosmos Atlas
       }
-      // Clicking anywhere else on the black hole does NOT enter the magazine.
-      // Only the dedicated "Enter Magazine →" button opens the magazine!
       return;
+    }
+
+    if (STATE === 1) {
+      mouse.x =  (e.clientX / W) * 2 - 1;
+      mouse.y = -((e.clientY / H) * 2 - 1);
+      raycaster.setFromCamera(mouse, strandCam);
+      var hits = raycaster.intersectObjects(strandObjs);
+      if (hits.length > 0) {
+        openInfoPanel(hits[0].object.userData.art);
+      }
     }
   }
 
+  // CTA Buttons
   var ctaDisk = document.querySelector('.cta-disk');
   var ctaShadow = document.querySelector('.cta-shadow');
   if (ctaDisk) {
@@ -672,32 +758,191 @@
     });
   });
 
-  window.addEventListener('wheel', function (e) {
-    // Passive wheel listener - never prevents default scrolling
-    if (e.deltaY > 80 && STATE === 0) {
-      // Optional subtle hint or smooth transition
+  /* ---------- Touch Gestures (Swipe Up/Down, Pinch, Edge Swipe, Tap) ---------- */
+  var activePointers = new Map();
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var touchStartTime = 0;
+  var initPinchDist = 0;
+  var lastPinchRatio = 1;
+  var lastGestureTime = 0;
+
+  function dismissSwipeHint() {
+    var hint = document.getElementById('mobile-swipe-hint');
+    if (hint && !hint.hidden) {
+      hint.style.opacity = '0';
+      setTimeout(function () { hint.hidden = true; }, 600);
+      try { localStorage.setItem('cosmosSwipeHintSeen', '1'); } catch (e) {}
+    }
+  }
+
+  // Show swipe hint on first mobile visit
+  try {
+    if (MOB && !localStorage.getItem('cosmosSwipeHintSeen')) {
+      var hint = document.getElementById('mobile-swipe-hint');
+      if (hint) {
+        hint.hidden = false;
+        setTimeout(dismissSwipeHint, 6000);
+      }
+    }
+  } catch (e) {}
+
+  canvas.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    dismissSwipeHint();
+
+    if (activePointers.size === 1) {
+      touchStartX = e.clientX;
+      touchStartY = e.clientY;
+      touchStartTime = Date.now();
+      initPinchDist = 0;
+      lastPinchRatio = 1;
+    } else if (activePointers.size === 2) {
+      var pts = Array.from(activePointers.values());
+      initPinchDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      lastPinchRatio = 1;
     }
   }, { passive: true });
 
-  var touchY0 = 0;
-  canvas.addEventListener('touchstart', function (e) {
-    touchY0 = e.touches[0].clientY;
-  }, { passive: true });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!activePointers.has(e.pointerId)) return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
-  canvas.addEventListener('touchend', function (e) {
-    var dy = e.changedTouches[0].clientY - touchY0;
-    if (Math.abs(dy) < 15 && e.changedTouches.length > 0) {
-      onCanvasClick({ clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY });
+    if (activePointers.size === 2 && initPinchDist > 0) {
+      var pts = Array.from(activePointers.values());
+      var currentDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      lastPinchRatio = currentDist / initPinchDist;
     }
   }, { passive: true });
 
+  function onPointerEnd(e) {
+    if (!activePointers.has(e.pointerId)) return;
+    activePointers.delete(e.pointerId);
+
+    var now = Date.now();
+    if (now - lastGestureTime < 250) return; // 250ms debounce
+
+    var dt = now - touchStartTime;
+    var dx = e.clientX - touchStartX;
+    var dy = e.clientY - touchStartY;
+
+    // 1. Pinch Detection
+    if (initPinchDist > 0) {
+      if (lastPinchRatio > 1.35) { // Pinch out -> Go deeper
+        lastGestureTime = now;
+        if (STATE === 0) goToState(1);
+        else if (STATE === 1) goToState(2);
+        return;
+      }
+      if (lastPinchRatio < 0.72) { // Pinch in -> Go back
+        lastGestureTime = now;
+        if (isPanelOpen) closeInfoPanel();
+        else if (STATE === 1) goToState(0);
+        return;
+      }
+    }
+
+    // 2. Edge Swipe Right (back navigation)
+    if (touchStartX < 48 && dx > 55 && Math.abs(dy) < 60) {
+      lastGestureTime = now;
+      if (isPanelOpen) closeInfoPanel();
+      else if (STATE > 0) goToState(STATE - 1);
+      return;
+    }
+
+    // 3. Swipe Up -> Advance state (Home -> Light strands -> Horizon)
+    if (dy < -55 && Math.abs(dy) > Math.abs(dx) * 1.25) {
+      lastGestureTime = now;
+      if (STATE === 0) goToState(1);
+      else if (STATE === 1) goToState(2);
+      return;
+    }
+
+    // 4. Swipe Down -> Return state
+    if (dy > 55 && Math.abs(dy) > Math.abs(dx) * 1.25) {
+      lastGestureTime = now;
+      if (isPanelOpen) closeInfoPanel();
+      else if (STATE === 1) goToState(0);
+      return;
+    }
+
+    // 5. Tap interaction
+    if (Math.abs(dx) < 18 && Math.abs(dy) < 18 && dt < 350) {
+      handleCanvasTap(e.clientX, e.clientY);
+    }
+  }
+
+  canvas.addEventListener('pointerup', onPointerEnd, { passive: true });
+  canvas.addEventListener('pointercancel', onPointerEnd, { passive: true });
+
+  function handleCanvasTap(cx, cy) {
+    if (STATE === 2 || isPulling) return;
+
+    if (STATE === 0) {
+      var normX = (cx - W / 2) / W;
+      var normY = (cy - H / 2) / H;
+      var dist = Math.sqrt(normX * normX + (normY * 1.35) * (normY * 1.35));
+
+      // Tap on black shadow center -> Dive into Cosmos Atlas
+      if (dist < 0.17) {
+        goToState(2);
+        return;
+      }
+      // Tap on glowing disk area -> Enter Magazine
+      if (dist >= 0.17 && dist < 0.46) {
+        triggerPullToMagazine();
+        return;
+      }
+      return;
+    }
+
+    if (STATE === 1) {
+      mouse.x =  (cx / W) * 2 - 1;
+      mouse.y = -((cy / H) * 2 - 1);
+      raycaster.setFromCamera(mouse, strandCam);
+      var hits = raycaster.intersectObjects(strandObjs);
+
+      if (hits.length > 0) {
+        var tappedStrand = hits[0].object;
+        if (selectedTouchStrand === tappedStrand) {
+          // Second tap on same strand -> Open info panel
+          openInfoPanel(tappedStrand.userData.art);
+          selectedTouchStrand = null;
+          hideStrandLabel();
+        } else {
+          // First tap -> Highlight strand, scale up, show label
+          if (selectedTouchStrand) {
+            selectedTouchStrand.userData.strandMesh.material.opacity = 0.90;
+            selectedTouchStrand.userData.strandMesh.scale.x = 1.0;
+          }
+          selectedTouchStrand = tappedStrand;
+          selectedTouchStrand.userData.strandMesh.material.opacity = 1.0;
+          selectedTouchStrand.userData.strandMesh.scale.x = 2.8;
+          showStrandLabel(tappedStrand.userData.art, cx, cy, true);
+        }
+      } else {
+        // Tapped outside strands -> Deselect
+        if (selectedTouchStrand) {
+          selectedTouchStrand.userData.strandMesh.material.opacity = 0.90;
+          selectedTouchStrand.userData.strandMesh.scale.x = 1.0;
+          selectedTouchStrand = null;
+        }
+        hideStrandLabel();
+      }
+    }
+  }
+
+  /* ---------- Keyboard & Popstate ---------- */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
-      var p = document.getElementById('info-panel');
-      if (p && p.classList.contains('open')) {
+      if (isPanelOpen) {
         closeInfoPanel();
         return;
       }
+      closeMobileDrawer();
+      closeMobileSettings();
       if (STATE > 0) goToState(STATE - 1);
     }
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
@@ -709,61 +954,166 @@
   });
 
   window.addEventListener('popstate', function (e) {
+    if (isPanelOpen) {
+      closeInfoPanel();
+      return;
+    }
     var s = (e.state && e.state.s !== undefined) ? e.state.s : 0;
     goToState(s);
   });
+
+  /* ---------- Quality Control & Switching ---------- */
+  function setQuality(newQ) {
+    Q = newQ;
+    DPR = Math.min(window.devicePixelRatio || 1, MOB ? 1.5 : 2) * QS[Q].scale;
+    if (MOB) DPR = Math.min(DPR, 1.5);
+    renderer.setPixelRatio(DPR);
+    bhUniforms.uSteps.value = QS[Q].steps;
+
+    var text = 'Quality: ' + Q.toUpperCase();
+    var btnDesktop = document.getElementById('btn-quality');
+    if (btnDesktop) btnDesktop.textContent = text;
+    var btnMobile = document.getElementById('mobile-quality-btn');
+    if (btnMobile) btnMobile.textContent = text;
+  }
 
   var btnQ = document.getElementById('btn-quality');
   if (btnQ) {
     btnQ.addEventListener('click', function () {
       var order = ['low', 'med', 'high'];
-      var idx = order.indexOf(Q);
-      Q = order[(idx + 1) % order.length];
-      DPR = Math.min(window.devicePixelRatio || 1, 2) * QS[Q].scale;
-      if (MOB) DPR = Math.min(DPR, 1.2);
-      renderer.setPixelRatio(DPR);
-      bhUniforms.uSteps.value = QS[Q].steps;
-      btnQ.textContent = 'Quality: ' + Q.toUpperCase();
+      setQuality(order[(order.indexOf(Q) + 1) % order.length]);
+    });
+  }
+  var mQualityBtn = document.getElementById('mobile-quality-btn');
+  if (mQualityBtn) {
+    mQualityBtn.addEventListener('click', function () {
+      var order = ['low', 'med', 'high'];
+      setQuality(order[(order.indexOf(Q) + 1) % order.length]);
     });
   }
 
+  /* ---------- Black Hole Switcher ---------- */
+  function switchBlackHole() {
+    currentBH = currentBH === 'sgr-a-star' ? 'm87-star' : 'sgr-a-star';
+    var label = currentBH === 'sgr-a-star' ? 'Sgr A*' : 'M87*';
+    var btnDesktop = document.getElementById('btn-bh-switch');
+    if (btnDesktop) btnDesktop.textContent = label;
+    var btnMobile = document.getElementById('mobile-bh-btn');
+    if (btnMobile) btnMobile.textContent = label;
+
+    if (currentBH === 'm87-star') {
+      diskNormal.set(0.05, 0.96, 0.28).normalize();
+      CAM_HOME.z = 9.8;
+    } else {
+      diskNormal.set(0.08, 0.92, 0.38).normalize();
+      CAM_HOME.z = 9.2;
+    }
+
+    if (window.gsap) {
+      gsap.to(camPos, {
+        z: CAM_HOME.z,
+        duration: 1.0, ease: 'power2.inOut',
+        onUpdate: syncCamera
+      });
+    } else {
+      camPos.z = CAM_HOME.z;
+      syncCamera();
+    }
+  }
+
   var btnBH = document.getElementById('btn-bh-switch');
-  if (btnBH) {
-    btnBH.addEventListener('click', function () {
-      currentBH = currentBH === 'sgr-a-star' ? 'm87-star' : 'sgr-a-star';
-      btnBH.textContent = currentBH === 'sgr-a-star' ? 'Sgr A*' : 'M87*';
+  if (btnBH) btnBH.addEventListener('click', switchBlackHole);
+  var mBHBtn = document.getElementById('mobile-bh-btn');
+  if (mBHBtn) mBHBtn.addEventListener('click', switchBlackHole);
 
-      if (currentBH === 'm87-star') {
-        diskNormal.set(0.05, 0.96, 0.28).normalize();
-        CAM_HOME.z = 9.8;
-      } else {
-        diskNormal.set(0.08, 0.92, 0.38).normalize();
-        CAM_HOME.z = 9.2;
-      }
+  /* ---------- Mobile Navigation Drawer & Settings Sheet ---------- */
+  var menuDrawer = document.getElementById('mobile-menu-drawer');
+  var drawerBackdrop = document.getElementById('drawer-backdrop');
+  var btnMenu = document.getElementById('btn-menu');
+  var btnCloseMenu = document.getElementById('btn-close-menu');
 
-      if (window.gsap) {
-        gsap.to(camPos, {
-          z: CAM_HOME.z,
-          duration: 1.0, ease: 'power2.inOut',
-          onUpdate: syncCamera
-        });
-      } else {
-        camPos.z = CAM_HOME.z;
-        syncCamera();
-      }
+  function openMobileDrawer() {
+    if (!menuDrawer) return;
+    closeMobileSettings();
+    menuDrawer.hidden = false;
+    drawerBackdrop.hidden = false;
+    requestAnimationFrame(function () {
+      menuDrawer.classList.add('open');
+      drawerBackdrop.classList.add('on');
+      if (btnMenu) btnMenu.setAttribute('aria-expanded', 'true');
+    });
+  }
+
+  function closeMobileDrawer() {
+    if (!menuDrawer) return;
+    menuDrawer.classList.remove('open');
+    if (drawerBackdrop) drawerBackdrop.classList.remove('on');
+    if (btnMenu) btnMenu.setAttribute('aria-expanded', 'false');
+    setTimeout(function () {
+      menuDrawer.hidden = true;
+      if (drawerBackdrop) drawerBackdrop.hidden = true;
+    }, 360);
+  }
+
+  if (btnMenu) btnMenu.addEventListener('click', openMobileDrawer);
+  if (btnCloseMenu) btnCloseMenu.addEventListener('click', closeMobileDrawer);
+  if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeMobileDrawer);
+
+  var settingsSheet = document.getElementById('mobile-settings-sheet');
+  var settingsBackdrop = document.getElementById('settings-backdrop');
+  var btnSettings = document.getElementById('btn-settings');
+  var btnCloseSettings = document.getElementById('btn-close-settings');
+
+  function openMobileSettings() {
+    if (!settingsSheet) return;
+    closeMobileDrawer();
+    settingsSheet.hidden = false;
+    settingsBackdrop.hidden = false;
+    requestAnimationFrame(function () {
+      settingsSheet.classList.add('open');
+      settingsBackdrop.classList.add('on');
+      if (btnSettings) btnSettings.setAttribute('aria-expanded', 'true');
+    });
+  }
+
+  function closeMobileSettings() {
+    if (!settingsSheet) return;
+    settingsSheet.classList.remove('open');
+    if (settingsBackdrop) settingsBackdrop.classList.remove('on');
+    if (btnSettings) btnSettings.setAttribute('aria-expanded', 'false');
+    setTimeout(function () {
+      settingsSheet.hidden = true;
+      if (settingsBackdrop) settingsBackdrop.hidden = true;
+    }, 360);
+  }
+
+  if (btnSettings) btnSettings.addEventListener('click', openMobileSettings);
+  if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeMobileSettings);
+  if (settingsBackdrop) settingsBackdrop.addEventListener('click', closeMobileSettings);
+
+  var mAtlasLink = document.getElementById('mobile-atlas-link');
+  if (mAtlasLink) {
+    mAtlasLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      closeMobileDrawer();
+      var atLink = document.getElementById('atlas-link');
+      if (atLink) atLink.click();
     });
   }
 
   /* ============================================================
-     SECTION H: Resize & Render Loop
+     SECTION H: Resize, WebGL Context & Render Loop
      ============================================================ */
 
   function onResize() {
-    W   = window.innerWidth;
-    H   = window.innerHeight;
+    var vp = getViewportSize();
+    W   = vp.w;
+    H   = vp.h;
     asp = W / H;
-    DPR = Math.min(window.devicePixelRatio || 1, 2) * QS[Q].scale;
-    if (MOB) DPR = Math.min(DPR, 1.2);
+    document.documentElement.style.setProperty('--vvh', H + 'px');
+
+    DPR = Math.min(window.devicePixelRatio || 1, MOB ? 1.5 : 2) * QS[Q].scale;
+    if (MOB) DPR = Math.min(DPR, 1.5);
 
     renderer.setPixelRatio(DPR);
     renderer.setSize(W, H);
@@ -776,7 +1126,26 @@
     strandCam.right  =  strandAsp * 5.5;
     strandCam.updateProjectionMatrix();
   }
+
   window.addEventListener('resize', onResize);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', onResize);
+    window.visualViewport.addEventListener('scroll', onResize);
+  }
+  window.addEventListener('orientationchange', function () {
+    setTimeout(onResize, 120);
+  });
+
+  // WebGL Context Loss / Restoration
+  var isContextLost = false;
+  canvas.addEventListener('webglcontextlost', function (e) {
+    e.preventDefault();
+    isContextLost = true;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  }, false);
+  canvas.addEventListener('webglcontextrestored', function () {
+    window.location.reload();
+  }, false);
 
   syncCamera();
   history.replaceState({ s: 0 }, '', '#home');
@@ -784,11 +1153,49 @@
 
   var clock = new THREE.Clock();
   var firstFrame = true;
+  var raf = 0;
+
+  // Performance auto-throttler for phones (FPS tracking over 3 seconds)
+  var frameCount = 0;
+  var fpsTimer = 0;
+  var lowFpsCount = 0;
 
   function animate() {
-    requestAnimationFrame(animate);
+    raf = requestAnimationFrame(animate);
+
+    // Pause render loop if tab hidden, atlas modal open, context lost, or info panel covers screen
+    if (document.hidden || window.__atlasOpen || isContextLost || isPanelOpen) {
+      return;
+    }
+
     var dt = Math.min(clock.getDelta(), 0.05);
     var t  = clock.getElapsedTime();
+
+    // Auto performance throttling check
+    frameCount++;
+    fpsTimer += dt;
+    if (fpsTimer >= 3.0) {
+      var avgFps = frameCount / fpsTimer;
+      frameCount = 0;
+      fpsTimer = 0;
+
+      if (avgFps < 28 && !RM) {
+        lowFpsCount++;
+        if (lowFpsCount >= 2) {
+          lowFpsCount = 0;
+          if (Q === 'high') {
+            setQuality('med');
+          } else if (Q === 'med') {
+            setQuality('low');
+          } else if (Q === 'low' && DPR > 0.75) {
+            DPR = Math.max(0.70, DPR * 0.85);
+            renderer.setPixelRatio(DPR);
+          }
+        }
+      } else {
+        lowFpsCount = 0;
+      }
+    }
 
     if (!RM) {
       bhUniforms.uT.value = t;
@@ -810,7 +1217,7 @@
     if (STATE === 1 && strandsBuilt) {
       strandObjs.forEach(function (so, idx) {
         var sm = so.userData.strandMesh;
-        if (so !== hoveredStrand) {
+        if (so !== hoveredStrand && so !== selectedTouchStrand) {
           sm.material.opacity = 0.75 + 0.18 * Math.sin(t * 0.85 + strandPhases[idx]);
         }
       });
@@ -837,6 +1244,14 @@
       }
     }
   }
+
+  // Pause/resume when tab visibility changes
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && !raf) {
+      clock.getDelta();
+      animate();
+    }
+  });
 
   animate();
 })();
