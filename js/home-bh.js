@@ -1,6 +1,7 @@
 /* ============================================================
-   COSMOS MAGAZINE — home-bh.js (Gargantua Black Hole & Light Strands)
-   Pure Three.js r128 + GSAP. No build step, no Node.js dependencies.
+   COSMOS MAGAZINE — home-bh.js
+   Cinematic Gargantua (Interstellar Image B) + Light Strands (Image C)
+   Three.js r128 + GSAP. Pure static, no build step.
    ============================================================ */
 (function () {
   'use strict';
@@ -14,12 +15,12 @@
 
   var Q = MOB ? 'low' : 'high';
   var QS = {
-    low:  { steps: 75,  scale: 0.65, noise: 2 },
-    med:  { steps: 125, scale: 0.85, noise: 3 },
-    high: { steps: 175, scale: 1.00, noise: 4 }
+    low:  { steps: 110, scale: 0.65 },
+    med:  { steps: 160, scale: 0.85 },
+    high: { steps: 220, scale: 1.00 }
   };
 
-  var STATE = 0; // 0 = Home (Gargantua), 1 = Light Strands, 2 = Horizon (Diving)
+  var STATE = 0; // 0 = Home (Gargantua Image B), 1 = Light Strands (Image C), 2 = Horizon Dive
   var currentBH = 'sgr-a-star';
 
   var ARTICLES = [
@@ -66,7 +67,7 @@
   ];
 
   /* ============================================================
-     SECTION B: Renderer & Scene Setup
+     SECTION B: Renderer & Scene
      ============================================================ */
 
   var canvas = document.getElementById('bh');
@@ -94,13 +95,11 @@
   renderer.autoClear = true;
 
   var scene = new THREE.Scene();
-
-  // Dummy camera for fullscreen quad passes
   var bhCamera = new THREE.PerspectiveCamera(60, asp, 0.1, 1000);
   bhCamera.position.set(0, 0, 5);
 
   /* ============================================================
-     SECTION C: Gargantua Black Hole Ray-March Shader
+     SECTION C: Gargantua Volumetric Ray-Marching Shader (Image B)
      ============================================================ */
 
   var VERT_BH = [
@@ -115,18 +114,18 @@
     'precision highp float;',
     'uniform vec3  uCamPos;',
     'uniform vec3  uTarget;',
-    'uniform vec3  uN;',
     'uniform float uT;',
     'uniform float uSteps;',
     'uniform float uInterstellar;',
     'uniform float uDimness;',
     'uniform float uAsp;',
     'uniform float uFov;',
-    'uniform int   uNoiseOct;',
     'varying vec2  vUv;',
 
     'float hash(vec2 p) {',
-    '  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);',
+    '  p = fract(p * vec2(123.34, 456.21));',
+    '  p += dot(p, p + 45.32);',
+    '  return fract(p.x * p.y);',
     '}',
 
     'float vnoise(vec2 p) {',
@@ -140,13 +139,12 @@
     '  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);',
     '}',
 
-    'float fbm(vec2 p, int oct) {',
+    'float fbmGas(vec2 p) {',
     '  float v = 0.0;',
     '  float a = 0.5;',
-    '  for(int i = 0; i < 6; i++) {',
-    '    if(i >= oct) break;',
+    '  for(int i = 0; i < 4; i++) {',
     '    v += a * vnoise(p);',
-    '    p = p * 2.15 + vec2(1.7, 9.2);',
+    '    p = p * 2.08 + vec2(1.7, 9.2);',
     '    a *= 0.5;',
     '  }',
     '  return v;',
@@ -155,145 +153,147 @@
     'void main() {',
     '  vec2 pCoord = (vUv * 2.0 - 1.0) * vec2(uAsp * uFov, uFov);',
     '  vec3 fwd = normalize(uTarget - uCamPos);',
-    '  vec3 rgt = normalize(cross(fwd, vec3(0.0, 1.0, 0.0)));',
+    '  // Slanted camera up vector (~10.5 degree roll to match Image B perfectly)',
+    '  vec3 camUp = normalize(vec3(-0.18, 0.98, 0.0));',
+    '  vec3 rgt = normalize(cross(fwd, camUp));',
     '  vec3 up  = cross(rgt, fwd);',
     '  vec3 dir = normalize(fwd + rgt * pCoord.x + up * pCoord.y);',
     '  vec3 pos = uCamPos;',
-
-    '  vec3 n = normalize(uN);',
-    '  vec3 rf = abs(n.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);',
-    '  vec3 e1 = normalize(cross(n, rf));',
-    '  vec3 e2 = cross(n, e1);',
 
     '  vec3 col = vec3(0.0);',
     '  float al = 0.0;',
     '  bool hit = false;',
     '  float minR = 1e9;',
-    '  const float RB = 26.0;',
+    '  const float RB = 25.0;',
 
-    '  for(int i = 0; i < 200; i++) {',
+    '  for(int i = 0; i < 220; i++) {',
     '    if(float(i) >= uSteps) break;',
     '    float r = length(pos);',
     '    if(r < minR) minR = r;',
-    '    if(r < 1.02) { hit = true; break; }',
-    '    if(r > RB * 1.05 && dot(pos, dir) > 0.0) break;',
 
+    '    if(r < 1.02) { hit = true; break; }',
+    '    if(r > RB && dot(pos, dir) > 0.0) break;',
+
+    '    // Geodesic deflection (Schwarzschild gravity)',
     '    vec3 L = cross(pos, dir);',
     '    float h2 = dot(L, L);',
-    '    float dt = r > 7.0 ? 0.12 * r : clamp(0.055 * (r - 0.55), 0.018, 0.45);',
+    '    float dt = r > 8.0 ? 0.14 * r : clamp(0.05 * (r - 0.5), 0.018, 0.38);',
     '    vec3 acc = -1.5 * h2 * pos / (r * r * r * r * r);',
     '    vec3 nextPos = pos + dir * dt;',
     '    dir = normalize(dir + acc * dt);',
 
-    '    // Disk intersection: plane defined by normal n',
-    '    float s0 = dot(pos, n);',
-    '    float s1 = dot(nextPos, n);',
-    '    if(s0 * s1 < 0.0 && al < 0.98) {',
-    '      vec3 q = mix(pos, nextPos, s0 / (s0 - s1));',
-    '      float rr = length(q);',
-    '      if(rr > 2.65 && rr < 16.5) {',
-    '        float ph = atan(dot(q, e2), dot(q, e1));',
-    '        float tR = clamp((rr - 2.65) / (16.5 - 2.65), 0.0, 1.0);',
+    '    // Volumetric Accretion Disk in X-Z plane (y = 0)',
+    '    float h = abs(pos.y);',
+    '    float rr = length(pos.xz);',
+    '    float maxH = 0.22 + 0.022 * rr;',
 
-    '        // Differential Keplerian orbital velocity',
-    '        float vOmega = 1.0 / sqrt(2.0 * max(rr - 1.0, 1.2));',
-    '        vec3 vel = normalize(cross(n, q));',
-    '        float dop = dot(vel, dir);',
-    '        float gt = sqrt(max(0.01, 1.0 - vOmega * vOmega)) / (1.0 + vOmega * dop) * sqrt(max(0.01, 1.0 - 1.0 / rr));',
-    '        gt = mix(gt, 1.0 + dop * 0.25, uInterstellar);',
-    '        float boost = pow(max(0.2, gt), 2.8);',
+    '    if(h < maxH && rr > 2.6 && rr < 17.5 && al < 0.97) {',
+    '      float vertFade = 1.0 - h / maxH;',
+    '      vertFade = vertFade * vertFade * (3.0 - 2.0 * vertFade);',
 
-    '        // Multi-frequency gas turbulence stretched along orbital rings',
-    '        float dRot = ph - uT * 0.42 * pow(3.5 / rr, 1.3);',
-    '        vec2 uvGas = vec2(rr * 1.8, dRot * 5.0);',
-    '        vec2 uvStr = vec2(rr * 0.6, dRot * 18.0);',
-    '        float turb = fbm(uvGas + vec2(0.0, uT * 0.05), uNoiseOct);',
-    '        float strk = fbm(uvStr + vec2(uT * 0.02, 0.0), uNoiseOct);',
-    '        float gasDensity = mix(turb, strk, 0.45);',
+    '      float tR = clamp((rr - 2.6) / (17.5 - 2.6), 0.0, 1.0);',
+    '      float radFade = smoothstep(2.6, 3.2, rr) * smoothstep(17.5, 13.0, rr);',
 
-    '        // Characteristic dark dust lane running through outer-mid disk',
-    '        float dustLane = smoothstep(5.8, 7.5, rr) * smoothstep(11.2, 8.5, rr) * (0.35 + 0.65 * vnoise(vec2(rr * 2.2, dRot * 3.5)));',
-    '        gasDensity = clamp(gasDensity - dustLane * 0.52, 0.04, 1.4);',
+    '      // Differential Keplerian rotation',
+    '      float phi = atan(pos.z, pos.x);',
+    '      float dRot = phi - uT * 0.30 * pow(3.5 / rr, 1.25);',
 
-    '        // Photoreal Gargantua color grading: white-cream -> copper -> deep rust',
-    '        vec3 innerCol = vec3(1.00, 0.98, 0.94);',
-    '        vec3 midCol   = vec3(0.92, 0.65, 0.35);',
-    '        vec3 outerCol = vec3(0.38, 0.16, 0.06);',
+    '      // Multi-scale cloud turbulence & concentric filaments',
+    '      vec2 uv1 = vec2(rr * 1.4, dRot * 4.2);',
+    '      vec2 uv2 = vec2(rr * 2.8, dRot * 8.4);',
+    '      float turb1 = fbmGas(uv1);',
+    '      float turb2 = fbmGas(uv2);',
+    '      float streak = sin(rr * 14.0 + dRot * 2.5) * 0.2 + sin(rr * 28.0 - dRot * 4.0) * 0.1;',
+    '      float gas = clamp(turb1 * 0.65 + turb2 * 0.35 + streak, 0.0, 1.6);',
 
-    '        vec3 diskCol;',
-    '        if(tR < 0.22) {',
-    '          diskCol = mix(innerCol, innerCol, tR / 0.22);',
-    '        } else if(tR < 0.55) {',
-    '          diskCol = mix(innerCol, midCol, (tR - 0.22) / 0.33);',
-    '        } else {',
-    '          diskCol = mix(midCol, outerCol, (tR - 0.55) / 0.45);',
-    '        }',
+    '      // Dark dust lanes cutting through the glowing gas',
+    '      float dustMask = smoothstep(5.2, 7.2, rr) * smoothstep(11.5, 8.5, rr);',
+    '      float dustPattern = fbmGas(vec2(rr * 2.2, dRot * 3.5));',
+    '      gas = clamp(gas - dustMask * dustPattern * 0.55, 0.02, 1.6);',
+    '      gas *= vertFade * radFade;',
 
-    '        float intensity = boost * gasDensity * (1.0 - tR * 0.65) * 3.2;',
-    '        intensity *= smoothstep(2.65, 3.1, rr) * smoothstep(16.5, 13.5, rr);',
-    '        diskCol *= intensity;',
+    '      // Photoreal Gargantua color grading',
+    '      vec3 innerCol = vec3(1.00, 0.98, 0.92);',
+    '      vec3 midCol   = vec3(0.94, 0.60, 0.26);',
+    '      vec3 outerCol = vec3(0.40, 0.15, 0.05);',
 
-    '        float dAlpha = clamp(intensity * 0.28, 0.0, 0.90) * (1.0 - al);',
-    '        col += diskCol * dAlpha;',
-    '        al  += dAlpha;',
+    '      vec3 diskCol;',
+    '      if(tR < 0.22) {',
+    '        diskCol = innerCol;',
+    '      } else if(tR < 0.58) {',
+    '        diskCol = mix(innerCol, midCol, (tR - 0.22) / 0.36);',
+    '      } else {',
+    '        diskCol = mix(midCol, outerCol, (tR - 0.58) / 0.42);',
     '      }',
+
+    '      // Balanced Doppler beaming',
+    '      vec3 vel = normalize(vec3(-pos.z, 0.0, pos.x));',
+    '      float dop = dot(vel, dir);',
+    '      float boost = pow(max(0.25, 1.0 + dop * 0.38), 2.2);',
+    '      boost = mix(boost, 1.0, 1.0 - uInterstellar);',
+
+    '      float stepDensity = gas * boost * dt * 2.8;',
+    '      vec3 stepCol = diskCol * (1.2 + 0.8 * (1.0 - tR));',
+
+    '      col += stepCol * stepDensity * (1.0 - al);',
+    '      al  += stepDensity * (1.0 - al);',
     '    }',
+
     '    pos = nextPos;',
     '  }',
 
-    '  // Razor-sharp, brilliant white photon ring hugging the shadow edge',
+    '  // Razor-sharp, brilliant white photon ring hugging the shadow',
     '  if(!hit) {',
-    '    float pRing = smoothstep(1.58, 1.08, minR) * smoothstep(1.0, 1.04, minR);',
-    '    col += vec3(1.0, 0.98, 0.95) * pRing * (1.0 - al) * 4.2;',
-    '    al   = max(al, pRing * 0.88);',
+    '    float pRing = smoothstep(1.55, 1.08, minR) * smoothstep(1.0, 1.035, minR);',
+    '    col += vec3(1.0, 0.98, 0.95) * pRing * (1.0 - al) * 4.8;',
+    '    al   = max(al, pRing * 0.92);',
     '  }',
 
-    '  // Black hole shadow: pure event horizon void',
+    '  // Pure black event horizon void',
     '  if(hit) {',
     '    col = vec3(0.0);',
     '    al  = 1.0;',
     '  }',
 
-    '  // Background: lensed celestial stars distorted by the geodesic march',
+    '  // Deep space background with distant stars',
     '  if(!hit && al < 0.99) {',
     '    vec3 sd = dir;',
     '    vec2 suv = vec2(atan(sd.z, sd.x) * 0.15915 + 0.5, sd.y * 0.5 + 0.5);',
-    '    float sn = hash(floor(suv * 900.0));',
+    '    float sn = hash(floor(suv * 800.0));',
     '    vec3 starCol = vec3(0.0);',
-    '    if(sn > 0.991) {',
-    '      float sb = hash(floor(suv * 900.0) + vec2(3.7, 2.1));',
-    '      vec3 sc  = mix(vec3(0.75, 0.82, 1.00), vec3(1.00, 0.92, 0.72), hash(floor(suv * 900.0) + vec2(1.1, 5.3)));',
-    '      starCol += sc * (0.45 + sb * 0.85);',
+    '    if(sn > 0.992) {',
+    '      float sb = hash(floor(suv * 800.0) + vec2(4.7, 1.3));',
+    '      vec3 sc  = mix(vec3(0.75, 0.85, 1.00), vec3(1.00, 0.92, 0.75), sb);',
+    '      starCol += sc * (0.4 + sb * 0.8);',
     '    }',
-    '    vec3 deepSpace = mix(vec3(0.008, 0.012, 0.026), vec3(0.018, 0.010, 0.024), vnoise(suv * 2.5));',
+    '    vec3 deepSpace = mix(vec3(0.005, 0.008, 0.018), vec3(0.014, 0.007, 0.018), vnoise(suv * 3.0));',
     '    col += (deepSpace + starCol) * (1.0 - al);',
     '  }',
 
-    '  // Subtle cinematic film grain',
-    '  float seed = dot(vUv, vec2(127.1, 311.7)) * (uT * 0.10 + 1.0);',
-    '  float grain = (fract(sin(seed) * 43758.5) * 2.0 - 1.0) * 0.010;',
+    '  // Subtle film grain',
+    '  float seed = dot(vUv, vec2(127.1, 311.7)) * (uT * 0.08 + 1.0);',
+    '  float grain = (fract(sin(seed) * 43758.5) * 2.0 - 1.0) * 0.008;',
     '  col += grain;',
 
-    '  // Horizon dive fade to black',
+    '  // Horizon dive fade',
     '  col *= (1.0 - uDimness);',
 
-    '  gl_FragColor = vec4(clamp(col, 0.0, 4.0), max(al, 0.01));',
+    '  gl_FragColor = vec4(clamp(col, 0.0, 5.0), max(al, 0.01));',
     '}'
   ].join('\n');
 
-  // Disk normal: tilted slightly in the viewport to match Gargantua in Image B
-  var diskTiltAngle = 83.5 * Math.PI / 180; // 83.5 degrees (nearly edge-on)
-  var diskNormal = new THREE.Vector3(-0.06, Math.cos(diskTiltAngle), Math.sin(diskTiltAngle)).normalize();
+  // Camera settings: looking slightly down onto the X-Z disk (y = 1.35)
+  var CAM_HOME   = { x: 0.0, y: 1.35, z: 11.5 };
+  var CAM_STRAND = { x: 0.0, y: 0.20, z: 3.0 };
+  var camPos     = { x: CAM_HOME.x, y: CAM_HOME.y, z: CAM_HOME.z };
 
   var bhUniforms = {
-    uCamPos:       { value: new THREE.Vector3(0.0, 1.45, 11.8) },
+    uCamPos:       { value: new THREE.Vector3(CAM_HOME.x, CAM_HOME.y, CAM_HOME.z) },
     uTarget:       { value: new THREE.Vector3(0.0, 0.0, 0.0) },
-    uN:            { value: diskNormal },
     uT:            { value: 0.0 },
     uSteps:        { value: QS[Q].steps },
-    uInterstellar: { value: 0.75 }, // Balanced Interstellar look
+    uInterstellar: { value: 0.72 },
     uDimness:      { value: 0.0 },
-    uNoiseOct:     { value: QS[Q].noise },
     uAsp:          { value: asp },
     uFov:          { value: Math.tan(30 * Math.PI / 180) } // 60 deg vertical FOV
   };
@@ -310,12 +310,8 @@
   scene.add(bhMesh);
 
   /* ============================================================
-     SECTION D: Navigation States & Camera Positions
+     SECTION D: Navigation States & Camera Animations
      ============================================================ */
-
-  var camPos = { x: 0.0, y: 1.45, z: 11.8 };
-  var CAM_HOME   = { x: 0.0, y: 1.45, z: 11.8 };
-  var CAM_STRAND = { x: 0.0, y: 0.20, z: 3.2 };
 
   var camDriftX = 0, camDriftY = 0;
   var camDriftTX = 0, camDriftTY = 0;
@@ -343,7 +339,6 @@
     updateStateLabel();
 
     if (n === 0) {
-      // Return to Image B (Home)
       showHomeCTA(true);
       if (strandsGroup) strandsGroup.visible = false;
       bhMesh.visible = true;
@@ -362,7 +357,6 @@
       }
       try { history.pushState({ s: 0 }, '', '#home'); } catch (e) {}
     } else if (n === 1) {
-      // Zoom into Light Strands (Image C)
       showHomeCTA(false);
       buildStrands();
 
@@ -385,7 +379,6 @@
       }
       try { history.pushState({ s: 1 }, '', '#strands'); } catch (e) {}
     } else if (n === 2) {
-      // Fast dive into Event Horizon (State 3)
       showHomeCTA(false);
       triggerDive();
       try { history.pushState({ s: 2 }, '', '#horizon'); } catch (e) {}
@@ -401,12 +394,12 @@
       gsap.killTweensOf(camPos);
       gsap.to(camPos, {
         x: 0, y: 0.1, z: 1.6,
-        duration: 1.3, ease: 'power3.in',
+        duration: 1.2, ease: 'power3.in',
         onUpdate: syncCamera
       });
       gsap.to(bhUniforms.uDimness, {
         value: 1.0,
-        duration: 1.0, delay: 0.25, ease: 'power2.in',
+        duration: 0.9, delay: 0.25, ease: 'power2.in',
         onComplete: function () {
           window.location.href = 'atlas.html?v=7&ref=index.html#' + targetId;
         }
@@ -417,7 +410,7 @@
   }
 
   /* ============================================================
-     SECTION E: Light Strands (Image C Architecture)
+     SECTION E: Light Strands (Image C)
      ============================================================ */
 
   var strandsBuilt = false;
@@ -442,13 +435,11 @@
     if (strandsBuilt) return;
     strandsBuilt = true;
 
-    // Hundreds of fine vertical luminous strands (dense center, pale gold-yellow)
-    var N_BG = 380;
+    var N_BG = 400;
     var bgPos = [], bgCol = [];
     for (var i = 0; i < N_BG; i++) {
       var sx = (Math.random() - 0.5) * 15;
-      // Denser and brighter towards center
-      var br = Math.pow(1.0 - Math.abs(sx) / 7.5, 2.4);
+      var br = Math.pow(1.0 - Math.abs(sx) / 7.5, 2.5);
       br *= 0.25 + Math.random() * 0.75;
 
       var r = (0.75 + br * 0.25) * br;
@@ -478,8 +469,8 @@
     });
     strandsGroup.add(new THREE.LineSegments(bgGeo, bgMat));
 
-    // Faint horizontal crossing lines
-    var N_H = 26;
+    // Horizontal crossing threads
+    var N_H = 28;
     var hPos = [], hCol = [];
     for (var k = 0; k < N_H; k++) {
       var hy = (Math.random() - 0.5) * 10;
@@ -503,12 +494,11 @@
     });
     strandsGroup.add(new THREE.LineSegments(hGeo, hMat));
 
-    // 10 Interactive Article Strands
+    // Interactive article strands
     var strandH = 6.2;
     ARTICLES.forEach(function (art, idx) {
       var sx2 = (idx - (ARTICLES.length - 1) / 2.0) * 0.90;
 
-      // Visual line quad
       var sGeo = new THREE.PlaneGeometry(0.06, strandH);
       var sMat = new THREE.MeshBasicMaterial({
         color: new THREE.Color(art.catColor),
@@ -523,7 +513,6 @@
       sMesh.renderOrder = 2;
       strandsGroup.add(sMesh);
 
-      // Glowing tip
       var tGeo = new THREE.CircleGeometry(0.09, 14);
       var tMat = new THREE.MeshBasicMaterial({
         color: new THREE.Color(art.catColor),
@@ -536,7 +525,6 @@
       tMesh.position.set(sx2, strandH / 2 + 0.06, -3.0);
       strandsGroup.add(tMesh);
 
-      // Generous hit box for Raycaster (>14px width)
       var hbGeo = new THREE.PlaneGeometry(0.42, strandH + 0.6);
       var hbMat = new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide });
       var hbMesh = new THREE.Mesh(hbGeo, hbMat);
@@ -549,7 +537,7 @@
   }
 
   /* ============================================================
-     SECTION F: Raycaster & Glass Info Panel
+     SECTION F: Raycaster & Info Panel
      ============================================================ */
 
   var raycaster = new THREE.Raycaster();
@@ -638,13 +626,13 @@
   }
 
   /* ============================================================
-     SECTION G: Input Event Handlers
+     SECTION G: User Input Handlers
      ============================================================ */
 
   window.addEventListener('mousemove', function (e) {
     if (STATE === 0) {
-      camDriftTX = ((e.clientX / W) * 2 - 1) * 0.45;
-      camDriftTY = -((e.clientY / H) * 2 - 1) * 0.22;
+      camDriftTX = ((e.clientX / W) * 2 - 1) * 0.40;
+      camDriftTY = -((e.clientY / H) * 2 - 1) * 0.20;
     }
 
     if (STATE === 1) {
@@ -703,20 +691,17 @@
     }
   }
 
-  // CTA label buttons
   var ctaDisk   = document.querySelector('.cta-disk');
   var ctaShadow = document.querySelector('.cta-shadow');
   if (ctaDisk)   ctaDisk.addEventListener('click',   function () { goToState(1); });
   if (ctaShadow) ctaShadow.addEventListener('click', function () { goToState(2); });
 
-  // State label buttons (Home, Light, Horizon)
   document.querySelectorAll('#state-label button').forEach(function (btn) {
     btn.addEventListener('click', function () {
       goToState(parseInt(btn.dataset.state, 10));
     });
   });
 
-  // Scroll wheel: 1 tick = 1 full level jump
   window.addEventListener('wheel', function (e) {
     e.preventDefault();
     var now = Date.now();
@@ -726,7 +711,6 @@
     else if (e.deltaY < 0 && STATE > 0) goToState(STATE - 1);
   }, { passive: false });
 
-  // Touch swipe & tap
   var touchY0 = 0;
   canvas.addEventListener('touchstart', function (e) {
     touchY0 = e.touches[0].clientY;
@@ -742,7 +726,6 @@
     }
   }, { passive: true });
 
-  // Keyboard navigation
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       var p = document.getElementById('info-panel');
@@ -760,13 +743,11 @@
     }
   });
 
-  // Browser back/forward button support
   window.addEventListener('popstate', function (e) {
     var s = (e.state && e.state.s !== undefined) ? e.state.s : 0;
     goToState(s);
   });
 
-  // Quality button
   var btnQ = document.getElementById('btn-quality');
   if (btnQ) {
     btnQ.addEventListener('click', function () {
@@ -776,34 +757,40 @@
       DPR = Math.min(window.devicePixelRatio || 1, 2) * QS[Q].scale;
       if (MOB) DPR = Math.min(DPR, 1.2);
       renderer.setPixelRatio(DPR);
-      bhUniforms.uSteps.value    = QS[Q].steps;
-      bhUniforms.uNoiseOct.value = QS[Q].noise;
+      bhUniforms.uSteps.value = QS[Q].steps;
       btnQ.textContent = 'Quality: ' + Q.toUpperCase();
     });
   }
 
-  // Black hole switch button (Sgr A* / M87*)
   var btnBH = document.getElementById('btn-bh-switch');
   if (btnBH) {
     btnBH.addEventListener('click', function () {
       currentBH = currentBH === 'sgr-a-star' ? 'm87-star' : 'sgr-a-star';
       btnBH.textContent = currentBH === 'sgr-a-star' ? 'Sgr A*' : 'M87*';
 
-      var newTilt = (currentBH === 'sgr-a-star' ? 83.5 : 72.0) * Math.PI / 180;
-      var newNorm = new THREE.Vector3(-0.06, Math.cos(newTilt), Math.sin(newTilt)).normalize();
+      if (currentBH === 'm87-star') {
+        CAM_HOME.y = 1.70;
+        CAM_HOME.z = 12.0;
+      } else {
+        CAM_HOME.y = 1.35;
+        CAM_HOME.z = 11.5;
+      }
 
       if (window.gsap) {
-        gsap.to(bhUniforms.uN.value, {
-          x: newNorm.x, y: newNorm.y, z: newNorm.z,
-          duration: 1.4, ease: 'power2.inOut'
+        gsap.to(camPos, {
+          y: CAM_HOME.y, z: CAM_HOME.z,
+          duration: 1.2, ease: 'power2.inOut',
+          onUpdate: syncCamera
         });
         gsap.to(bhUniforms.uInterstellar, {
-          value: currentBH === 'sgr-a-star' ? 0.75 : 0.45,
-          duration: 1.4, ease: 'power2.inOut'
+          value: currentBH === 'sgr-a-star' ? 0.72 : 0.45,
+          duration: 1.2, ease: 'power2.inOut'
         });
       } else {
-        bhUniforms.uN.value.copy(newNorm);
-        bhUniforms.uInterstellar.value = currentBH === 'sgr-a-star' ? 0.75 : 0.45;
+        camPos.y = CAM_HOME.y;
+        camPos.z = CAM_HOME.z;
+        syncCamera();
+        bhUniforms.uInterstellar.value = currentBH === 'sgr-a-star' ? 0.72 : 0.45;
       }
     });
   }
@@ -860,7 +847,7 @@
       bhUniforms.uCamPos.value.set(camPos.x, camPos.y, camPos.z);
     }
 
-    // Shimmer effect on interactive strands
+    // Interactive strands shimmer in State 1
     if (STATE === 1 && strandsBuilt) {
       strandObjs.forEach(function (so, idx) {
         var sm = so.userData.strandMesh;
@@ -870,7 +857,7 @@
       });
     }
 
-    // Render pass
+    // Render active scene
     if (STATE !== 1 || !strandsBuilt) {
       bhMesh.visible = true;
       renderer.render(scene, bhCamera);
@@ -880,7 +867,6 @@
       renderer.render(scene, strandCam);
     }
 
-    // Dismiss loading overlay on first rendered frame
     if (firstFrame) {
       firstFrame = false;
       var ls = document.getElementById('loading');

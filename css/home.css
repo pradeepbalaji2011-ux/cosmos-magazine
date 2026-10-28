@@ -199,42 +199,56 @@ button:focus-visible {
 
 .cta-disk {
   position: absolute;
-  top: 30%;
+  top: 22%;
   left: 50%;
-  transform: translateX(-50%) translateX(160px);
+  transform: translateX(-50%);
   font: 11px/1 var(--font-mono);
   letter-spacing: 0.18em;
-  color: rgba(232,223,200,0.45);
+  color: rgba(232,223,200,0.55);
+  background: rgba(8,10,20,0.45);
+  border: 1px solid rgba(200,169,110,0.22);
+  border-radius: 20px;
+  padding: 6px 16px;
   text-transform: uppercase;
   text-shadow: 0 0 20px rgba(200,169,110,0.5);
   pointer-events: auto;
   cursor: pointer;
-  transition: color var(--trans), text-shadow var(--trans);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: color var(--trans), border-color var(--trans), background var(--trans);
   white-space: nowrap;
 }
 .cta-disk:hover {
-  color: rgba(232,223,200,0.85);
-  text-shadow: 0 0 30px rgba(200,169,110,0.9);
+  color: rgba(232,223,200,0.95);
+  border-color: rgba(200,169,110,0.6);
+  background: rgba(200,169,110,0.12);
 }
 
 .cta-shadow {
   position: absolute;
-  top: 50%;
+  bottom: 84px;
   left: 50%;
-  transform: translateX(-80px) translateY(90px);
+  transform: translateX(-50%);
   font: 11px/1 var(--font-mono);
   letter-spacing: 0.18em;
-  color: rgba(200,169,110,0.35);
+  color: rgba(232,223,200,0.40);
+  background: rgba(8,10,20,0.45);
+  border: 1px solid rgba(200,169,110,0.18);
+  border-radius: 20px;
+  padding: 6px 16px;
   text-transform: uppercase;
   text-shadow: 0 0 16px rgba(200,169,110,0.3);
   pointer-events: auto;
   cursor: pointer;
-  transition: color var(--trans), text-shadow var(--trans);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: color var(--trans), border-color var(--trans), background var(--trans);
   white-space: nowrap;
 }
 .cta-shadow:hover {
-  color: rgba(200,169,110,0.75);
-  text-shadow: 0 0 24px rgba(200,169,110,0.7);
+  color: rgba(232,223,200,0.85);
+  border-color: rgba(200,169,110,0.5);
+  background: rgba(200,169,110,0.12);
 }
 
 /* ---------- State label / nav ---------- */
