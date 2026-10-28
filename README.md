@@ -10,7 +10,7 @@ A high-performance, dark-themed astronomical web magazine and interactive 3D uni
 
 ```
 ├── index.html                   # 3D scroll magazine with dynamic Sky This Week & Newsletter
-├── atlas.html                   # Interactive 3D universe (Three.js r128) with 4K textures & photo lightbox
+├── atlas.html                   # Interactive 3D universe (Three.js r128) with dynamic 4K textures & photo lightbox
 ├── og-preview.html              # Template used to generate social preview image (1200x630)
 ├── README.md                    # Project documentation, sources, and licences
 ├── .gitignore                   # Ignores large raw datasets (*.gitignored)
@@ -32,7 +32,7 @@ A high-performance, dark-themed astronomical web magazine and interactive 3D uni
 │   ├── saturn_ring.png (transparent)
 │   ├── earth_night.jpg, earth_clouds.jpg, earth_normal.jpg
 │   ├── mercury_bump.jpg, moon_bump.jpg, mars_bump.jpg
-│   └── 2k/                      # 2048px bandwidth-optimised maps for low-spec / mobile devices
+│   └── 2k/                      # 2048px baseline textures loaded first for all bodies
 ├── images/
 │   ├── og-cosmos.png            # Open Graph social preview image (1200x630)
 │   ├── README.md                # Guide for generating social preview images
@@ -59,9 +59,9 @@ A high-performance, dark-themed astronomical web magazine and interactive 3D uni
 - **Open Graph Metadata**: Complete Open Graph and Twitter Card tags pointing to `images/og-cosmos.png`.
 
 ### 2. Cosmos Atlas (`atlas.html`)
-- **4K Real Planet Textures**: Quality "high" loads full 4K equirectangular textures; quality "low" automatically falls back to the 2K assets.
-- **Accurate Color Encoding**: `THREE.sRGBEncoding` for color maps and `renderer.outputEncoding` ensuring vibrant, accurate colors without washing out.
-- **Object Photo Panel & Lightbox**: Selecting an object presents real imagery with credit lines and an option to expand to a full-screen glass modal.
+- **GPU Memory Optimization & On-Demand 4K Loading**: All bodies start with lightweight 2K base maps (`textures/2k/`) on every quality level. When focusing Earth, Moon, Mercury, or Mars, 4K maps dynamically load and swap in on medium/high quality. When focus moves or is cleared (polled every 3s), 2K textures are restored and 4K textures are disposed to keep VRAM consumption minimal. Quality "low" remains 2K-only. Bodies without additional 4K detail (Jupiter, Saturn, Venus, Uranus, Neptune) remain strictly on 2K. Saturn's ring texture is maintained at 4K on non-low.
+- **Accurate Linear Color Decoding in Custom Shaders**: Custom ShaderMaterials (Earth night-side city lights and Saturn's ring shadow) explicitly decode sRGB textures to linear space (`sRGBToLinear`) before performing lighting calculations and re-encoding with `#include <encodings_fragment>`, eliminating washed-out or over-bright artifacts in Three.js r128.
+- **Object Photo Panel & Lightbox**: Selecting an object presents real imagery (loading WebP with automatic JPG error fallback) with credit lines and an option to expand to a full-screen glass modal.
 - **Deep Linking & Sharing**: Hash deep-linking for all celestial bodies (`#saturn`, `#m31`, `#star-sirius`, `#con-ori`). Native Web Share API with clipboard fallback.
 - **Dynamic Back-Links**: Opened from an article page via `?ref=articles/...`, displaying a responsive **`← Back to article`** button in the header.
 - **Auto-Generated Credits**: All photo and texture attributions are parsed directly from `credits.json` and populated into the Credits dialog.
@@ -85,7 +85,7 @@ All base planetary surface maps are provided under **Creative Commons Attributio
 - **Mars**: NASA / Viking & Mars Global Surveyor MOLA elevation
 - **Jupiter**: NASA / Cassini & Hubble Space Telescope
 - **Saturn & Rings**: NASA / Cassini imaging science subsystem
-- **Uranus & Neptune**: NASA / Voyager 2 narrow-angle camera
+- **Uranus & Neptune**: NASA / Voyager 2 narrow-angle camera (2K base maps; Solar System Scope only publishes 2K due to Voyager 2 camera limits; not described as 4K)
 - **Lunar Topography**: NASA SVS Lunar Reconnaissance Orbiter LOLA digital elevation model (`ldem_4.tif`, Public Domain)
 
 ### Deep-Sky & Astronomical Photography (`images/objects/`)
@@ -95,18 +95,18 @@ Every image was sourced from official public archives of NASA, ESA/Hubble, ESA/W
 |---|---|---|---|
 | `orion-nebula` | Orion Nebula (M42) | NASA, ESA, M. Robberto / Hubble Space Telescope | Public Domain |
 | `crab-nebula` | Crab Nebula (M1) | NASA, ESA, J. Hester & A. Loll / Hubble Space Telescope | Public Domain |
-| `eagle-nebula` | Pillars of Creation (M16) | NASA, ESA, CSA, STScI / James Webb Space Telescope | CC BY 4.0 / Public Domain |
-| `ring-nebula` | Ring Nebula (M57) | ESA/Webb, NASA, CSA, M. Barlow et al. / JWST | CC BY 4.0 / Public Domain |
+| `eagle-nebula` | Pillars of Creation (M16) | NASA, ESA, CSA, STScI / James Webb Space Telescope | CC BY 4.0 |
+| `ring-nebula` | Ring Nebula (M57) | ESA/Webb, NASA, CSA, M. Barlow et al. / JWST | CC BY 4.0 |
 | `helix-nebula` | Helix Nebula (NGC 7293) | ESO / VISTA (J. Emerson, CASU) | CC BY 4.0 |
-| `horsehead-nebula` | Horsehead Nebula (B33) | ESA/Webb, NASA, CSA, K. Misselt, A. Abergel / JWST | CC BY 4.0 / Public Domain |
-| `carina-nebula` | Cosmic Cliffs (NGC 3372) | NASA, ESA, CSA, STScI / James Webb Space Telescope | CC BY 4.0 / Public Domain |
+| `horsehead-nebula` | Horsehead Nebula (B33) | ESA/Webb, NASA, CSA, K. Misselt, A. Abergel / JWST | CC BY 4.0 |
+| `carina-nebula` | Cosmic Cliffs (NGC 3372) | NASA, ESA, CSA, STScI / James Webb Space Telescope | CC BY 4.0 |
 | `pleiades` | Pleiades Cluster (M45) | NASA, ESA, AURA/Caltech, Palomar Observatory | Public Domain |
 | `hyades` | Hyades Cluster (Mel 25) | NOIRLab / NSF / AURA / Digitized Sky Survey 2 | CC BY 4.0 |
 | `omega-centauri` | Omega Centauri (NGC 5139) | ESO / INAF-VST / OmegaCAM | CC BY 4.0 |
 | `m31` | Andromeda Galaxy | ESO / G. Beccari | CC BY 4.0 |
 | `m33` | Triangulum Galaxy | ESO / VPHAS+ Team | CC BY 4.0 |
 | `m51` | Whirlpool Galaxy | NASA, ESA, S. Beckwith / Hubble Heritage Team | Public Domain |
-| `m104` | Sombrero Galaxy | ESA/Webb, NASA, CSA, STScI / JWST | CC BY 4.0 / Public Domain |
+| `m104` | Sombrero Galaxy | ESA/Webb, NASA, CSA, STScI / JWST | CC BY 4.0 |
 | `milky-way` | Milky Way Panorama | ESO / Serge Brunier | CC BY 4.0 |
 | `m87-star` | M87* Black Hole | Event Horizon Telescope (EHT) Collaboration | CC BY 4.0 |
 | `sgr-a-star` | Sagittarius A* Black Hole | Event Horizon Telescope (EHT) Collaboration | CC BY 4.0 |
@@ -117,9 +117,11 @@ Every image was sourced from official public archives of NASA, ESA/Hubble, ESA/W
 
 ## ⚡ Asset & Performance Summary
 
-- **`textures/` Size**: **23.67 MB** (32 files across 4K and 2K sets)
+- **`textures/` Size**: **23.67 MB** (32 files total)
+  - `textures/` (4K maps root): **18.95 MB** (16 files)
+  - `textures/2k/` (2K baseline set): **4.72 MB** (16 files)
 - **`images/` Size**: **106.71 MB** (119 files across objects, responsive article heroes, and OG image)
 - **`data/hyg.csv`**: Trimmed to **3.26 MB** (from 32.36 MB, stars mag ≤ 8.0), reducing initial load time by ~90%.
 - **Resolution Notes**: 
-  - All 19 deep-sky objects and the Sun are provided in true **3840px (4K)** resolution in both `.webp` and `.jpg`.
-  - For Uranus and Neptune surface maps, Solar System Scope only publishes base maps in 2048px (Voyager 2 coverage limits); high-fidelity Lanczos upscaling was used to generate matching 4K textures for seamless 4K rendering.
+  - All 18 deep-sky photos and the Sun are provided in true **3840px (4K)** resolution in both `.webp` and `.jpg`.
+  - Uranus and Neptune: Solar System Scope publishes base maps in 2048px (Voyager 2 coverage limits). They are strictly 2K base maps and are not described or treated as 4K anywhere.

@@ -16,14 +16,14 @@
   "eagle-nebula": {
     "title": "Pillars of Creation (Eagle Nebula / M16)",
     "credit": "NASA, ESA, CSA, STScI, J. DePasquale, A. Pagan, A. M. Koekemoer",
-    "license": "CC BY 4.0 / Public Domain",
+    "license": "CC BY 4.0",
     "source": "https://esawebb.org/images/weic2216a/",
     "isIllustration": false
   },
   "ring-nebula": {
     "title": "The Ring Nebula (M57)",
     "credit": "ESA/Webb, NASA, CSA, M. Barlow (UCL), N. Cox (ACRI-ST), R. Wesson (Cardiff University)",
-    "license": "CC BY 4.0 / Public Domain",
+    "license": "CC BY 4.0",
     "source": "https://esawebb.org/images/weic2320a/",
     "isIllustration": false
   },
@@ -37,14 +37,14 @@
   "horsehead-nebula": {
     "title": "The Horsehead Nebula (Barnard 33)",
     "credit": "ESA/Webb, NASA, CSA, K. Misselt (University of Arizona) and A. Abergel (IAS/Université Paris-Saclay)",
-    "license": "CC BY 4.0 / Public Domain",
+    "license": "CC BY 4.0",
     "source": "https://esawebb.org/images/weic2411a/",
     "isIllustration": false
   },
   "carina-nebula": {
     "title": "Cosmic Cliffs in the Carina Nebula (NGC 3372)",
     "credit": "NASA, ESA, CSA, STScI",
-    "license": "CC BY 4.0 / Public Domain",
+    "license": "CC BY 4.0",
     "source": "https://esawebb.org/images/weic2205a/",
     "isIllustration": false
   },
@@ -57,7 +57,7 @@
   },
   "hyades": {
     "title": "The Hyades Star Cluster (Melotte 25)",
-    "credit": "NOIRLab/NSF/AURA/Digitized Sky Survey 2. Acknowledgment: Davide De Martin",
+    "credit": "NOIRLab/NSF/AURA/Digitized Sky Survey 2",
     "license": "CC BY 4.0",
     "source": "https://noirlab.edu/public/images/noirlab2018e/",
     "isIllustration": false
@@ -93,7 +93,7 @@
   "m104": {
     "title": "Sombrero Galaxy (M104)",
     "credit": "ESA/Webb, NASA, CSA, STScI",
-    "license": "CC BY 4.0 / Public Domain",
+    "license": "CC BY 4.0",
     "source": "https://esawebb.org/images/weic2428a/",
     "isIllustration": false
   },
@@ -128,7 +128,7 @@
   "sun": {
     "title": "The Sun in Multi-Wavelength Ultra-HD (304, 211, 171 Å)",
     "credit": "NASA/SDO (Solar Dynamics Observatory) and the AIA Science Team",
-    "license": "Public Domain (NASA)",
+    "license": "Public Domain",
     "source": "https://sdo.gsfc.nasa.gov/",
     "isIllustration": false
   },
@@ -182,17 +182,19 @@
     "isIllustration": false
   },
   "uranus": {
-    "title": "Uranus Atmosphere",
+    "title": "Uranus Atmosphere (2K Base Map)",
     "credit": "Solar System Scope / NASA Voyager 2 (CC BY 4.0)",
     "license": "CC BY 4.0",
     "source": "https://www.solarsystemscope.com/textures/",
-    "isIllustration": false
+    "isIllustration": false,
+    "is2K": true
   },
   "neptune": {
-    "title": "Neptune Atmosphere",
+    "title": "Neptune Atmosphere (2K Base Map)",
     "credit": "Solar System Scope / NASA Voyager 2 (CC BY 4.0)",
     "license": "CC BY 4.0",
     "source": "https://www.solarsystemscope.com/textures/",
-    "isIllustration": false
+    "isIllustration": false,
+    "is2K": true
   }
 }

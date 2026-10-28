@@ -163,13 +163,13 @@ function populateCredits(){
   let sec=$("credits-obj-section");
   if(!sec){
     sec=document.createElement("div");sec.id="credits-obj-section";
-    sec.innerHTML='<h3 style="color:var(--cy);margin-top:20px;margin-bottom:8px">4K Real Imagery &amp; Deep-Sky Photography</h3><p style="font-size:12px;color:var(--dim)">Direct observation photos and planetary maps with open licences from NASA, ESA/Hubble, ESA/Webb, ESO, NOIRLab, and Solar System Scope.</p><div id="credits-obj-list"></div>';
+    sec.innerHTML='<h3 style="color:var(--cy);margin-top:20px;margin-bottom:8px">Real Imagery &amp; Deep-Sky Photography</h3><p style="font-size:12px;color:var(--dim)">Direct observation photos (4K) and planetary maps (2K base, 4K on focus) with open licences from NASA, ESA/Hubble, ESA/Webb, ESO, NOIRLab, and Solar System Scope.</p><div id="credits-obj-list"></div>';
     cEl.appendChild(sec);
   }
   const list=$("credits-obj-list");if(!list)return;
   list.innerHTML=Object.entries(CREDITS_MAP).map(([id,item])=>`
     <div>
-      <b style="color:var(--tx)">${item.title}</b> ${item.isIllustration?'<span style="color:var(--am);font-size:10px;margin-left:4px">[Artist Concept]</span>':''}
+      <b style="color:var(--tx)">${item.title}</b> ${item.isIllustration?'<span style="color:var(--am);font-size:10px;margin-left:4px">[Artist Concept]</span>':(id==='uranus'||id==='neptune'||item.is2K?'<span style="color:#8a96b8;font-size:10px;margin-left:4px">[2K Base Map]</span>':'')}
       <div style="color:var(--dim);font-size:11px;margin-top:3px">${item.credit} · <a href="${item.source}" target="_blank" rel="noopener" style="color:var(--cy)">${item.license}</a></div>
     </div>
   `).join("");
@@ -177,7 +177,16 @@ function populateCredits(){
 
 function getMediaHtml(id){
   const c=CREDITS_MAP[id];if(!c)return "";
-  const badge=c.isIllustration?'<span class="illus-badge">🎨 Artist Concept (Illustration)</span>':'<span class="photo-badge">📷 Real 4K Imagery</span>';
+  let badge;
+  if(c.isIllustration){
+    badge='<span class="illus-badge">🎨 Artist Concept (Illustration)</span>';
+  }else if(id==='uranus'||id==='neptune'||c.is2K){
+    badge='<span class="photo-badge" style="border-color:rgba(120,160,255,.3);color:#8a96b8">🗺️ Real 2K Map (Upscaled)</span>';
+  }else if(byId[id]){
+    badge='<span class="photo-badge">🗺️ Real Planetary Map</span>';
+  }else{
+    badge='<span class="photo-badge">📷 Real 4K Imagery</span>';
+  }
   return '<div class="panel-media" data-id="'+id+'">'+
     '<picture><source srcset="images/objects/'+id+'.webp" type="image/webp"><img src="images/objects/'+id+'.jpg" alt="'+c.title+'" class="panel-thumb" loading="lazy" decoding="async" onclick="openPhotoModal(\''+id+'\')"></picture>'+
     '<div class="panel-media-meta">'+badge+'<button class="expand-btn" type="button" onclick="openPhotoModal(\''+id+'\')">⛶ Fullscreen</button></div>'+
@@ -189,8 +198,13 @@ function openPhotoModal(id){
   const item=CREDITS_MAP[id];if(!item)return;
   const m=$("imgModal");if(!m)return;
   const pic=$("imgModal-pic"),info=$("imgModal-info");
-  pic.src="images/objects/"+id+".jpg";pic.alt=item.title;
-  info.innerHTML='<h3>'+item.title+(item.isIllustration?' <span style="color:var(--am);font-size:12px">[Artist Concept]</span>':'')+'</h3>'+
+  pic.alt=item.title;
+  pic.onerror=function(){
+    this.onerror=null;
+    this.src="images/objects/"+id+".jpg";
+  };
+  pic.src="images/objects/"+id+".webp";
+  info.innerHTML='<h3>'+item.title+(item.isIllustration?' <span style="color:var(--am);font-size:12px">[Artist Concept]</span>':(id==='uranus'||id==='neptune'||item.is2K?' <span style="color:#8a96b8;font-size:12px">[2K Base Map]</span>':''))+'</h3>'+
     '<p>'+item.credit+' · <a href="'+item.source+'" target="_blank" rel="noopener" style="color:var(--cy)">'+item.license+'</a></p>';
   m.classList.add("active");m.setAttribute("aria-hidden","false");
 }
@@ -339,6 +353,7 @@ let sel=null;const favs=new Set();try{JSON.parse(localStorage.getItem("cosmosFav
 function crumb(){const l=LV.find(x=>cam.r<x[0])||LV[LV.length-1];$("crumb").textContent=l[2]+(sel&&l===LV[0]?" › "+sel.n:"")+(selD?" › "+selD.n:"")}
 function renderList(f){const l=$("list");l.innerHTML="";D.filter(b=>b.n.toLowerCase().includes(f||"")).forEach(b=>{const d=document.createElement("div");d.innerHTML=b.n+"<small>"+b.t.split(" · ")[0]+"</small>";if(sel==b)d.className="sel";d.onclick=()=>select(b.id);d.tabIndex=0;d.setAttribute("role","button");d.onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();select(b.id)}};l.appendChild(d)})}
 function select(id){const b=byId[id];if(!b)return;sel=b;cam.follow=b.orbit;cam.tr=b.R*3.4;ring.visible=true;
+focusBody4K(id);
 const rel=Math.log10(b.dk/12742),pct=clamp((rel+.6)/2.65*100,3,100),x=b.dk/12742;
 $("panel").innerHTML='<div id="typ">'+b.t+'</div><h2>'+b.n+'</h2><div id="tag">'+b.tag+'</div>'+getMediaHtml(id)+'<div class="bar"><i style="width:'+pct+'%"></i></div><small style="color:#8a96b8">Size: '+(x>=1?x.toFixed(x>10?0:1)+"× Earth":(x).toFixed(2)+"× Earth")+" (log scale)</small><div id=\"grid\">"+
 b.st.reduce((h,v,i)=>i%2?h:h+"<div><small>"+v+"</small><b>"+b.st[i+1]+"</b></div>","")+'</div><p>'+b.desc+'</p><div id="fact"><b>Did you know?</b><br>'+b.fact+'</div><div>Related</div>'+
@@ -354,7 +369,7 @@ let playing=!matchMedia("(prefers-reduced-motion:reduce)").matches,speed=100;$("
 $("bp").onclick=()=>{playing=!playing;$("bp").textContent=playing?"❚❚ Pause":"▶ Play"};$("sp").onchange=e=>speed=+e.target.value;
 let showLab=true;$("bo").onclick=e=>{showOrb=!showOrb;e.target.classList.toggle("on")};
 $("bl").onclick=e=>{showLab=!showLab;e.target.classList.toggle("on")};
-$("bh").onclick=()=>{sel=null;cam.follow=null;cam.tgt.set(0,0,0);cam.tr=70;ring.visible=false;closePanel();crumb();renderList($("q").value.toLowerCase())};
+$("bh").onclick=()=>{revert4K();sel=null;cam.follow=null;cam.tgt.set(0,0,0);cam.tr=70;ring.visible=false;closePanel();crumb();renderList($("q").value.toLowerCase())};
 addEventListener("keydown",e=>{if(e.key!="Escape")return;if($("imgModal")&&$("imgModal").classList.contains("active")){closePhotoModal();return}const atDefault=!sel&&cam.follow===null&&Math.abs(cam.tr-70)<1;if(atDefault&&window.parent!==window){const m={type:"close-atlas"};try{parent.postMessage(m,location.origin)}catch(x){parent.postMessage(m,"*")}return}$("bh").click()});
 addEventListener("resize",()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});
 setSide(innerWidth<760);
@@ -705,11 +720,11 @@ CON.forEach(c=>{if(cen[c.ab]){c.c=cen[c.ab].divideScalar(c.cnt);c.fig=c.fig||[];
 /* Picking: brute-force screen-space search over the bright/named set (fine up to ~10k stars; use a grid for more) */
 const sp3=new THREE.Vector3(),_pick=pick;
 pick=function(x,y){const id=_pick(x,y);if(id||cam.r/K>4e4)return id;let best=-1,bd=196;for(let i=0;i<PKS.length;i++){sp3.copy(PKS[i].p).project(camera);if(sp3.z>1)continue;const dx=(sp3.x*.5+.5)*innerWidth-x,dy=(-sp3.y*.5+.5)*innerHeight-y,d=dx*dx+dy*dy-(8-PKS[i].mag)*2;if(d<bd){bd=d;best=i}}return best>=0?"*"+best:null};
-const _sel2=select;select=function(id){if(typeof id=="string"&&id[0]=="*"){selStar(PKS[+id.slice(1)]);return}selS=null;_sel2(id)};
+const _sel2=select;select=function(id){if(typeof id=="string"&&id[0]=="*"){revert4K();selStar(PKS[+id.slice(1)]);return}selS=null;_sel2(id)};
 document.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>selS=null));$("bh").addEventListener("click",()=>selS=null);
 const fmN=v=>v==null?"—":v>=1000?Math.round(v).toLocaleString():String(+v.toPrecision(3));
 function panelOpen(html,live){const p=$("panel");p.innerHTML=html;p.classList.add("open");p.inert=false;p.removeAttribute("aria-hidden");$("live").textContent=live}
-function selStar(x){if(!x)return;selS=x;sel=null;starT.position.copy(x.p);cam.follow=starT;cam.tr=200;ring.visible=true;
+function selStar(x){if(!x)return;revert4K();selS=x;sel=null;starT.position.copy(x.p);cam.follow=starT;cam.tr=200;ring.visible=true;
 const m=/^[OBAFGKM]/.exec(x.sp||""),lc=/^[OBAFGKM][0-9.]*\s*(Iab|Ia|Ib|III|II|IV|V|I)/.exec(x.sp||""),ys=fmN(x.ly),T=x.T||x.Teff,key=x.n.toLowerCase();
 const desc=x.n+(x.des?" ("+x.des+")":"")+" is "+(m?SPD[m[0]]:"a star")+(lc&&LCN[lc[1]]?", a "+LCN[lc[1]]:"")+(x.con?" in "+x.con:"")+", about "+ys+" light-years away.";
 const st=[["Distance",ys+" light-years"],["Apparent magnitude",fmN(x.mag)],["Absolute magnitude",fmN(x.am)],["Spectral class",x.sp||"—"],["Temperature",T?fmN(T)+" K"+(x.T?"":" (from colour)"):"—"],["Luminosity",x.Lm!=null?fmN(x.Lm)+" × Sun":"—"],["Mass",x.M!=null?fmN(x.M)+" × Sun":"—"],["Radius",x.R!=null?fmN(x.R)+" × Sun":"—"]];
@@ -719,7 +734,7 @@ $("panel").querySelectorAll(".chip").forEach(c=>c.onclick=()=>selStar(rel[+c.dat
 $("sm").onclick=()=>{selS=x;cam.follow=null;cam.tgt.copy(x.p).multiplyScalar(.5);cam.tr=Math.max(x.p.length()*1.4,50)};
 $("shs").onclick=()=>{shareLink(location.href.split("#")[0]+"#star-"+starSlug(x.n),$("shs"))};
 const rl=renderList;crumb();rl($("q").value.toLowerCase());try{history.replaceState(null,"","#star-"+starSlug(x.n))}catch(e){}}
-function selCon(c){selS=null;sel=null;ring.visible=false;showCon=true;$("bc").classList.add("on");
+function selCon(c){revert4K();selS=null;sel=null;ring.visible=false;showCon=true;$("bc").classList.add("on");
 if(c.c){const d=c.c.clone().normalize(),R=1000;cam.follow=null;cam.tgt.copy(d).multiplyScalar(R);cam.ph=Math.acos(clamp(-d.y,-1,1));cam.th=Math.atan2(-d.x,-d.z);cam.tr=R}
 const myth=MYTH[c.n]||"No story note is included for this constellation yet.";
 panelOpen('<div id="typ">Constellation · '+(c.z?"Zodiac":"IAU")+'</div><h2>'+c.n+'</h2><div id="tag">'+c.ab+'</div><div id="grid"><div><small>Zodiac</small><b>'+(c.z?"Yes":"No")+'</b></div><div><small>Brightest listed star</small><b>'+(c.bs?c.bs.n:"—")+'</b></div><div><small>Figure</small><b>'+(c.c?(FIG[c.n]?"Simplified":"Full"):"Not loaded")+'</b></div></div><p>'+myth+'</p><p class="note">Constellations are sky patterns. The lines join real stars, but the stars lie at very different distances. Seen from far away the shape falls apart.'+(c.c?"":" Add data/constellations.lines.json to draw every figure.")+'</p>',c.n+", constellation");try{history.replaceState(null,"","#con-"+c.ab.toLowerCase())}catch(e){}}
@@ -750,33 +765,188 @@ const viewSync=()=>{camera.updateMatrixWorld();camera.matrixWorldInverse.copy(ca
 const sunDirV=(wp,o)=>o.copy(wp).negate().normalize().transformDirection(camera.matrixWorldInverse);
 const status2=m=>{window.__st2="<br>"+m;$("sbn").innerHTML=(window.__st1||"")+window.__st2};
 
-/* ---------- 1. REAL TEXTURES (optional files in /textures/), procedural fallback ---------- */
-const texDir=(Qn==="low")?"textures/2k/":"textures/";const TXL=new THREE.TextureLoader(),MAXA=Math.min(8,renderer.capabilities.getMaxAnisotropy()),texState={};
-const loadTex=(name,exts,isLinear)=>new Promise(res=>{let i=0;const nx=()=>{if(i>=exts.length)return res(null);TXL.load(texDir+name+"."+exts[i++],t=>{t.anisotropy=MAXA;if(!isLinear)t.encoding=THREE.sRGBEncoding;res(t)},undefined,nx)};nx()});
-function applyBase(id,t){const b=byId[id],m=b.mesh.material;if(m.map&&m.map!==t)m.map.dispose();m.map=t;
-if(id=="earth"){if(!m.userData.rb)m.bumpMap=null}else if(id=="mercury"||id=="moon"||id=="mars"){if(!m.userData.rb)m.bumpMap=t}m.needsUpdate=true;texState[id]=1}
-function applyBump(id,t){const m=byId[id].mesh.material;m.bumpMap=t;m.bumpScale=1;m.userData.rb=1;m.needsUpdate=true}
-/* Earth: night-side city lights as an additive overlay (real map if present, otherwise illustrative random lights on the procedural land) */
+/* ---------- 1. REAL TEXTURES: 2K baseline for all bodies, dynamic 4K on focus ---------- */
+const TXL=new THREE.TextureLoader(),MAXA=Math.min(8,renderer.capabilities.getMaxAnisotropy()),texState={};
+const tex2K={};
+const UPGRADE_4K=new Set(["earth","moon","mercury","mars"]);
+let current4K=null,loadSeq4K=0;
+const active4KTex={map:null,bumpMap:null,normalMap:null,clouds:null,night:null};
+
+const loadPathTex=(dir,name,exts,isLinear)=>new Promise(res=>{
+  let i=0;
+  const nx=()=>{
+    if(i>=exts.length)return res(null);
+    TXL.load(dir+name+"."+exts[i++],t=>{
+      t.anisotropy=MAXA;
+      if(!isLinear)t.encoding=THREE.sRGBEncoding;
+      res(t);
+    },undefined,nx);
+  };
+  nx();
+});
+
+function applyBase(id,t){
+  const b=byId[id],m=b.mesh.material;
+  if(m.map&&m.map!==t&&!Object.values(tex2K).some(k=>k.map===m.map))m.map.dispose();
+  m.map=t;
+  tex2K[id]=tex2K[id]||{};tex2K[id].map=t;
+  if(id=="earth"){if(!m.userData.rb)m.bumpMap=null}
+  else if(id=="mercury"||id=="moon"||id=="mars"){if(!m.userData.rb)m.bumpMap=t}
+  m.needsUpdate=true;texState[id]=1;
+}
+
+function applyBump(id,t){
+  const m=byId[id].mesh.material;
+  m.bumpMap=t;m.bumpScale=1;m.userData.rb=1;m.needsUpdate=true;
+  tex2K[id]=tex2K[id]||{};tex2K[id].bumpMap=t;
+}
+
+/* Earth: night-side city lights as an additive overlay */
 const nightU={t:{value:new THREE.CanvasTexture(paint(512,256,(u,v,l)=>{if(fbm(u,v,8,5)<.55)return[0,0,0];const c=fbm(u*3+11,v*3+5,24,4),p=Math.abs(l-.5)*2,k=Math.pow(cl((c-.52)*5,0,1),1.5)*(p>.85?0:1)*(fbm(u*14,v*14,112,2)>.42?1:.25)*255;return[k,k*.8,k*.5]}))},sun:{value:new THREE.Vector3(1,0,0)}};
 const nightMesh=new THREE.Mesh(new THREE.SphereGeometry(byId.earth.r*1.003,48,32),new THREE.ShaderMaterial({uniforms:nightU,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
 vertexShader:"varying vec2 vUv;varying vec3 vN;void main(){vUv=uv;vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
-fragmentShader:"uniform sampler2D t;uniform vec3 sun;varying vec2 vUv;varying vec3 vN;void main(){float nf=smoothstep(.08,-.2,dot(normalize(vN),sun));gl_FragColor=vec4(texture2D(t,vUv).rgb*vec3(1.,.82,.5)*nf*1.3,1.);#include <encodings_fragment>}"}));
+fragmentShader:"#include <encodings_pars_fragment>\nuniform sampler2D t;uniform vec3 sun;varying vec2 vUv;varying vec3 vN;void main(){float nf=smoothstep(.08,-.2,dot(normalize(vN),sun));vec4 tex=texture2D(t,vUv);vec3 lin=sRGBToLinear(tex).rgb;gl_FragColor=vec4(lin*vec3(1.,.82,.5)*nf*1.3,1.);#include <encodings_fragment>}"}));
 byId.earth.mesh.add(nightMesh);
+
 /* Saturn rings: planet shadow falls on the rings */
 const sat=byId.saturn,satRing=sat.tilt.children.find(o=>o.geometry&&o.geometry.type=="RingGeometry"),ringU={map:{value:satRing.material.map},sunL:{value:new THREE.Vector3(1,0,0)},rp:{value:sat.r}};
 satRing.material=new THREE.ShaderMaterial({uniforms:ringU,side:THREE.DoubleSide,transparent:true,
 vertexShader:"varying vec2 vUv;varying vec3 vP;void main(){vUv=uv;vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
-fragmentShader:"uniform sampler2D map;uniform vec3 sunL;uniform float rp;varying vec2 vUv;varying vec3 vP;void main(){vec4 t=texture2D(map,vUv);vec3 q=vec3(vP.x,0.,-vP.y);float b=dot(q,sunL),c=dot(q,q)-rp*rp,disc=b*b-c;float sh=(b<0.&&disc>0.)?smoothstep(0.,.3*rp*rp,disc):0.;gl_FragColor=vec4(t.rgb*(1.-.85*sh),t.a);#include <encodings_fragment>}"});
+fragmentShader:"#include <encodings_pars_fragment>\nuniform sampler2D map;uniform vec3 sunL;uniform float rp;varying vec2 vUv;varying vec3 vP;void main(){vec4 tex=texture2D(map,vUv);vec3 lin=sRGBToLinear(tex).rgb;vec3 q=vec3(vP.x,0.,-vP.y);float b=dot(q,sunL),c=dot(q,q)-rp*rp,disc=b*b-c;float sh=(b<0.&&disc>0.)?smoothstep(0.,.3*rp*rp,disc):0.;gl_FragColor=vec4(lin*(1.-.85*sh),tex.a);#include <encodings_fragment>}"});
 function ringGeo(i0,i1){const rg=new THREE.RingGeometry(sat.r*i0,sat.r*i1,128),p=rg.attributes.position,uv=rg.attributes.uv,v=new THREE.Vector3();for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);uv.setXY(k,(v.length()-sat.r*i0)/(sat.r*(i1-i0)),.5)}return rg}
+
+// Initial 2K loads for all bodies on every quality level
 const TXSLOTS=["mercury","venus","earth","moon","mars","jupiter","saturn","uranus","neptune"],TXX=[];
-TXSLOTS.forEach(id=>TXX.push(loadTex(id,["jpg","png"]).then(t=>{if(t)applyBase(id,t)})));
-TXX.push(loadTex("saturn_ring",["png"]).then(t=>{if(!t)return;ringU.map.value=t;satRing.geometry.dispose();satRing.geometry=ringGeo(1.24,2.33);texState.ring=1}));
-if(Qn!="low"){["mercury","moon","mars"].forEach(id=>TXX.push(loadTex(id+"_bump",["jpg","png"],true).then(t=>{if(t)applyBump(id,t)})));
-TXX.push(loadTex("earth_normal",["jpg","png"],true).then(t=>{if(!t)return;const m=byId.earth.mesh.material;m.normalMap=t;m.bumpMap=null;m.userData.rb=1;m.needsUpdate=true}));
-TXX.push(loadTex("earth_night",["jpg","png"]).then(t=>{if(t){nightU.t.value=t;texState.night=1}}));
-TXX.push(loadTex("earth_clouds",["jpg","png"]).then(t=>{if(!t)return;const o=byId.earth.cloud.material;byId.earth.cloud.material=new THREE.MeshStandardMaterial({color:0xffffff,alphaMap:t,transparent:true,depthWrite:false,roughness:1});o.dispose();texState.clouds=1}))}
-const texP=Promise.all(TXX).then(()=>{const n=TXSLOTS.filter(i=>texState[i]).length;status2("Planet textures: "+n+" of "+TXSLOTS.length+" real maps found in textures/"+(n<TXSLOTS.length?"; the rest are procedural and illustrative (see Credits).":"."))});
-function texNote(id){const b=byId[id];if(!b||id=="sun")return;const n=$("panel").querySelector(".note");if(!n)return;n.insertAdjacentHTML("beforeend"," "+(texState[id]?"Surface: real texture (see Credits).":"Surface: illustrative procedural texture (real maps load from textures/ when present).")+(ATMP[id]?" Atmosphere glow: stylised Rayleigh-style scattering.":""))}
+TXSLOTS.forEach(id=>TXX.push(loadPathTex("textures/2k/",id,["jpg","png"]).then(t=>{if(t)applyBase(id,t)})));
+// Saturn ring: keep 4K on non-low, 2K on low
+const ringDir=(Qn==="low")?"textures/2k/":"textures/";
+TXX.push(loadPathTex(ringDir,"saturn_ring",["png"]).then(t=>{if(!t)return;ringU.map.value=t;satRing.geometry.dispose();satRing.geometry=ringGeo(1.24,2.33);texState.ring=1}));
+
+if(Qn!="low"){
+  ["mercury","moon","mars"].forEach(id=>TXX.push(loadPathTex("textures/2k/",id+"_bump",["jpg","png"],true).then(t=>{if(t)applyBump(id,t)})));
+  TXX.push(loadPathTex("textures/2k/","earth_normal",["jpg","png"],true).then(t=>{
+    if(!t)return;
+    const m=byId.earth.mesh.material;
+    m.normalMap=t;m.bumpMap=null;m.userData.rb=1;m.needsUpdate=true;
+    tex2K.earth=tex2K.earth||{};tex2K.earth.normalMap=t;
+  }));
+  TXX.push(loadPathTex("textures/2k/","earth_night",["jpg","png"]).then(t=>{
+    if(t){
+      nightU.t.value=t;texState.night=1;
+      tex2K.earth=tex2K.earth||{};tex2K.earth.night=t;
+    }
+  }));
+  TXX.push(loadPathTex("textures/2k/","earth_clouds",["jpg","png"]).then(t=>{
+    if(!t)return;
+    const o=byId.earth.cloud.material;
+    byId.earth.cloud.material=new THREE.MeshStandardMaterial({color:0xffffff,alphaMap:t,transparent:true,depthWrite:false,roughness:1});
+    o.dispose();texState.clouds=1;
+    tex2K.earth=tex2K.earth||{};tex2K.earth.clouds=t;
+  }));
+}
+
+const texP=Promise.all(TXX).then(()=>{
+  const n=TXSLOTS.filter(i=>texState[i]).length;
+  status2("Planet textures: 2K base maps loaded ("+n+"/"+TXSLOTS.length+" bodies); 4K textures load on focus (Earth, Moon, Mercury, Mars).");
+});
+
+function revert4K(){
+  if(!current4K)return;
+  const id=current4K;current4K=null;
+  const b=byId[id];
+  if(b){
+    if(id==="earth"){
+      if(tex2K.earth){
+        if(tex2K.earth.map)b.mesh.material.map=tex2K.earth.map;
+        b.mesh.material.normalMap=tex2K.earth.normalMap||null;
+        b.mesh.material.needsUpdate=true;
+        if(b.cloud&&tex2K.earth.clouds){
+          b.cloud.material.alphaMap=tex2K.earth.clouds;
+          b.cloud.material.needsUpdate=true;
+        }
+        if(tex2K.earth.night)nightU.t.value=tex2K.earth.night;
+      }
+    }else if(UPGRADE_4K.has(id)){
+      if(tex2K[id]){
+        if(tex2K[id].map)b.mesh.material.map=tex2K[id].map;
+        b.mesh.material.bumpMap=tex2K[id].bumpMap||null;
+        b.mesh.material.needsUpdate=true;
+      }
+    }
+  }
+  for(const k in active4KTex){
+    if(active4KTex[k]){
+      try{active4KTex[k].dispose()}catch(e){}
+      active4KTex[k]=null;
+    }
+  }
+}
+
+function focusBody4K(id){
+  if(Qn==="low")return;
+  if(!UPGRADE_4K.has(id)){revert4K();return}
+  if(current4K===id)return;
+  revert4K();
+  const seq=++loadSeq4K;
+  if(id==="earth"){
+    Promise.all([
+      loadPathTex("textures/","earth",["jpg"]),
+      loadPathTex("textures/","earth_normal",["jpg"],true),
+      loadPathTex("textures/","earth_clouds",["jpg"]),
+      loadPathTex("textures/","earth_night",["jpg"])
+    ]).then(([m4k,n4k,c4k,ng4k])=>{
+      if(seq!==loadSeq4K||!sel||sel.id!=="earth"){
+        if(m4k)m4k.dispose();if(n4k)n4k.dispose();if(c4k)c4k.dispose();if(ng4k)ng4k.dispose();
+        return;
+      }
+      current4K="earth";
+      active4KTex.map=m4k;active4KTex.normalMap=n4k;active4KTex.clouds=c4k;active4KTex.night=ng4k;
+      if(m4k)byId.earth.mesh.material.map=m4k;
+      if(n4k){byId.earth.mesh.material.normalMap=n4k;byId.earth.mesh.material.bumpMap=null}
+      byId.earth.mesh.material.needsUpdate=true;
+      if(c4k&&byId.earth.cloud){
+        byId.earth.cloud.material.alphaMap=c4k;
+        byId.earth.cloud.material.needsUpdate=true;
+      }
+      if(ng4k)nightU.t.value=ng4k;
+    });
+  }else{
+    Promise.all([
+      loadPathTex("textures/",id,["jpg"]),
+      loadPathTex("textures/",id+"_bump",["jpg"],true)
+    ]).then(([m4k,b4k])=>{
+      if(seq!==loadSeq4K||!sel||sel.id!==id){
+        if(m4k)m4k.dispose();if(b4k)b4k.dispose();
+        return;
+      }
+      current4K=id;
+      active4KTex.map=m4k;active4KTex.bumpMap=b4k;
+      const b=byId[id];
+      if(m4k)b.mesh.material.map=m4k;
+      if(b4k){b.mesh.material.bumpMap=b4k;b.mesh.material.bumpScale=1}
+      b.mesh.material.needsUpdate=true;
+    });
+  }
+}
+
+// Poll sel/selD every 3s to restore 2K and dispose 4K when focus moves or is cleared
+setInterval(()=>{
+  if(current4K){
+    if(!sel||sel.id!==current4K||selD||!$("panel").classList.contains("open")){
+      revert4K();
+    }
+  }
+},3000);
+
+function texNote(id){
+  const b=byId[id];if(!b||id=="sun")return;
+  const n=$("panel").querySelector(".note");if(!n)return;
+  const is4K=(current4K===id);
+  const qualTxt=is4K?"real 4K map (focused)":(texState[id]?"real 2K map (see Credits)":"illustrative procedural texture");
+  n.insertAdjacentHTML("beforeend"," Surface: "+qualTxt+"."+(ATMP[id]?" Atmosphere glow: stylised Rayleigh-style scattering.":""));
+}
+
+
 
 /* ---------- 2. ATMOSPHERES: analytic ray-through-shell scattering ---------- */
 const ATMP={venus:{b:[1,.9,.6],d:4.5,k:.25,g:1.1,s:1.06},earth:{b:[.17,.44,1],d:2.6,k:.38,g:1.5,s:1.05},mars:{b:[1,.72,.42],d:.9,k:.2,g:1,s:1.035},jupiter:{b:[1,.88,.65],d:1.4,k:.2,g:.8,s:1.05},saturn:{b:[1,.9,.7],d:1.3,k:.2,g:.8,s:1.05},uranus:{b:[.3,.8,1],d:2.2,k:.2,g:1,s:1.05},neptune:{b:[.2,.5,1],d:2.4,k:.2,g:1.1,s:1.05}};
@@ -985,14 +1155,14 @@ dmG.setAttribute("position",new THREE.BufferAttribute(dmP,3));dmG.setAttribute("
 const dmPts=new THREE.Points(dmG,new THREE.PointsMaterial({size:10,sizeAttenuation:false,vertexColors:true,map:new THREE.CanvasTexture(dc),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));dmPts.frustumCulled=false;scene.add(dmPts);
 
 /* ---------- 8. SELECTION, PANEL, PICKING, CATALOG, SEARCH ---------- */
-function selDSO(d){if(!d)return;selD=d;sel=null;selS=null;cam.follow=d.o;cam.tr=d.tr;ring.visible=true;const i=d.info,rel=(i.rel||[]).filter(r=>r[0]=="d"?DSOid[r.slice(2)]:CUR[r.slice(2).toLowerCase()]);
+function selDSO(d){if(!d)return;revert4K();selD=d;sel=null;selS=null;cam.follow=d.o;cam.tr=d.tr;ring.visible=true;const i=d.info,rel=(i.rel||[]).filter(r=>r[0]=="d"?DSOid[r.slice(2)]:CUR[r.slice(2).toLowerCase()]);
 panelOpen('<div id="typ">'+i.t+'</div><h2>'+d.n+'</h2><div id="tag">'+i.tag+'</div>'+getMediaHtml(d.id)+'<div id="grid">'+i.st.map(a=>"<div><small>"+a[0]+"</small><b>"+a[1]+"</b></div>").join("")+'</div><p>'+i.desc+'</p><div id="fact"><b>Did you know?</b><br>'+i.fact+" "+lightTxt(d.ly)+"</div>"+(rel.length?"<div>Related</div>":"")+
 rel.map(r=>'<span class="chip" data-k="'+r+'">'+(r[0]=="d"?DSOid[r.slice(2)].n:r.slice(2))+"</span>").join("")+'<p><button id="sm">Show on map</button> <button id="sh">Share link</button></p><p class="note">'+i.note+"</p>",d.n+", "+i.t);
 $("panel").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(k[0]=="d")selDSO(DSOid[k.slice(2)]);else{const s=CUR[k.slice(2).toLowerCase()];if(s)selStar(s)}});
 $("sm").onclick=()=>{const t=d.sys?d.sys.o:d.o;t.getWorldPosition(pw);const L=pw.length();cam.follow=null;cam.tgt.copy(pw).multiplyScalar(.5);cam.tr=Math.max(L*1.3,(d.sys?d.sys.size:d.size)*6)};
 $("sh").onclick=()=>{shareLink(location.href.split("#")[0]+"#"+d.id,$("sh"))};
 try{history.replaceState(null,"","#"+d.id)}catch(e){}crumb();renderList($("q").value.toLowerCase())}
-const _sel3=select;select=function(id){if(typeof id=="string"&&id[0]=="#"){const d=DSOid[id.slice(1)];if(d){selDSO(d);return}}selD=null;_sel3(id);texNote(id)};
+const _sel3=select;select=function(id){if(typeof id=="string"&&id[0]=="#"){const d=DSOid[id.slice(1)];if(d){revert4K();selDSO(d);return}}selD=null;_sel3(id);texNote(id)};
 const _ss3=selStar;selStar=function(x){selD=null;_ss3(x)};
 document.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>{selD=null}));$("bh").addEventListener("click",()=>{selD=null});
 function pickD(x,y){const pxs=innerHeight/(2*Math.tan(camera.fov*DEG/2));let best=null,bd=1e9;for(const d of DSO){if(!d.vis)continue;d.o.getWorldPosition(pq);const dist=pq.distanceTo(camera.position);if(d.k!="exop"&&dist<d.size*.9)continue;pq.project(camera);if(pq.z>1)continue;
@@ -1051,9 +1221,9 @@ if(!pos.length)throw new Error("empty");Object.assign(SV,{n:ly.length,pos:new Fl
 function svLoad(){if(SV.st!="idle")return;SV.st="load";fetch("data/2mrs.csv").then(r=>{if(!r.ok)throw new Error(r.status);return r.text()}).then(t=>{svParse(t);SV.st="ok";svNote()}).catch(e=>{SV.st="err";svNote()})}
 function svPick(x,y){if(SV.st!="ok"||SV.m.uniforms.al.value<.05)return -1;let b=-1,bd=matchMedia("(pointer:coarse)").matches?256:100;for(let i=0;i<SV.n;i++){pq.set(SV.pos[i*3],SV.pos[i*3+1],SV.pos[i*3+2]).project(camera);if(pq.z>1)continue;const dx=(pq.x*.5+.5)*innerWidth-x,dy=(-pq.y*.5+.5)*innerHeight-y,d=dx*dx+dy*dy;if(d<bd){bd=d;b=i}}return b}
 const gxT=new THREE.Object3D(),gxS=new THREE.Sprite(new THREE.SpriteMaterial({map:GT[0],blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.7}));gxT.add(gxS);gxT.visible=false;scene.add(gxT);let selZ=null;
-function selGx(i){const ly=SV.ly[i],R=3e4*LY,n=SV.nm[i]||"2MRS galaxy #"+(i+1),K=SV.K[i];selD=null;selS=null;sel=null;selZ={n,ly,R};gxT.position.set(SV.pos[i*3],SV.pos[i*3+1],SV.pos[i*3+2]);gxT.visible=true;gxS.scale.setScalar(R*2.4);cam.follow=gxT;cam.tr=R*8;ring.visible=true;
+function selGx(i){revert4K();const ly=SV.ly[i],R=3e4*LY,n=SV.nm[i]||"2MRS galaxy #"+(i+1),K=SV.K[i];selD=null;selS=null;sel=null;selZ={n,ly,R};gxT.position.set(SV.pos[i*3],SV.pos[i*3+1],SV.pos[i*3+2]);gxT.visible=true;gxS.scale.setScalar(R*2.4);cam.follow=gxT;cam.tr=R*8;ring.visible=true;
 panelOpen('<div id="typ">Galaxy · 2MASS Redshift Survey</div><h2>'+n+'</h2><div id="tag">Distance from redshift, H0 = 70</div><div id="grid">'+[["Distance",fmN(ly/1e6)+" million ly"],["Redshift velocity cz",fmN(SV.cz[i])+" km/s"],["Brightness (Ks)",isNaN(K)?"—":K.toFixed(1)+" mag"],["RA / Dec",SV.ra[i].toFixed(2)+"°, "+SV.de[i].toFixed(2)+"°"]].map(a=>"<div><small>"+a[0]+"</small><b>"+a[1]+"</b></div>").join("")+'</div><p>One of the galaxies mapped by the 2MASS Redshift Survey.</p><div id="fact"><b>Did you know?</b><br>'+lightTxt(ly)+'</div><p class="note">Position and redshift are real catalogue values. Distance assumes smooth cosmic expansion, so nearby galaxies can be off by tens of percent. The picture is a generic galaxy icon (illustrative), not the real shape or size.</p>',n+", galaxy");crumb()}
-const _sel4=select;select=function(id){if(typeof id=="string"&&id[0]=="~"){selGx(+id.slice(1));return}selZ=null;_sel4(id)};
+const _sel4=select;select=function(id){if(typeof id=="string"&&id[0]=="~"){revert4K();selGx(+id.slice(1));return}selZ=null;_sel4(id)};
 const _pk4=pick;pick=function(x,y){const r=_pk4(x,y);if(r)return r;const i=svPick(x,y);return i>=0?"~"+i:r};
 /* Catalog sections */
 const _rl4=renderList;renderList=function(f){_rl4(f);const l=$("list");f=(f||"").toLowerCase();[["Galaxies",d=>d.k=="gal"&&!d.cl],["Galaxy clusters",d=>d.k=="gal"&&d.cl]].forEach(([h,fn])=>{const it=GXL.filter(d=>fn(d)&&d.n.toLowerCase().includes(f));if(!it.length)return;const t=document.createElement("h4");t.textContent=h;l.appendChild(t);
