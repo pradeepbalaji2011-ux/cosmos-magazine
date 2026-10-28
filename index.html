@@ -105,6 +105,8 @@
 
   <!-- Full-screen Classic Magazine View (Opens when clicking Enter Magazine) -->
   <div id="magazine-view" aria-label="Cosmos Magazine classic view">
+    <!-- 3D background canvas for celestial objects -->
+    <canvas id='mag-gl' aria-hidden='true'></canvas>
     <header id="mag-header">
       <button id="mag-back" aria-label="Return to Black Hole">← Back to Black Hole</button>
       <div class="mag-brand">✦ COSMOS <b>MAGAZINE</b></div>
@@ -226,6 +228,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="js/home-bh.js?v=11"></script>
+  <script src='js/mag-3d.js?v=11'></script>
 
   <!-- Atlas modal iframe communication script -->
   <script>

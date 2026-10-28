@@ -409,24 +409,33 @@ button:focus-visible {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: radial-gradient(ellipse at 30% 20%, rgba(26,20,64,0.88), transparent 60%),
-              radial-gradient(ellipse at 80% 70%, rgba(58,26,20,0.88), transparent 55%),
-              rgba(3,4,10,0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(3, 4, 10, 0.55);
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(30px);
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.4,0,.2,1), visibility 0.4s;
+  transition: opacity 0.4s ease, visibility 0.4s;
 }
 
 #magazine-view.open {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+}
+
+#mag-gl {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+#mag-main {
+  position: relative;
+  z-index: 2;
 }
 
 #mag-header {
@@ -496,7 +505,7 @@ button:focus-visible {
 
 /* Magazine sections & cards */
 .mag-section {
-  min-height: 85vh;
+  min-height: 110vh;
   display: flex;
   align-items: center;
   padding: 80px 8vw;

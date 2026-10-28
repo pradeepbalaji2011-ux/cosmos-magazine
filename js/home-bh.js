@@ -232,8 +232,8 @@
     '      float boost = pow(max(0.25, 1.0 + dop * 0.38), 2.2);',
     '      boost = mix(boost, 1.0, 1.0 - uInterstellar);',
 
-    '      float stepDensity = gas * boost * dt * 1.35;',
-    '      vec3 stepCol = diskCol * (0.85 + 0.35 * (1.0 - tR));',
+    '      float stepDensity = gas * boost * dt * 1.85;',
+    '      vec3 stepCol = diskCol * (1.0 + 0.45 * (1.0 - tR));',
 
     '      col += stepCol * stepDensity * (1.0 - al);',
     '      al  += stepDensity * (1.0 - al);',
@@ -245,7 +245,7 @@
     '  // Razor-sharp, brilliant white photon ring hugging the shadow',
     '  if(!hit) {',
     '    float pRing = smoothstep(1.30, 1.10, minR) * smoothstep(1.01, 1.04, minR);',
-    '    col += vec3(1.0, 0.94, 0.85) * pRing * (1.0 - al) * 1.6;',
+    '    col += vec3(1.0, 0.95, 0.88) * pRing * (1.0 - al) * 2.4;',
     '    al   = max(al, pRing * 0.92);',
     '  }',
 
@@ -278,8 +278,9 @@
     '  // Horizon dive fade',
     '  col *= (1.0 - uDimness);',
 
-    '  vec3 mapped = col / (col + vec3(0.85));',
-    '  mapped = pow(mapped, vec3(0.95));',
+    '  // Filmic tone mapping: vibrant copper/amber glow, sharp details',
+    '  vec3 mapped = col / (col + vec3(0.52));',
+    '  mapped = pow(mapped, vec3(0.90));',
     '  mapped *= (1.0 - uDimness);',
     '  gl_FragColor = vec4(clamp(mapped, 0.0, 1.0), max(al, 0.01));',
     '}'
