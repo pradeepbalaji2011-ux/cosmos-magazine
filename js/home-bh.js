@@ -363,11 +363,11 @@
         value: 1.0,
         duration: 0.75, delay: 0.1, ease: 'power2.in',
         onComplete: function () {
-          window.location.href = 'atlas.html?v=8&ref=index.html#' + targetId;
+          window.location.href = 'atlas.html?v=8&ref=index.html#solar-system' + targetId;
         }
       });
     } else {
-      window.location.href = 'atlas.html?v=8&ref=index.html#' + targetId;
+      window.location.href = 'atlas.html?v=8&ref=index.html#solar-system' + targetId;
     }
   }
 
