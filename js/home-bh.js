@@ -114,9 +114,9 @@
     'precision highp float;',
     'uniform vec3  uCamPos;',
     'uniform vec3  uTarget;',
+    'uniform vec3  uDiskNormal;',
     'uniform float uT;',
     'uniform float uSteps;',
-    'uniform float uInterstellar;',
     'uniform float uDimness;',
     'uniform float uAsp;',
     'uniform float uFov;',
@@ -128,178 +128,113 @@
     '  return fract(p.x * p.y);',
     '}',
 
-    'float vnoise(vec2 p) {',
-    '  vec2 i = floor(p);',
-    '  vec2 f = fract(p);',
-    '  f = f * f * (3.0 - 2.0 * f);',
-    '  float a = hash(i);',
-    '  float b = hash(i + vec2(1.0, 0.0));',
-    '  float c = hash(i + vec2(0.0, 1.0));',
-    '  float d = hash(i + vec2(1.0, 1.0));',
-    '  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);',
-    '}',
-
-    'float fbmGas(vec2 p) {',
-    '  float v = 0.0;',
-    '  float a = 0.5;',
-    '  for(int i = 0; i < 4; i++) {',
-    '    v += a * vnoise(p);',
-    '    p = p * 2.08 + vec2(1.7, 9.2);',
-    '    a *= 0.5;',
-    '  }',
-    '  return v;',
-    '}',
-
     'void main() {',
     '  vec2 pCoord = (vUv * 2.0 - 1.0) * vec2(uAsp * uFov, uFov);',
     '  vec3 fwd = normalize(uTarget - uCamPos);',
-    '  // Slanted camera up vector (~10.5 degree roll to match Image B perfectly)',
-    '  vec3 camUp = normalize(vec3(-0.18, 0.98, 0.0));',
-    '  vec3 rgt = normalize(cross(fwd, camUp));',
+    '  vec3 rgt = normalize(cross(fwd, vec3(0.0, 1.0, 0.0)));',
     '  vec3 up  = cross(rgt, fwd);',
     '  vec3 dir = normalize(fwd + rgt * pCoord.x + up * pCoord.y);',
-    '  vec3 pos = uCamPos;',
-
+    '',
+    '  // Accretion disk reference frame and orientation',
+    '  vec3 n = normalize(uDiskNormal);',
+    '  vec3 rf = abs(n.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);',
+    '  vec3 e1 = normalize(cross(n, rf));',
+    '  vec3 e2 = cross(n, e1);',
+    '',
+    '  vec3 p = uCamPos;',
+    '  vec3 v = dir;',
+    '  vec3 L = cross(p, v);',
+    '  float h2 = dot(L, L);',
+    '',
     '  vec3 col = vec3(0.0);',
     '  float al = 0.0;',
     '  bool hit = false;',
     '  float minR = 1e9;',
-    '  const float RB = 25.0;',
-
-    '  for(int i = 0; i < 220; i++) {',
+    '  const float RB = 26.0;',
+    '',
+    '  // Analytical Schwarzschild geodesic raymarcher',
+    '  for(int i = 0; i < 200; i++) {',
     '    if(float(i) >= uSteps) break;',
-    '    float r = length(pos);',
+    '    float r = length(p);',
     '    if(r < minR) minR = r;',
-
-    '    if(r < 1.02) { hit = true; break; }',
-    '    if(r > RB && dot(pos, dir) > 0.0) break;',
-
-    '    // Geodesic deflection (Schwarzschild gravity)',
-    '    vec3 L = cross(pos, dir);',
-    '    float h2 = dot(L, L);',
-    '    float dt = r > 8.0 ? 0.14 * r : clamp(0.05 * (r - 0.5), 0.018, 0.38);',
-    '    vec3 acc = -1.5 * h2 * pos / (r * r * r * r * r);',
-    '    vec3 nextPos = pos + dir * dt;',
-    '    dir = normalize(dir + acc * dt);',
-
-    '    // Volumetric Accretion Disk in X-Z plane (y = 0)',
-    '    float h = abs(pos.y);',
-    '    float rr = length(pos.xz);',
-    '    float maxH = 0.22 + 0.022 * rr;',
-
-    '    if(h < maxH && rr > 2.6 && rr < 17.5 && al < 0.97) {',
-    '      float vertFade = 1.0 - h / maxH;',
-    '      vertFade = vertFade * vertFade * (3.0 - 2.0 * vertFade);',
-
-    '      float tR = clamp((rr - 2.6) / (17.5 - 2.6), 0.0, 1.0);',
-    '      float radFade = smoothstep(2.6, 3.2, rr) * smoothstep(17.5, 13.0, rr);',
-
-    '      // Differential Keplerian rotation',
-    '      float phi = atan(pos.z, pos.x);',
-    '      float dRot = phi - uT * 0.30 * pow(3.5 / rr, 1.25);',
-
-    '      // Multi-scale cloud turbulence & concentric filaments',
-    '      vec2 uv1 = vec2(rr * 1.4, dRot * 4.2);',
-    '      vec2 uv2 = vec2(rr * 2.8, dRot * 8.4);',
-    '      float turb1 = fbmGas(uv1);',
-    '      float turb2 = fbmGas(uv2);',
-    '      float streak = sin(rr * 14.0 + dRot * 2.5) * 0.2 + sin(rr * 28.0 - dRot * 4.0) * 0.1;',
-    '      float gas = clamp(turb1 * 0.65 + turb2 * 0.35 + streak, 0.0, 1.6);',
-
-    '      // Dark dust lanes cutting through the glowing gas',
-    '      float dustMask = smoothstep(5.2, 7.2, rr) * smoothstep(11.5, 8.5, rr);',
-    '      float dustPattern = fbmGas(vec2(rr * 2.2, dRot * 3.5));',
-    '      gas = clamp(gas - dustMask * dustPattern * 0.55, 0.02, 1.6);',
-    '      gas *= vertFade * radFade;',
-
-    '      // Photoreal Gargantua color grading',
-    '      vec3 innerCol = vec3(1.00, 0.98, 0.92);',
-    '      vec3 midCol   = vec3(0.94, 0.60, 0.26);',
-    '      vec3 outerCol = vec3(0.40, 0.15, 0.05);',
-
-    '      vec3 diskCol;',
-    '      if(tR < 0.22) {',
-    '        diskCol = innerCol;',
-    '      } else if(tR < 0.58) {',
-    '        diskCol = mix(innerCol, midCol, (tR - 0.22) / 0.36);',
-    '      } else {',
-    '        diskCol = mix(midCol, outerCol, (tR - 0.58) / 0.42);',
+    '    if(r < 1.0) { hit = true; break; }',
+    '    if(r > RB * 1.04 && dot(p, v) > 0.0) break;',
+    '',
+    '    float dt = r > 8.0 ? 0.10 * r : clamp(0.05 * (r - 0.55), 0.018, 0.45);',
+    '    vec3 a = -1.5 * h2 * p / (r * r * r * r * r);',
+    '    vec3 pn = p + v * dt;',
+    '    v = normalize(v + a * dt);',
+    '',
+    '    // Analytical disk plane crossing (zero stepping artifacts, razor-sharp)',
+    '    float s0 = dot(p, n);',
+    '    float s1 = dot(pn, n);',
+    '    if(s0 * s1 < 0.0 && al < 0.98) {',
+    '      vec3 q = mix(p, pn, s0 / (s0 - s1));',
+    '      float rr = length(q);',
+    '      if(rr > 2.8 && rr < 15.5) {',
+    '        float ph = atan(dot(q, e2), dot(q, e1));',
+    '        float t = pow(3.0 / rr, 0.75);',
+    '        vec3 vel = normalize(cross(n, q));',
+    '        float vk = sqrt(0.5 / (rr - 1.0));',
+    '        float gt = sqrt(1.0 - vk * vk) / (1.0 + vk * dot(vel, v)) * sqrt(1.0 - 1.0 / rr);',
+    '        // Fine concentric Keplerian orbital rings',
+    '        float tb = 0.62 + 0.38 * sin(7.0 * (ph + uT * 3.6 * pow(rr, -1.5)) + rr * 5.0) * sin(rr * 14.0 - ph * 2.0);',
+    '        float I = min(pow(t * gt, 3.0) * 3.0 * tb, 2.4) * smoothstep(15.5, 11.5, rr) * smoothstep(2.8, 3.3, rr);',
+    '        vec3 c = mix(vec3(1.0, 0.38, 0.08), vec3(1.0, 0.94, 0.84), clamp(t * gt * 1.1, 0.0, 1.0));',
+    '        c = mix(c, vec3(0.75, 0.88, 1.0), clamp(t * gt - 0.9, 0.0, 1.0));',
+    '        col += (1.0 - al) * c * I;',
+    '        al  += (1.0 - al) * clamp(I * 0.65, 0.0, 0.95);',
     '      }',
-
-    '      // Balanced Doppler beaming',
-    '      vec3 vel = normalize(vec3(-pos.z, 0.0, pos.x));',
-    '      float dop = dot(vel, dir);',
-    '      float boost = pow(max(0.25, 1.0 + dop * 0.38), 2.2);',
-    '      boost = mix(boost, 1.0, 1.0 - uInterstellar);',
-
-    '      float stepDensity = gas * boost * dt * 1.85;',
-    '      vec3 stepCol = diskCol * (1.0 + 0.45 * (1.0 - tR));',
-
-    '      col += stepCol * stepDensity * (1.0 - al);',
-    '      al  += stepDensity * (1.0 - al);',
     '    }',
-
-    '    pos = nextPos;',
+    '    p = pn;',
     '  }',
-
-    '  // Razor-sharp, brilliant white photon ring hugging the shadow',
+    '',
+    '  // Razor-sharp, brilliant white photon ring encircling the shadow',
     '  if(!hit) {',
-    '    float pRing = smoothstep(1.30, 1.10, minR) * smoothstep(1.01, 1.04, minR);',
-    '    col += vec3(1.0, 0.95, 0.88) * pRing * (1.0 - al) * 2.4;',
-    '    al   = max(al, pRing * 0.92);',
+    '    float pRing = smoothstep(1.30, 1.08, minR) * smoothstep(1.00, 1.04, minR);',
+    '    col += vec3(1.0, 0.97, 0.92) * pRing * (1.0 - al) * 2.8;',
+    '    al   = max(al, pRing * 0.95);',
     '  }',
-
-    '  // Pure black event horizon void',
+    '',
+    '  // Pitch black event horizon',
     '  if(hit) {',
     '    col = vec3(0.0);',
     '    al  = 1.0;',
     '  }',
-
-    '  // Deep space background with distant stars',
+    '',
+    '  // Distant stars bent around the black hole',
     '  if(!hit && al < 0.99) {',
-    '    vec3 sd = dir;',
-    '    vec2 suv = vec2(atan(sd.z, sd.x) * 0.15915 + 0.5, sd.y * 0.5 + 0.5);',
+    '    vec2 suv = vec2(atan(v.z, v.x) * 0.15915 + 0.5, v.y * 0.5 + 0.5);',
     '    float sn = hash(floor(suv * 800.0));',
-    '    vec3 starCol = vec3(0.0);',
-    '    if(sn > 0.992) {',
+    '    if(sn > 0.993) {',
     '      float sb = hash(floor(suv * 800.0) + vec2(4.7, 1.3));',
     '      vec3 sc  = mix(vec3(0.75, 0.85, 1.00), vec3(1.00, 0.92, 0.75), sb);',
-    '      starCol += sc * (0.4 + sb * 0.8);',
+    '      col += sc * (0.5 + sb * 0.8) * (1.0 - al);',
     '    }',
-    '    vec3 deepSpace = mix(vec3(0.005, 0.008, 0.018), vec3(0.014, 0.007, 0.018), vnoise(suv * 3.0));',
-    '    col += (deepSpace + starCol) * (1.0 - al);',
     '  }',
-
-    '  // Subtle film grain',
-    '  float seed = dot(vUv, vec2(127.1, 311.7)) * (uT * 0.08 + 1.0);',
-    '  float grain = (fract(sin(seed) * 43758.5) * 2.0 - 1.0) * 0.008;',
-    '  col += grain;',
-
+    '',
     '  // Horizon dive fade',
     '  col *= (1.0 - uDimness);',
-
-    '  // Filmic tone mapping: vibrant copper/amber glow, sharp details',
-    '  vec3 mapped = col / (col + vec3(0.52));',
-    '  mapped = pow(mapped, vec3(0.90));',
-    '  mapped *= (1.0 - uDimness);',
-    '  gl_FragColor = vec4(clamp(mapped, 0.0, 1.0), max(al, 0.01));',
+    '',
+    '  gl_FragColor = vec4(clamp(col, 0.0, 1.0), max(al, 0.01));',
     '}'
   ].join('\n');
 
   // Camera settings: looking slightly down onto the X-Z disk (y = 1.35)
-  var CAM_HOME   = { x: 0.0, y: 1.35, z: 11.5 };
-  var CAM_STRAND = { x: 0.0, y: 0.20, z: 3.0 };
+  var CAM_HOME   = { x: 0.0, y: 0.0, z: 9.2 };
+  var CAM_STRAND = { x: 0.0, y: 0.0, z: 3.0 };
   var camPos     = { x: CAM_HOME.x, y: CAM_HOME.y, z: CAM_HOME.z };
+  var diskNormal = new THREE.Vector3(0.08, 0.92, 0.38).normalize();
 
   var bhUniforms = {
     uCamPos:       { value: new THREE.Vector3(CAM_HOME.x, CAM_HOME.y, CAM_HOME.z) },
     uTarget:       { value: new THREE.Vector3(0.0, 0.0, 0.0) },
+    uDiskNormal:   { value: diskNormal },
     uT:            { value: 0.0 },
     uSteps:        { value: QS[Q].steps },
-    uInterstellar: { value: 0.72 },
     uDimness:      { value: 0.0 },
     uAsp:          { value: asp },
-    uFov:          { value: Math.tan(30 * Math.PI / 180) } // 60 deg vertical FOV
+    uFov:          { value: Math.tan(30 * Math.PI / 180) }
   };
 
   var bhMat = new THREE.ShaderMaterial({
@@ -742,28 +677,22 @@
       btnBH.textContent = currentBH === 'sgr-a-star' ? 'Sgr A*' : 'M87*';
 
       if (currentBH === 'm87-star') {
-        CAM_HOME.y = 1.70;
-        CAM_HOME.z = 12.0;
+        diskNormal.set(0.05, 0.96, 0.28).normalize();
+        CAM_HOME.z = 9.8;
       } else {
-        CAM_HOME.y = 1.35;
-        CAM_HOME.z = 11.5;
+        diskNormal.set(0.08, 0.92, 0.38).normalize();
+        CAM_HOME.z = 9.2;
       }
 
       if (window.gsap) {
         gsap.to(camPos, {
-          y: CAM_HOME.y, z: CAM_HOME.z,
-          duration: 1.2, ease: 'power2.inOut',
+          z: CAM_HOME.z,
+          duration: 1.0, ease: 'power2.inOut',
           onUpdate: syncCamera
         });
-        gsap.to(bhUniforms.uInterstellar, {
-          value: currentBH === 'sgr-a-star' ? 0.72 : 0.45,
-          duration: 1.2, ease: 'power2.inOut'
-        });
       } else {
-        camPos.y = CAM_HOME.y;
         camPos.z = CAM_HOME.z;
         syncCamera();
-        bhUniforms.uInterstellar.value = currentBH === 'sgr-a-star' ? 0.72 : 0.45;
       }
     });
   }
