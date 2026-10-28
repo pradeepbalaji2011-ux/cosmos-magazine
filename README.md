@@ -6,10 +6,66 @@ A high-performance, dark-themed astronomical web magazine and interactive 3D uni
 
 ---
 
+## 🌑 Immersive Black Hole Home Page
+
+`index.html` is a full-screen, cinematic WebGL experience powered by a **ray-marched Schwarzschild black hole shader** (Three.js r128). The black hole fills the entire viewport and *is* the navigation.
+
+### What you see
+| Feature | Detail |
+|---|---|
+| Shadow size | ~37–40 % of viewport height (camera z = 12, FOV 60°) |
+| Accretion disk | Turbulent Keplerian disk, orange-white inner → amber outer, relativistic Doppler beaming |
+| Gravitational lensing | Far side of disk bent over and under the shadow (Interstellar halo), thin photon ring glow |
+| Starfield | Procedural hash-based starfield bent by the geodesic ray march |
+| Post-processing | Inline bloom brightpass, chromatic aberration, film grain, CSS vignette |
+| Quality levels | **Low** (60 steps, ×0.5 pixel ratio) / **Med** (110, ×0.75, bloom on) / **High** (160, ×1.0, bloom on) — auto-detects mobile |
+| Reduced motion | Disk animation and camera drift freeze when `prefers-reduced-motion: reduce` is set |
+
+### Three zoom levels
+1. **Ring (default)** — Glowing nodes orbit the photon ring, one per article. Hover for a glass tooltip; click to read the article.
+2. **Threads** — Scroll in; nodes unfold into luminous 3D filaments coloured by category (News=gold, Observing=cyan, Exploration=orange, Learn=violet). Click a thread for a card with hero image.
+3. **Horizon** — Zoom to the event horizon; a dive animation fades to black and navigates to `atlas.html?v=7&ref=index.html#sgr-a-star` (or `#m87-star`).
+
+### Controls
+| Input | Action |
+|---|---|
+| Scroll wheel | Zoom in/out |
+| Pinch (touch) | Zoom in/out |
+| Hover / tap | Show article tooltip |
+| Click node | Read article (Level 1) or show card (Level 2) |
+| ◎ Ring · ⟡ Threads · ● Horizon | Jump between zoom levels |
+| Sgr A* / M87* | Switch black hole (changes disk inclination & colour temperature) |
+| Quality button | Cycle Low / Med / High |
+| Balanced light | Toggle physical Doppler beaming vs Interstellar-style balanced look |
+| Sky & News ✦ | Open side panel with live Moon phase, planetary visibility & newsletter |
+| Esc | Close cards / panel |
+
+### Adding a new article node
+Edit the `ARTICLES` array in `js/home-bh.js`:
+```js
+{ slug:'your-article', title:'Your Title',
+  cat:'News', catColor:'#ffb454',
+  summary:'One-sentence description.',
+  atlasId: null,        // or an Atlas object id, e.g. 'mars'
+  angle: 6.1 }          // radians, 0–2π, spread evenly around ring
+```
+Use a unique `angle` and add a matching `articles/your-article.html`.
+
+### Classic fallback
+`index-classic.html` is the original scrolling 3D magazine. `index.html` redirects there automatically if WebGL fails. A "Classic view" link is in the top bar, and a "✦ Immersive view" link is in the classic page header.
+
+### Atlas transition
+Zoom to the event horizon → 2.5-second dive animation → `atlas.html?v=7&ref=index.html#<black-hole-id>`. The Atlas shows a "← Back to the black hole" button when `ref=index.html` is present.
+
+---
+
 ## 📁 Repository Structure
 
 ```
-├── index.html                   # 3D scroll magazine with dynamic Sky This Week & Newsletter
+├── index.html                   # Immersive WebGL black hole home page (Three.js r128 ray-marched)
+├── index-classic.html           # Original 3D scroll magazine (preserved, linked from home page)
+├── css/home.css                 # Styles for the immersive home page
+├── js/home-bh.js                # WebGL black hole scene, nodes, threads, UI, navigation
 ├── atlas.html                   # Interactive 3D universe (Three.js r128) with dynamic 4K textures & photo lightbox
 ├── og-preview.html              # Template used to generate social preview image (1200x630)
 ├── README.md                    # Project documentation, sources, and licences

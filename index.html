@@ -1,373 +1,375 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cosmos Magazine — The Cosmos After Dark</title>
-<meta name="description" content="Astronomy news, observing guides and a 3D map of the universe. Scroll through space, then explore every planet, galaxy and star in the Cosmos Atlas.">
-<link rel="canonical" href="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/">
-<meta name="theme-color" content="#03040a">
-<meta property="og:type" content="website"><meta property="og:site_name" content="Cosmos Magazine"><meta property="og:title" content="The Cosmos After Dark"><meta property="og:description" content="Astronomy news, observing guides and a 3D map of the universe. Scroll through space, then explore every planet, galaxy and star in the Cosmos Atlas."><meta property="og:url" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/"><meta property="og:image" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/images/og-cosmos.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="The Cosmos After Dark"><meta name="twitter:description" content="Astronomy news, observing guides and a 3D map of the universe. Scroll through space, then explore every planet, galaxy and star in the Cosmos Atlas."><meta name="twitter:image" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/images/og-cosmos.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,700;1,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#03040a;--tx:#e9edff;--dim:#9aa6c8;--ac:#e4572e;--cy:#5ee1ff;--vi:#9b8cff;--card:rgba(8,12,30,.62);--line:rgba(150,170,255,.18);color-scheme:dark;box-sizing:border-box}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#03040a}}
-:root[data-theme="dark"]{--bg:#03040a}
-*{box-sizing:inherit}html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 "DM Mono",ui-monospace,monospace}
-#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
-.fb #gl{display:none}.fb body,body.fb{background:radial-gradient(ellipse at 30% 20%,#1a1440,transparent 60%),radial-gradient(ellipse at 80% 70%,#3a1a14,transparent 55%),#03040a}
-header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:10;display:flex;align-items:center;gap:18px;padding:14px 22px;background:linear-gradient(rgba(3,4,10,.85),transparent)}
-.logo{font:700 18px "Bodoni Moda",serif;letter-spacing:.24em;color:var(--tx);text-decoration:none}.logo b{color:var(--ac)}
-nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
-nav a{color:var(--dim);text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;white-space:nowrap;border-radius:6px;transition:.2s}
-nav a:hover,nav a.on{color:var(--tx);background:rgba(255,255,255,.07)}nav a.atl{color:#ff6b6f}
-#bar{position:fixed;left:0;top:0;height:2px;width:0;background:linear-gradient(90deg,var(--ac),var(--vi),var(--cy));z-index:11}
-main{position:relative;z-index:2}
-section{min-height:115vh;display:flex;align-items:center;padding:90px 6vw}
-section.r{justify-content:flex-end}
-.card{max-width:520px;background:var(--card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:30px;transition:transform .35s,border-color .35s}
-.card:hover{transform:translateY(-4px);border-color:rgba(228,87,46,.55)}
-.eye{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);margin:0 0 10px}
-h1,h2{font-family:"Bodoni Moda",serif;font-weight:700;line-height:1.1;margin:0 0 14px}
-h1{font-size:clamp(40px,7vw,84px)}h2{font-size:clamp(30px,4.5vw,52px)}
-p{margin:0 0 14px;color:var(--dim)}p.l{font-size:17px;color:var(--tx)}
-ul{list-style:none;margin:0;padding:0}
-li{padding:12px 0;border-top:1px solid var(--line);color:var(--tx);font-size:14px;transition:padding .25s,color .25s;cursor:default}
-li:hover{padding-left:10px;color:var(--cy)}li small{display:block;color:var(--dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
-/* Article links inside list items */
-li a{color:inherit;text-decoration:none;display:block;margin:-12px 0;padding:12px 0}
-li a:hover{color:var(--cy)}
-li:hover a{padding-left:0}
-a:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
-.btn{display:inline-block;margin:6px 8px 0 0;padding:11px 18px;border-radius:8px;border:1px solid var(--ac);background:var(--ac);color:#fff;font:500 13px "DM Mono",monospace;text-decoration:none;cursor:pointer;transition:.2s}
-.btn.g{background:transparent;color:var(--tx);border-color:var(--line)}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(228,87,46,.3)}
-.hint{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:5;font-size:11px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;transition:opacity .4s;pointer-events:none}
-footer{position:relative;z-index:2;text-align:center;padding:40px 20px 60px;color:var(--dim);font-size:12px}
-@media(max-width:760px){header{padding:10px 12px}.logo{font-size:15px}section,section.r{justify-content:center;padding:80px 14px}.card{padding:22px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-#atlasView{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
-#atlasView.on{opacity:1;visibility:visible}
-#atlasBar{display:flex;align-items:center;gap:14px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:#03040a;border-bottom:1px solid var(--line)}
-#atlasBar span{font:700 14px "Bodoni Moda",serif;letter-spacing:.2em;color:var(--tx)}#atlasBar b{color:var(--ac)}
-#atlasClose{font:500 12px "DM Mono",monospace;color:var(--tx);background:transparent;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}#atlasClose:hover{border-color:var(--ac)}
-#atlasFrame{flex:1;width:100%;border:0;display:block;background:#000}
-a:focus-visible,button:focus-visible,.btn:focus-visible,#atlasFrame:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
-.skip{position:fixed;left:12px;top:-70px;z-index:60;background:var(--ac);color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;font:500 13px "DM Mono",monospace;transition:top .2s}.skip:focus{top:calc(10px + env(safe-area-inset-top,0px))}
-/* Sky this week */
-#sky-info{font-size:13px;margin:6px 0 0;color:var(--dim)}
-#sky-info strong{color:var(--cy)}
-#sky-note{font-size:11px;color:var(--dim);margin-top:8px;opacity:.7}
-/* Newsletter form */
-.nl-form{margin-top:16px}
-.nl-form label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
-.nl-form input[type=email]{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--tx);font:14px "DM Mono",monospace;transition:border-color .2s}
-.nl-form input[type=email]:focus{outline:2px solid var(--cy);outline-offset:2px;border-color:var(--cy)}
-.nl-form .hp{position:absolute;left:-9999px;opacity:0;pointer-events:none}
-.nl-consent{font-size:11px;color:var(--dim);margin:8px 0 12px;line-height:1.5}
-.nl-submit{display:inline-block;padding:10px 20px;border-radius:8px;border:1px solid var(--cy);background:transparent;color:var(--cy);font:500 13px "DM Mono",monospace;cursor:pointer;transition:.2s}
-.nl-submit:hover{background:var(--cy);color:#03040a}
-.nl-submit:disabled{opacity:.5;cursor:not-allowed}
-#nl-msg{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:6px;display:none}
-#nl-msg.ok{background:rgba(94,225,255,.12);border:1px solid var(--cy);color:var(--cy)}
-#nl-msg.err{background:rgba(228,87,46,.12);border:1px solid var(--ac);color:var(--ac)}
-</style></head><body>
-<a class="skip" href="#top">Skip to content</a>
-<noscript><p style="position:relative;z-index:30;margin:0;padding:14px 20px;background:#1a1440;color:#e9edff;text-align:center">This site uses JavaScript for its 3D journey and the Cosmos Atlas. The articles below still work without it.</p></noscript>
-<canvas id="gl" aria-hidden="true"></canvas><div id="bar"></div>
-<header><a class="logo" href="#top">✦ COSMOS</a>
-<nav aria-label="Main"><a href="#news">News</a><a href="#observing">Observing</a><a href="#missions">Exploration</a><a href="#learn">Learn</a><a class="atl" href="atlas.html?v=7" data-atlas>Cosmos Atlas</a></nav></header>
-<main id="top">
-<section id="home"><div class="card" data-o="stars"><p class="eye">A space for deeper looking and bolder observing</p><h1>The Cosmos After Dark</h1><p class="l">Astronomy news, observing guides and a live 3D map of the universe, for people who look up.</p><a class="btn" href="atlas.html?v=7" data-atlas>Open the Cosmos Atlas</a><a class="btn g" href="#news">Read the latest</a></div></section>
-<section id="news" class="r"><div class="card" data-o="galaxy"><p class="eye">Latest news</p><h2>Galaxies &amp; skies</h2><ul>
-<li><small>Galaxies</small><a href="articles/galaxies-filaments.html">How galaxies grow filaments of hot gas</a></li>
-<li><small>Earth</small><a href="articles/atmosphere-glows.html">Earth from orbit: why our atmosphere glows</a></li>
-<li><small>The Sun</small><a href="articles/solar-cycles.html">Solar cycles explained, from spots to storms</a></li>
-</ul></div></section>
-<section id="observing"><div class="card" data-o="moon"><p class="eye">Sky this week</p><h2>Observing</h2>
-<div id="sky-info" aria-live="polite"><p class="l">Calculating tonight's sky…</p></div>
-<p id="sky-note">Calculated for your device's date; visibility depends on your location and weather.</p>
-<ul>
-<li><small>Tip</small><a href="articles/dark-adapt.html">Give your eyes 20 minutes to dark-adapt</a></li>
-<li><small>Moon</small><a href="articles/moon-phase.html">Check the phase before planning dark-sky sessions</a></li>
-</ul></div></section>
-<section id="missions" class="r"><div class="card" data-o="planets"><p class="eye">Space exploration</p><h2>Worlds beyond Earth</h2><ul>
-<li><small>Mars</small><a href="articles/life-on-mars.html">The long search for life on Mars</a></li>
-<li><small>Giants</small><a href="articles/gas-giants-ice-giants.html">Gas giants versus ice giants</a></li>
-<li><small>Rings</small><a href="articles/saturns-rings.html">Saturn's rings: young, thin and temporary?</a></li>
-</ul></div></section>
-<section id="learn"><div class="card" data-o="nebula"><p class="eye">Learn astronomy</p><h2>Stellar nurseries</h2><ul>
-<li><small>Nebulae</small><a href="articles/nebulae.html">Nebulae: nurseries and graveyards of stars</a></li>
-<li><small>Milky Way</small><a href="articles/milky-way.html">Walking through the spiral arms</a></li>
-<li><small>Newsletter</small>The night sky, in your inbox
-  <div class="nl-form" id="nl-form-wrap">
-    <form id="nl-form" novalidate>
-      <!-- Honeypot: bots fill this, humans don't -->
-      <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <label for="nl-email">Your email address</label>
-      <input type="email" id="nl-email" name="email" placeholder="you@example.com" autocomplete="email" required>
-      <p class="nl-consent">By subscribing you agree to receive occasional astronomy updates from Cosmos Magazine. No spam; unsubscribe any time.</p>
-      <button type="submit" class="nl-submit">Subscribe</button>
-    </form>
-    <div id="nl-msg" role="status" aria-live="polite"></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cosmos Magazine — The Cosmos After Dark</title>
+  <meta name="description" content="Astronomy news, observing guides and a 3D map of the universe. Dive into a ray-marched black hole, then explore every planet, galaxy and star in the Cosmos Atlas.">
+  <link rel="canonical" href="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/">
+  <meta name="theme-color" content="#03040a">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Cosmos Magazine">
+  <meta property="og:title" content="The Cosmos After Dark">
+  <meta property="og:description" content="Astronomy news, observing guides and a 3D map of the universe. Dive into a ray-marched black hole, then explore every planet, galaxy and star in the Cosmos Atlas.">
+  <meta property="og:url" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/">
+  <meta property="og:image" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/images/og-cosmos.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Cosmos After Dark">
+  <meta name="twitter:description" content="Astronomy news, observing guides and a 3D map of the universe.">
+  <meta name="twitter:image" content="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/images/og-cosmos.png">
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌌%3C/text%3E%3C/svg%3E">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,700;1,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/home.css?v=8">
+</head>
+<body>
+
+  <!-- Skip link -->
+  <a class="skip" href="index-classic.html">Skip to classic view</a>
+
+  <!-- Loading screen -->
+  <div id="loading" aria-live="polite" aria-label="Loading the black hole…">
+    <div class="load-logo">✦ COSMOS</div>
+    <div class="progress-ring">
+      <svg viewBox="0 0 60 60" aria-hidden="true">
+        <circle cx="30" cy="30" r="25"/>
+        <circle class="arc" cx="30" cy="30" r="25"/>
+      </svg>
+    </div>
+    <p>Approaching the event horizon&nbsp;…</p>
   </div>
-</li>
-</ul></div></section>
-<section id="atlas" class="r"><div class="card" data-o="web"><p class="eye">Cosmos Atlas</p><h2>Zoom out to the cosmic web</h2><p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p><a class="btn" href="atlas.html?v=7" data-atlas>Launch the Cosmos Atlas</a><a class="btn g" href="#top">Back to the start</a></div></section>
-</main>
-<div class="hint" id="hint">Scroll to travel ↓</div>
-<footer>© Cosmos Magazine · Fly through space with your scroll wheel, move the mouse to look around.</footer>
-<div id="atlasView" role="dialog" aria-modal="true" aria-label="Cosmos Atlas, interactive 3D universe" aria-hidden="true"><div id="atlasBar"><button id="atlasClose">&larr; Back to Magazine</button><span>COSMOS <b>ATLAS</b></span></div><iframe id="atlasFrame" title="Cosmos Atlas" allow="fullscreen"></iframe></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script>
-(function(){
-var mob=innerWidth<760||/Mobi|Android/i.test(navigator.userAgent),rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
-var cv=document.getElementById('gl'),R;
-try{R=new THREE.WebGLRenderer({canvas:cv,antialias:!mob,alpha:false});}catch(e){document.body.classList.add('fb');document.documentElement.classList.add('fb');}
-if(typeof gsap!=='undefined'&&typeof ScrollTrigger!=='undefined'){gsap.registerPlugin(ScrollTrigger);gsap.utils.toArray('.card').forEach(function(c){gsap.from(c,{opacity:0,y:50,duration:1,ease:'power3.out',scrollTrigger:{trigger:c,start:'top 85%'}});});}
-var bar=document.getElementById('bar'),hint=document.getElementById('hint');
-function prog(){var h=document.documentElement.scrollHeight-innerHeight;return h>0?Math.min(1,Math.max(0,scrollY/h)):0}
-if(!R){addEventListener('scroll',function(){bar.style.width=prog()*100+'%';hint.style.opacity=scrollY>40?0:1});return;}
-R.setPixelRatio(Math.min(devicePixelRatio,mob?1:1.75));R.setSize(innerWidth,innerHeight);
-var S=new THREE.Scene();S.background=new THREE.Color(0x03040a);S.fog=new THREE.FogExp2(0x03040a,.004);
-var cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,600);
-S.add(new THREE.AmbientLight(0x6070a0,.7));var sun=new THREE.DirectionalLight(0xfff0d8,1.6);sun.position.set(30,20,40);S.add(sun);
-function glow(c){var k=document.createElement('canvas');k.width=k.height=64;var x=k.getContext('2d'),g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,c||'rgba(255,255,255,1)');g.addColorStop(.35,'rgba(255,255,255,.35)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(k)}
-var dot=glow();
-function pts(n,fn,size,op){var p=new Float32Array(n*3),c=new Float32Array(n*3),o={p:p,c:c};for(var i=0;i<n;i++)fn(i,p,c);var g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(p,3));g.setAttribute('color',new THREE.BufferAttribute(c,3));return new THREE.Points(g,new THREE.PointsMaterial({size:size,map:dot,vertexColors:true,transparent:true,opacity:op||1,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true}))}
-function tex(base,bands,spots){var k=document.createElement('canvas');k.width=256;k.height=128;var x=k.getContext('2d');x.fillStyle=base;x.fillRect(0,0,256,128);for(var i=0;i<bands;i++){x.fillStyle='rgba('+(Math.random()<.5?'0,0,0':'255,255,255')+','+(Math.random()*.18)+')';x.fillRect(0,Math.random()*128,256,Math.random()*14)}for(i=0;i<spots;i++){x.fillStyle='rgba(0,0,0,'+Math.random()*.25+')';x.beginPath();x.arc(Math.random()*256,Math.random()*128,Math.random()*9+1,0,6.3);x.fill()}return new THREE.CanvasTexture(k)}
-// star field
-var stars=pts(mob?1800:4500,function(i,p,c){p[i*3]=(Math.random()-.5)*160;p[i*3+1]=(Math.random()-.5)*100;p[i*3+2]=40-Math.random()*320;var t=.6+Math.random()*.4;c[i*3]=t;c[i*3+1]=t;c[i*3+2]=1},.9,.9);S.add(stars);
-// key camera stops + object placement (side = which side the text card is NOT on)
-var K=[[0,0,14],[3,1,-24],[-3,1,-72],[3,0,-120],[-3,1,-168],[0,0,-214]],O={};
-function put(o,k,s,dz){o.position.set(K[k][0]+s*6,K[k][1]+(s>0?0:.5),K[k][2]-(dz||17));S.add(o);return o}
-// galaxy
-var gal=new THREE.Group(),c1=new THREE.Color('#ffb870'),c2=new THREE.Color('#5ee1ff'),tc=new THREE.Color();
-gal.add(pts(mob?2500:7000,function(i,p,c){var r=Math.pow(Math.random(),1.4)*11,a=(i%3)/3*6.283+r*.55,j=(Math.random()-.5)*(.4+r*.12);p[i*3]=Math.cos(a)*r+j*2;p[i*3+1]=(Math.random()-.5)*.8*(1-r/14);p[i*3+2]=Math.sin(a)*r+j*2;tc.copy(c1).lerp(c2,r/11);c[i*3]=tc.r;c[i*3+1]=tc.g;c[i*3+2]=tc.b},.35));
-var core=new THREE.Sprite(new THREE.SpriteMaterial({map:glow(),color:0xffd9a0,blending:THREE.AdditiveBlending,depthWrite:false}));core.scale.set(8,8,1);gal.add(core);gal.rotation.set(.9,0,.25);O.galaxy=put(gal,1,-1,18);
-// moon
-var moon=new THREE.Mesh(new THREE.SphereGeometry(3,40,28),new THREE.MeshLambertMaterial({map:tex('#a9a9ad',10,90)}));O.moon=put(moon,2,1,14);
-var halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glow(),color:0x7ca0ff,blending:THREE.AdditiveBlending,depthWrite:false,opacity:.35}));halo.scale.set(13,13,1);moon.add(halo);
-// planets: Mars + Saturn
-var pl=new THREE.Group(),mars=new THREE.Mesh(new THREE.SphereGeometry(2,36,24),new THREE.MeshLambertMaterial({map:tex('#b5532f',14,40)})),sat=new THREE.Mesh(new THREE.SphereGeometry(2.6,36,24),new THREE.MeshLambertMaterial({map:tex('#cdb58a',26,4)}));
-var ring=new THREE.Mesh(new THREE.RingGeometry(3.6,6,80),new THREE.MeshBasicMaterial({color:0xd8c394,side:THREE.DoubleSide,transparent:true,opacity:.6}));ring.rotation.x=1.9;sat.add(ring);
-mars.position.set(-4,-1.5,6);sat.position.set(4,1.5,-4);sat.rotation.z=.4;pl.add(mars,sat);pl.userData={mars:mars,sat:sat};O.planets=put(pl,3,-1,16);
-// nebula
-var neb=new THREE.Group(),cols=[0xe4572e,0x9b8cff,0x5ee1ff,0xff6b9a];
-for(var i=0;i<(mob?9:16);i++){var s=new THREE.Sprite(new THREE.SpriteMaterial({map:glow(),color:cols[i%4],transparent:true,opacity:.32,blending:THREE.AdditiveBlending,depthWrite:false}));var z=14+Math.random()*16;s.scale.set(z,z,1);s.position.set((Math.random()-.5)*16,(Math.random()-.5)*9,(Math.random()-.5)*12);neb.add(s)}
-neb.add(pts(500,function(i,p,c){p[i*3]=(Math.random()-.5)*18;p[i*3+1]=(Math.random()-.5)*10;p[i*3+2]=(Math.random()-.5)*12;c[i*3]=1;c[i*3+1]=.9;c[i*3+2]=1},.5));O.nebula=put(neb,4,1,18);
-// cosmic web
-var web=new THREE.Group(),N=mob?60:110,nd=[],lp=[];
-for(i=0;i<N;i++){var v=new THREE.Vector3((Math.random()-.5)*2,(Math.random()-.5)*2,(Math.random()-.5)*2).normalize().multiplyScalar(Math.random()*11);nd.push(v)}
-for(i=0;i<N;i++)for(var j=i+1;j<N;j++)if(nd[i].distanceTo(nd[j])<4.6)lp.push(nd[i].x,nd[i].y,nd[i].z,nd[j].x,nd[j].y,nd[j].z);
-var lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(lp,3));
-web.add(new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x5ee1ff,transparent:true,opacity:.28,blending:THREE.AdditiveBlending})));
-web.add(pts(N,function(i,p,c){p[i*3]=nd[i].x;p[i*3+1]=nd[i].y;p[i*3+2]=nd[i].z;c[i*3]=1;c[i*3+1]=.85;c[i*3+2]=.6},1.6));O.web=put(web,5,-1,15);
-O.stars=stars;
-// camera spline, scroll + mouse
-var curve=new THREE.CatmullRomCurve3(K.map(function(a){return new THREE.Vector3(a[0],a[1],a[2])})),cur=0,tgt=0,mx=0,my=0,smx=0,smy=0,hov={},look=new THREE.Vector3(),pos=new THREE.Vector3();
-addEventListener('pointermove',function(e){mx=e.clientX/innerWidth*2-1;my=e.clientY/innerHeight*2-1});
-document.querySelectorAll('.card').forEach(function(c){var k=c.dataset.o;c.addEventListener('pointerenter',function(){hov[k]=1});c.addEventListener('pointerleave',function(){hov[k]=0})});
-var links=[].slice.call(document.querySelectorAll('nav a'));
-function onScroll(){tgt=prog();bar.style.width=tgt*100+'%';hint.style.opacity=scrollY>40?0:1;var id='';document.querySelectorAll('section').forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.5)id=s.id});links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+id)})}
-addEventListener('scroll',onScroll,{passive:true});onScroll();cur=tgt;
-addEventListener('resize',function(){cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
-var clock=new THREE.Clock(),raf=0,paused=false;
-function frame(){raf=0;if(paused)return;var dt=clock.getDelta(),t=clock.elapsedTime;cur+=(tgt-cur)*(rm?1:.06);smx+=(mx-smx)*.05;smy+=(my-smy)*.05;
-curve.getPointAt(Math.min(cur,1),pos);cam.position.set(pos.x-smx*1.6,pos.y+smy*1,pos.z);
-look.set(pos.x+smx*3,pos.y-smy*2,pos.z-10);cam.lookAt(look);
-if(!rm){gal.rotation.y+=dt*.06;moon.rotation.y+=dt*.1;mars.rotation.y+=dt*.2;sat.rotation.y+=dt*.15;neb.rotation.y+=dt*.02;web.rotation.y+=dt*.05;stars.rotation.z=Math.sin(t*.05)*.01}
-if(!mob)for(var k in O){var h=hov[k]?1.22:1,o=O[k];o.scale.x+=(h-o.scale.x)*.08;o.scale.y=o.scale.z=o.scale.x}
-R.render(S,cam);raf=requestAnimationFrame(frame)}
-function setPause(p){paused=p;if(p){if(raf){cancelAnimationFrame(raf);raf=0}}else if(!raf&&!document.hidden){clock.getDelta();raf=requestAnimationFrame(frame)}}
-window.cosmosPause=setPause;
-addEventListener('visibilitychange',function(){setPause(document.hidden||window.__atlasOpen===true)});
-raf=requestAnimationFrame(frame);
-})();
-</script>
-<script>
-(function(){var v=document.getElementById('atlasView'),f=document.getElementById('atlasFrame'),c=document.getElementById('atlasClose'),opener=null,bg=document.querySelectorAll('.skip,header,main,.hint,footer');
-function setBg(x){bg.forEach(function(e){if(x)e.setAttribute('inert','');else e.removeAttribute('inert')})}
-function open(e){if(e)e.preventDefault();opener=(e&&e.currentTarget)||document.activeElement;
-var hash=e&&e.currentTarget&&e.currentTarget.dataset.hash?e.currentTarget.dataset.hash:'';
-var src='atlas.html?v=7'+(hash?'#'+hash:'');
-if(!f.getAttribute('src')||f.getAttribute('src').split('?')[0]!=='atlas.html')f.src=src;
-else if(hash)try{f.contentWindow.location.hash='#'+hash}catch(ex){}
-v.classList.add('on');v.setAttribute('aria-hidden','false');setBg(true);document.body.style.overflow='hidden';window.__atlasOpen=true;if(window.cosmosPause)window.cosmosPause(true);c.focus()}
-function close(){if(!v.classList.contains('on'))return;v.classList.remove('on');v.setAttribute('aria-hidden','true');setBg(false);document.body.style.overflow='';f.removeAttribute('src');window.__atlasOpen=false;if(window.cosmosPause)window.cosmosPause(document.hidden);if(opener&&opener.focus)opener.focus()}
-document.querySelectorAll('[data-atlas]').forEach(function(a){a.addEventListener('click',open)});
-c.addEventListener('click',close);
-addEventListener('keydown',function(e){if(e.key==='Escape')close()});
-v.addEventListener('keydown',function(e){if(e.key==='Tab'&&e.shiftKey&&document.activeElement===c){e.preventDefault();f.focus()}});
-document.addEventListener('focusin',function(e){if(v.classList.contains('on')&&!v.contains(e.target))c.focus()});
-addEventListener('message',function(e){if(e.source!==f.contentWindow||e.origin!==location.origin)return;if(e.data&&e.data.type==='close-atlas')close()});
-})();
-</script>
-<script>
-/* ===== SKY THIS WEEK: client-side Moon phase and naked-eye planets ===== */
-(function(){
-  'use strict';
-  try {
-    var now = new Date();
-    var jd = now.getTime() / 86400000 + 2440587.5;
 
-    /* ---- Moon phase (using standard lunar algorithm) ---- */
-    var T = (jd - 2451545.0) / 36525;
-    // Mean elongation, anomaly, argument of latitude (simplified)
-    var D = (297.85036 + 445267.111480*T - 0.0019142*T*T) * Math.PI/180;
-    var M = (357.52772 + 35999.050340*T - 0.0001603*T*T) * Math.PI/180;
-    var Mp = (134.96298 + 477198.867398*T + 0.0086972*T*T) * Math.PI/180;
-    // Phase angle (0 = new, 0.5 = full)
-    var phase = (1 - Math.cos(D - Mp + M)) / 2; // approx illumination fraction
-    var illum = Math.round(phase * 100);
+  <!-- WebGL canvas -->
+  <canvas id="bh" aria-hidden="true"></canvas>
 
-    // More accurate: use mean synodic month from a known new moon
-    // Known new moon: 2000 Jan 6, JD 2451549.5 (approx)
-    var syno = 29.530588853;
-    var base = 2451549.5;
-    var cycles = (jd - base) / syno;
-    var frac = cycles - Math.floor(cycles); // 0=new, 0.5=full
-    var phaseFrac = frac;
+  <!-- CSS vignette -->
+  <div id="vignette" aria-hidden="true"></div>
 
-    // Phase name
-    var phaseName;
-    if (phaseFrac < 0.03 || phaseFrac > 0.97) phaseName = 'New Moon';
-    else if (phaseFrac < 0.23) phaseName = 'Waxing Crescent';
-    else if (phaseFrac < 0.27) phaseName = 'First Quarter';
-    else if (phaseFrac < 0.48) phaseName = 'Waxing Gibbous';
-    else if (phaseFrac < 0.52) phaseName = 'Full Moon';
-    else if (phaseFrac < 0.73) phaseName = 'Waning Gibbous';
-    else if (phaseFrac < 0.77) phaseName = 'Last Quarter';
-    else phaseName = 'Waning Crescent';
+  <!-- Top bar -->
+  <header id="topbar">
+    <a class="logo" href="index.html" aria-label="Cosmos Magazine home">✦&nbsp;COSMOS</a>
+    <nav aria-label="Main navigation">
+      <a href="index-classic.html">Classic&nbsp;view</a>
+      <a href="articles/galaxies-filaments.html">News</a>
+      <a href="articles/dark-adapt.html">Observing</a>
+      <a href="articles/life-on-mars.html">Exploration</a>
+      <a href="articles/nebulae.html">Learn</a>
+      <a class="atl" href="atlas.html?v=7" data-atlas>Cosmos&nbsp;Atlas</a>
+    </nav>
+    <div class="topbar-controls">
+      <button id="btn-quality" title="Cycle render quality">Quality: HIGH</button>
+      <button id="btn-interstellar" aria-pressed="false" title="Toggle balanced / physical lighting">Balanced&nbsp;light</button>
+      <button id="btn-panel" aria-controls="side-panel" aria-expanded="false">Sky &amp; News ✦</button>
+    </div>
+  </header>
 
-    // Illumination from phase fraction (0=new, 0.5=full → 0 to 1 to 0)
-    var illumPct = Math.round((1 - Math.abs(phaseFrac * 2 - 1)) * 100);
+  <!-- Visually hidden semantic nav for accessibility / SEO / no-JS -->
+  <nav class="sr-only" aria-label="All articles">
+    <h1>The Cosmos After Dark</h1>
+    <ul>
+      <li><a href="articles/galaxies-filaments.html">How galaxies grow filaments of hot gas — News</a></li>
+      <li><a href="articles/atmosphere-glows.html">Earth from orbit: why our atmosphere glows — News</a></li>
+      <li><a href="articles/solar-cycles.html">Solar cycles explained, from spots to storms — News</a></li>
+      <li><a href="articles/dark-adapt.html">Give your eyes 20 minutes to dark-adapt — Observing</a></li>
+      <li><a href="articles/moon-phase.html">Check the Moon phase before planning dark-sky sessions — Observing</a></li>
+      <li><a href="articles/life-on-mars.html">The long search for life on Mars — Exploration</a></li>
+      <li><a href="articles/gas-giants-ice-giants.html">Gas giants versus ice giants — Exploration</a></li>
+      <li><a href="articles/saturns-rings.html">Saturn's rings: young, thin and temporary? — Exploration</a></li>
+      <li><a href="articles/nebulae.html">Nebulae: nurseries and graveyards of stars — Learn</a></li>
+      <li><a href="articles/milky-way.html">Walking through the spiral arms — Learn</a></li>
+    </ul>
+    <p><a href="atlas.html?v=7">Cosmos Atlas — Interactive 3D Universe</a></p>
+  </nav>
 
-    // Next full and new moon dates
-    var daysToFull = ((0.5 - phaseFrac + 1) % 1) * syno;
-    var daysToNew = ((1.0 - phaseFrac) % 1) * syno;
-    function addDays(d, n){ var r=new Date(d); r.setDate(r.getDate()+Math.round(n)); return r; }
-    var nextFull = addDays(now, daysToFull);
-    var nextNew = addDays(now, daysToNew);
-    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    function fmt(d){ return d.getDate()+' '+months[d.getMonth()]; }
+  <!-- Hover card: shown near nodes at Level 1 -->
+  <div id="hover-card" class="glass-card" role="tooltip" aria-live="polite" hidden>
+    <span class="hc-cat"></span>
+    <h3></h3>
+    <p></p>
+    <div class="hc-links"></div>
+  </div>
 
-    /* ---- Planetary visibility (very approximate) ---- */
-    // Use simplified heliocentric longitudes to estimate evening/morning visibility
-    // Planet elongation from Sun: > ~18° = potentially visible
-    // Rough ecliptic longitude of Sun (degrees) from JD
-    var Lsun = (280.46646 + 36000.76983 * T) % 360;
-    if (Lsun < 0) Lsun += 360;
+  <!-- Thread card: shown when clicking a node at Level 2 -->
+  <div id="thread-card" class="glass-card" role="dialog" aria-modal="false" aria-label="Article preview" hidden>
+    <button id="thread-card-close" aria-label="Close article preview">✕</button>
+    <img id="thread-img" src="" alt="" loading="lazy" decoding="async" width="360" height="160">
+    <div class="tc-body">
+      <span class="hc-cat" id="tc-cat"></span>
+      <h3></h3>
+      <p></p>
+      <div id="tc-links"></div>
+    </div>
+  </div>
 
-    // Keplerian mean longitude (very rough, good enough for "is it visible?")
-    // [planet, mean daily motion deg, L0, visibility threshold deg elongation]
-    var planets = [
-      {name:'Mercury', L0:252.25, n:4.0923, minElong:18},
-      {name:'Venus',   L0:181.98, n:1.6021, minElong:25},
-      {name:'Mars',    L0:-4.553, n:0.5240, minElong:30},
-      {name:'Jupiter', L0:34.396, n:0.0831, minElong:20},
-      {name:'Saturn',  L0:49.954, n:0.0334, minElong:20}
-    ];
+  <!-- Zoom level indicator -->
+  <nav id="zoom-ind" aria-label="Zoom level">
+    <button data-level="0" class="active" aria-pressed="true">◎ Ring</button>
+    <span aria-hidden="true">·</span>
+    <button data-level="1" aria-pressed="false">⟡ Threads</button>
+    <span aria-hidden="true">·</span>
+    <button data-level="2" aria-pressed="false">● Horizon</button>
+  </nav>
 
-    var dJ = jd - 2451545.0; // days from J2000
-    var visible = [], dawn = [];
-    planets.forEach(function(pl){
-      var L = (pl.L0 + pl.n * dJ) % 360;
-      if (L < 0) L += 360;
-      var elong = L - Lsun;
-      while (elong > 180) elong -= 360;
-      while (elong < -180) elong += 360;
-      var absEl = Math.abs(elong);
-      if (absEl >= pl.minElong) {
-        if (elong > 0) visible.push(pl.name + ' (east, evening)');
-        else dawn.push(pl.name + ' (west, morning)');
-      }
-    });
+  <!-- Sgr A* / M87* switcher -->
+  <div id="bh-switch" role="group" aria-label="Choose black hole">
+    <button id="btn-sgrastar" class="active" aria-pressed="true">Sgr&nbsp;A*</button>
+    <button id="btn-m87" aria-pressed="false">M87*</button>
+  </div>
 
-    var allPlanets = visible.concat(dawn);
+  <!-- Side panel: Sky This Week + Newsletter -->
+  <aside id="side-panel" role="complementary" aria-label="Sky this week and newsletter" hidden>
+    <button id="btn-panel-close" aria-label="Close panel">✕</button>
+    <h2>Sky This Week</h2>
+    <div id="sky-info" aria-live="polite"><p>Calculating tonight's sky…</p></div>
+    <p id="sky-note">Calculated for your device's date; visibility depends on your location and weather.</p>
+    <hr>
+    <h2>Newsletter</h2>
+    <p>The night sky, in your inbox.</p>
+    <div class="nl-form">
+      <form id="nl-form" novalidate>
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label for="nl-email">Your email address</label>
+        <input type="email" id="nl-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        <p class="nl-consent">By subscribing you agree to receive occasional astronomy updates. No spam; unsubscribe any time.</p>
+        <button type="submit" class="nl-submit">Subscribe</button>
+      </form>
+      <div id="nl-msg" role="status" aria-live="polite"></div>
+    </div>
+    <hr>
+    <h2>More</h2>
+    <ul>
+      <li><a href="index-classic.html">Classic magazine view</a></li>
+      <li><a href="atlas.html?v=7" data-atlas>Open Cosmos Atlas</a></li>
+    </ul>
+  </aside>
 
-    /* ---- Build the HTML ---- */
-    var html = '<p class="l"><strong>' + phaseName + '</strong> · ' + illumPct + '% illuminated</p>';
-    html += '<p>Next full Moon: <strong>' + fmt(nextFull) + '</strong> · Next new Moon: <strong>' + fmt(nextNew) + '</strong></p>';
-    if (allPlanets.length > 0) {
-      html += '<p>Naked-eye planets well placed: <strong>' + allPlanets.join(', ') + '</strong></p>';
-    } else {
-      html += '<p>No bright planets are well placed in this part of the sky tonight; check again in a few days.</p>';
-    }
+  <!-- Dive overlay (Level 3 animation) -->
+  <div id="dive-overlay" role="alert" aria-live="assertive" hidden>
+    <div class="dive-text">
+      <p>Crossing the event horizon…</p>
+      <p>Entering <strong id="dive-target">Sagittarius A*</strong></p>
+    </div>
+  </div>
 
-    document.getElementById('sky-info').innerHTML = html;
-  } catch(e) {
-    document.getElementById('sky-info').innerHTML = '<p class="l">Tonight: look south after dusk for the brightest planets. Check a star chart for your location.</p>';
-  }
-})();
-</script>
-<script>
-/* ===== NEWSLETTER SIGNUP ===== */
-(function(){
-  // Paste your Formspree or Buttondown URL here.
-  // Formspree: https://formspree.io/f/XXXXXXXX
-  // Buttondown: https://buttondown.email/api/subscribers
-  var NEWSLETTER_ACTION = 'PASTE_YOUR_FORM_URL_HERE';
+  <!-- Atlas modal (iframe overlay) -->
+  <div id="atlasView" role="dialog" aria-modal="true" aria-label="Cosmos Atlas — interactive 3D universe" aria-hidden="true">
+    <div id="atlasBar">
+      <button id="atlasClose">← Back to the black hole</button>
+      <span>COSMOS <b>ATLAS</b></span>
+    </div>
+    <iframe id="atlasFrame" title="Cosmos Atlas" allow="fullscreen"></iframe>
+  </div>
 
-  var form = document.getElementById('nl-form');
-  var msg = document.getElementById('nl-msg');
-  if (!form) return;
+  <!-- noscript fallback -->
+  <noscript>
+    <div style="position:fixed;inset:0;z-index:100;background:#03040a;color:#e9edff;display:grid;place-content:center;text-align:center;padding:24px;font-family:sans-serif">
+      <h1 style="font-family:Georgia,serif;margin:0 0 12px">Cosmos Magazine</h1>
+      <p style="color:#9aa6c8;margin:0 0 20px">This immersive view requires JavaScript.</p>
+      <a href="index-classic.html" style="color:#5ee1ff;font-size:14px">View the Classic Magazine →</a>
+    </div>
+  </noscript>
 
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    msg.style.display = 'none';
-    msg.className = '';
+  <!-- Three.js r128 (same CDN as atlas.html) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Black hole WebGL scene -->
+  <script src="js/home-bh.js?v=8"></script>
 
-    // Check if action is configured
-    if (!NEWSLETTER_ACTION || NEWSLETTER_ACTION === 'PASTE_YOUR_FORM_URL_HERE') {
-      msg.textContent = 'Signup is not connected yet. Check back soon!';
-      msg.className = 'err';
-      msg.style.display = 'block';
-      return;
-    }
+  <!-- Sky This Week (identical to index-classic.html) -->
+  <script>
+  /* ===== SKY THIS WEEK: client-side Moon phase and naked-eye planets ===== */
+  (function(){
+    'use strict';
+    try {
+      var now = new Date();
+      var jd = now.getTime() / 86400000 + 2440587.5;
 
-    // Honeypot check
-    var hp = form.querySelector('input[name="_gotcha"]');
-    if (hp && hp.value) return; // bot detected
+      var T = (jd - 2451545.0) / 36525;
+      var D = (297.85036 + 445267.111480*T - 0.0019142*T*T) * Math.PI/180;
+      var M = (357.52772 + 35999.050340*T - 0.0001603*T*T) * Math.PI/180;
+      var Mp = (134.96298 + 477198.867398*T + 0.0086972*T*T) * Math.PI/180;
 
-    var email = form.querySelector('input[type=email]').value.trim();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      msg.textContent = 'Please enter a valid email address.';
-      msg.className = 'err';
-      msg.style.display = 'block';
-      return;
-    }
+      var syno = 29.530588853;
+      var base = 2451549.5;
+      var cycles = (jd - base) / syno;
+      var phaseFrac = cycles - Math.floor(cycles);
 
-    var btn = form.querySelector('.nl-submit');
-    btn.disabled = true;
-    btn.textContent = 'Subscribing…';
+      var phaseName;
+      if (phaseFrac < 0.03 || phaseFrac > 0.97) phaseName = 'New Moon';
+      else if (phaseFrac < 0.23) phaseName = 'Waxing Crescent';
+      else if (phaseFrac < 0.27) phaseName = 'First Quarter';
+      else if (phaseFrac < 0.48) phaseName = 'Waxing Gibbous';
+      else if (phaseFrac < 0.52) phaseName = 'Full Moon';
+      else if (phaseFrac < 0.73) phaseName = 'Waning Gibbous';
+      else if (phaseFrac < 0.77) phaseName = 'Last Quarter';
+      else phaseName = 'Waning Crescent';
 
-    var body = new FormData();
-    body.append('email', email);
+      var illumPct = Math.round((1 - Math.abs(phaseFrac * 2 - 1)) * 100);
 
-    fetch(NEWSLETTER_ACTION, {
-      method: 'POST',
-      body: body,
-      headers: {Accept: 'application/json'}
-    }).then(function(r){
-      if (r.ok) {
-        msg.textContent = '✓ You\'re subscribed! Welcome to the night sky.';
-        msg.className = 'ok';
-        form.reset();
+      var daysToFull = ((0.5 - phaseFrac + 1) % 1) * syno;
+      var daysToNew  = ((1.0 - phaseFrac) % 1) * syno;
+      function addDays(d, n){ var r=new Date(d); r.setDate(r.getDate()+Math.round(n)); return r; }
+      var nextFull = addDays(now, daysToFull);
+      var nextNew  = addDays(now, daysToNew);
+      var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      function fmt(d){ return d.getDate()+' '+months[d.getMonth()]; }
+
+      var Lsun = (280.46646 + 36000.76983 * T) % 360;
+      if (Lsun < 0) Lsun += 360;
+
+      var planets = [
+        {name:'Mercury', L0:252.25, n:4.0923, minElong:18},
+        {name:'Venus',   L0:181.98, n:1.6021, minElong:25},
+        {name:'Mars',    L0:-4.553, n:0.5240, minElong:30},
+        {name:'Jupiter', L0:34.396, n:0.0831, minElong:20},
+        {name:'Saturn',  L0:49.954, n:0.0334, minElong:20}
+      ];
+
+      var dJ = jd - 2451545.0;
+      var visible = [], dawn = [];
+      planets.forEach(function(pl){
+        var L = (pl.L0 + pl.n * dJ) % 360;
+        if (L < 0) L += 360;
+        var elong = L - Lsun;
+        while (elong > 180) elong -= 360;
+        while (elong < -180) elong += 360;
+        if (Math.abs(elong) >= pl.minElong) {
+          if (elong > 0) visible.push(pl.name + ' (east, evening)');
+          else dawn.push(pl.name + ' (west, morning)');
+        }
+      });
+
+      var allPlanets = visible.concat(dawn);
+      var html = '<p><strong>' + phaseName + '</strong> · ' + illumPct + '% illuminated</p>';
+      html += '<p>Next full Moon: <strong>' + fmt(nextFull) + '</strong> · Next new Moon: <strong>' + fmt(nextNew) + '</strong></p>';
+      if (allPlanets.length > 0) {
+        html += '<p>Naked-eye planets well placed: <strong>' + allPlanets.join(', ') + '</strong></p>';
       } else {
-        return r.json().then(function(d){throw new Error(d.error||'Server error '+r.status)});
+        html += '<p>No bright planets are well placed tonight; check again in a few days.</p>';
       }
-    }).catch(function(err){
-      msg.textContent = 'Something went wrong: ' + (err.message||'Please try again.');
-      msg.className = 'err';
-      btn.disabled = false;
-      btn.textContent = 'Subscribe';
-    }).then(function(){
-      msg.style.display = 'block';
+      document.getElementById('sky-info').innerHTML = html;
+    } catch(e) {
+      document.getElementById('sky-info').innerHTML = '<p>Tonight: look south after dusk for the brightest planets.</p>';
+    }
+  })();
+  </script>
+
+  <!-- Newsletter (identical to index-classic.html) -->
+  <script>
+  /* ===== NEWSLETTER SIGNUP ===== */
+  (function(){
+    var NEWSLETTER_ACTION = 'PASTE_YOUR_FORM_URL_HERE';
+    var form = document.getElementById('nl-form');
+    var msg  = document.getElementById('nl-msg');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      msg.style.display = 'none';
+      msg.className = '';
+
+      if (!NEWSLETTER_ACTION || NEWSLETTER_ACTION === 'PASTE_YOUR_FORM_URL_HERE') {
+        msg.textContent = 'Signup is not connected yet. Check back soon!';
+        msg.className = 'err';
+        msg.style.display = 'block';
+        return;
+      }
+      var hp = form.querySelector('input[name="_gotcha"]');
+      if (hp && hp.value) return;
+
+      var email = form.querySelector('input[type=email]').value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.textContent = 'Please enter a valid email address.';
+        msg.className = 'err';
+        msg.style.display = 'block';
+        return;
+      }
+      var btn = form.querySelector('.nl-submit');
+      btn.disabled = true; btn.textContent = 'Subscribing…';
+
+      var body = new FormData();
+      body.append('email', email);
+      fetch(NEWSLETTER_ACTION, {method:'POST', body:body, headers:{Accept:'application/json'}})
+        .then(function(r){
+          if (r.ok) {
+            msg.textContent = '✓ You\'re subscribed! Welcome to the night sky.';
+            msg.className = 'ok'; form.reset();
+          } else { return r.json().then(function(d){throw new Error(d.error||'Server error '+r.status)}); }
+        }).catch(function(err){
+          msg.textContent = 'Something went wrong: ' + (err.message||'Please try again.');
+          msg.className = 'err'; btn.disabled = false; btn.textContent = 'Subscribe';
+        }).then(function(){ msg.style.display = 'block'; });
     });
-  });
-})();
-</script>
-</body></html>
+  })();
+  </script>
+
+  <!-- Atlas modal handler + data-atlas-obj delegation -->
+  <script>
+  (function(){
+    var v = document.getElementById('atlasView');
+    var f = document.getElementById('atlasFrame');
+    var c = document.getElementById('atlasClose');
+    var opener = null;
+
+    function openAtlas(hash) {
+      var src = 'atlas.html?v=7&ref=index.html' + (hash ? '#' + hash : '');
+      if (!f.getAttribute('src') || f.getAttribute('src').split('?')[0] !== 'atlas.html') {
+        f.src = src;
+      } else if (hash) {
+        try { f.contentWindow.location.hash = '#' + hash; } catch(x) {}
+      }
+      v.classList.add('on');
+      v.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAtlas() {
+      v.classList.remove('on');
+      v.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      f.removeAttribute('src');
+      if (opener && opener.focus) opener.focus();
+    }
+
+    // [data-atlas] links open the atlas modal
+    document.querySelectorAll('[data-atlas]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        opener = e.currentTarget;
+        openAtlas('');
+      });
+    });
+
+    // [data-atlas-obj] links (inside hover/thread cards) open atlas to a specific object
+    document.addEventListener('click', function(e){
+      var tgt = e.target.closest('[data-atlas-obj]');
+      if (!tgt) return;
+      e.preventDefault();
+      opener = tgt;
+      openAtlas(tgt.getAttribute('data-atlas-obj'));
+    });
+
+    c.addEventListener('click', closeAtlas);
+    addEventListener('keydown', function(e){ if (e.key === 'Escape') closeAtlas(); });
+    v.addEventListener('keydown', function(e){
+      if (e.key === 'Tab' && e.shiftKey && document.activeElement === c) {
+        e.preventDefault(); f.focus();
+      }
+    });
+    document.addEventListener('focusin', function(e){
+      if (v.classList.contains('on') && !v.contains(e.target)) c.focus();
+    });
+    addEventListener('message', function(e){
+      if (e.source !== f.contentWindow || e.origin !== location.origin) return;
+      if (e.data && e.data.type === 'close-atlas') closeAtlas();
+    });
+  })();
+  </script>
+
+</body>
+</html>
