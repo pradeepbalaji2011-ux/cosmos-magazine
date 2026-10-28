@@ -76,9 +76,9 @@ a:focus-visible,button:focus-visible,.btn:focus-visible,#atlasFrame:focus-visibl
 <noscript><p style="position:relative;z-index:30;margin:0;padding:14px 20px;background:#1a1440;color:#e9edff;text-align:center">This site uses JavaScript for its 3D journey and the Cosmos Atlas. The articles below still work without it.</p></noscript>
 <canvas id="gl" aria-hidden="true"></canvas><div id="bar"></div>
 <header><a href="index.html" class="btn-bh">← Black Hole</a><a class="logo" href="#top">✦ COSMOS</a>
-<nav aria-label="Main"><a href="#news">News</a><a href="#observing">Observing</a><a href="#missions">Exploration</a><a href="#learn">Learn</a><a class="atl" href="atlas.html?v=7" data-atlas>Cosmos Atlas</a></nav></header>
+<nav aria-label="Main"><a href="#news">News</a><a href="#observing">Observing</a><a href="#missions">Exploration</a><a href="#learn">Learn</a><a class="atl" href="atlas.html?ref=magazine.html#solar-system" data-atlas>Cosmos Atlas</a></nav></header>
 <main id="top">
-<section id="home"><div class="card" data-o="stars"><p class="eye">A space for deeper looking and bolder observing</p><h1>The Cosmos After Dark</h1><p class="l">Astronomy news, observing guides and a live 3D map of the universe, for people who look up.</p><a class="btn" href="atlas.html?v=7" data-atlas>Open the Cosmos Atlas</a><a class="btn g" href="#news">Read the latest</a></div></section>
+<section id="home"><div class="card" data-o="stars"><p class="eye">A space for deeper looking and bolder observing</p><h1>The Cosmos After Dark</h1><p class="l">Astronomy news, observing guides and a live 3D map of the universe, for people who look up.</p><a class="btn" href="atlas.html?ref=magazine.html#solar-system" data-atlas>Open the Cosmos Atlas</a><a class="btn g" href="#news">Read the latest</a></div></section>
 <section id="news" class="r"><div class="card" data-o="galaxy"><p class="eye">Latest news</p><h2>Galaxies &amp; skies</h2><ul>
 <li><small>Galaxies</small><a href="articles/galaxies-filaments.html">How galaxies grow filaments of hot gas</a></li>
 <li><small>Earth</small><a href="articles/atmosphere-glows.html">Earth from orbit: why our atmosphere glows</a></li>
@@ -113,7 +113,7 @@ a:focus-visible,button:focus-visible,.btn:focus-visible,#atlasFrame:focus-visibl
   </div>
 </li>
 </ul></div></section>
-<section id="atlas" class="r"><div class="card" data-o="web"><p class="eye">Cosmos Atlas</p><h2>Zoom out to the cosmic web</h2><p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p><a class="btn" href="atlas.html?v=7" data-atlas>Launch the Cosmos Atlas</a><a class="btn g" href="index.html">← Back to Black Hole</a></div></section>
+<section id="atlas" class="r"><div class="card" data-o="web"><p class="eye">Cosmos Atlas</p><h2>Zoom out to the cosmic web</h2><p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p><a class="btn" href="atlas.html?ref=magazine.html#solar-system" data-atlas>Launch the Cosmos Atlas</a><a class="btn g" href="index.html">← Back to Black Hole</a></div></section>
 </main>
 <div class="hint" id="hint">Scroll to travel ↓</div>
 <footer>© Cosmos Magazine · Fly through space with your scroll wheel. <a href="index.html" style="color:#ffb870;margin-left:8px;text-decoration:none">← Return to Black Hole</a></footer>
@@ -192,7 +192,7 @@ raf=requestAnimationFrame(frame);
 function setBg(x){bg.forEach(function(e){if(x)e.setAttribute('inert','');else e.removeAttribute('inert')})}
 function open(e){if(e)e.preventDefault();opener=(e&&e.currentTarget)||document.activeElement;
 var hash=e&&e.currentTarget&&e.currentTarget.dataset.hash?e.currentTarget.dataset.hash:'';
-var src='atlas.html?v=7'+(hash?'#'+hash:'');
+var src='atlas.html?ref=magazine.html' + (hash ? '#' + hash : '#solar-system')+(hash?'#'+hash:'');
 if(!f.getAttribute('src')||f.getAttribute('src').split('?')[0]!=='atlas.html')f.src=src;
 else if(hash)try{f.contentWindow.location.hash='#'+hash}catch(ex){}
 v.classList.add('on');v.setAttribute('aria-hidden','false');setBg(true);document.body.style.overflow='hidden';window.__atlasOpen=true;if(window.cosmosPause)window.cosmosPause(true);c.focus()}

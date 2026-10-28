@@ -60,7 +60,7 @@
       <a href="articles/dark-adapt.html">Observing</a>
       <a href="articles/life-on-mars.html">Exploration</a>
       <a href="articles/nebulae.html">Learn</a>
-      <a href="atlas.html?v=8#solar-system#solar-system" id="atlas-link">Atlas</a>
+      <a href="atlas.html?ref=index.html#solar-system" id="atlas-link">Atlas</a>
     </nav>
     <div id="topbar-right">
       <button id="btn-quality" title="Cycle render quality">Quality: HIGH</button>
@@ -101,7 +101,7 @@
       <li><a href="articles/nebulae.html">Nebulae: nurseries and graveyards of stars — Learn</a></li>
       <li><a href="articles/milky-way.html">Walking through the spiral arms — Learn</a></li>
     </ul>
-    <p><a href="atlas.html?v=7">Cosmos Atlas — Interactive 3D Universe</a></p>
+    <p><a href="atlas.html?ref=index.html#solar-system">Cosmos Atlas — Interactive 3D Universe</a></p>
   </nav>
 
   <!-- Atlas modal overlay -->
@@ -136,7 +136,7 @@
     var c = document.getElementById('atlasClose');
 
     function openAtlas(hash) {
-      f.src = 'atlas.html?v=7&ref=index.html' + (hash ? '#' + hash : '');
+      f.src = 'atlas.html?ref=index.html#solar-system' + (hash ? '#' + hash : '');
       v.classList.add('on');
       v.setAttribute('aria-hidden', 'false');
     }

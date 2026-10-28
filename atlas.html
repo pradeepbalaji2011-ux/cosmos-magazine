@@ -1470,28 +1470,31 @@ dsoFrame(now,dt);hud(now);layers(dt);d4(now,dt);renderer.render(scene,camera)}
 crumb();renderList("");bar(100);
 window.__cosmosReady=true;
 function applyHash(){
-  const h=(location.hash||'').slice(1);
-  if(!h || h==='solar-system' || h==='solar' || h==='home'){
-    revert4K(); sel=null; selD=null; cam.follow=null; cam.tgt.set(0,0,0); cam.r=75; cam.tr=75; cam.th=0.6; cam.ph=1.18; ring.visible=false; closePanel(); crumb();
+  const raw = (location.hash || '').replace(/^#+/, '').trim();
+  // Default directly to our Solar System unless a specific body is requested
+  if(!raw || raw === 'solar-system' || raw === 'solar' || raw === 'home' || raw === 'sun'){
+    revert4K(); sel=null; selD=null; selS=null; cam.follow=null;
+    cam.tgt.set(0,0,0); cam.r=75; cam.tr=75; cam.th=0.6; cam.ph=1.18;
+    ring.visible=false; closePanel(); crumb();
     return;
   }
-  if(byId[h])select(h);
-  else if(DSOid[h])selDSO(DSOid[h]);
-  else if(h==='catalog'||h==='side'||h==='search')setSide(false);
-  else if(h==='learn')hub();
-  else if(h.startsWith('star-')){
-    const sn=h.slice(5).replace(/-/g,' ');
-    const sx=NAMED.find(s=>s.n.toLowerCase()===sn)||NAMED.find(s=>starSlug(s.n)===h.slice(5));
-    if(sx)selStar(sx);
+  if(byId[raw]) select(raw);
+  else if(DSOid[raw]) selDSO(DSOid[raw]);
+  else if(raw === 'catalog' || raw === 'side' || raw === 'search') setSide(false);
+  else if(raw === 'learn') hub();
+  else if(raw.startsWith('star-')){
+    const sn = raw.slice(5).replace(/-/g, ' ');
+    const sx = NAMED.find(s => s.n.toLowerCase() === sn) || NAMED.find(s => starSlug(s.n) === raw.slice(5));
+    if(sx) selStar(sx);
   }
-  else if(h.startsWith('con-')){
-    const ct=h.slice(4).toLowerCase();
-    const cx=CON.find(c=>c.ab.toLowerCase()===ct||c.n.toLowerCase().replace(/\s+/g,'-')===ct);
-    if(cx)selCon(cx);
+  else if(raw.startsWith('con-')){
+    const ct = raw.slice(4).toLowerCase();
+    const cx = CON.find(c => c.ab.toLowerCase() === ct || c.n.toLowerCase().replace(/\s+/g, '-') === ct);
+    if(cx) selCon(cx);
   }
   else{
-    const cx=CON.find(c=>c.ab.toLowerCase()===h.toLowerCase());
-    if(cx)selCon(cx);
+    const cx = CON.find(c => c.ab.toLowerCase() === raw.toLowerCase());
+    if(cx) selCon(cx);
   }
 }
 applyHash();

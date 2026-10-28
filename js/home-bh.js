@@ -350,7 +350,6 @@
     isPulling = true;
     bhMesh.visible = true;
     if (strandsGroup) strandsGroup.visible = false;
-    var targetId = currentBH === 'm87-star' ? 'm87-star' : 'sgr-a-star';
 
     if (window.gsap) {
       gsap.killTweensOf(camPos);
@@ -363,11 +362,11 @@
         value: 1.0,
         duration: 0.75, delay: 0.1, ease: 'power2.in',
         onComplete: function () {
-          window.location.href = 'atlas.html?v=8&ref=index.html#solar-system' + targetId;
+          window.location.href = 'atlas.html?ref=index.html#solar-system';
         }
       });
     } else {
-      window.location.href = 'atlas.html?v=8&ref=index.html#solar-system' + targetId;
+      window.location.href = 'atlas.html?ref=index.html#solar-system';
     }
   }
 
@@ -630,29 +629,37 @@
   });
 
   function onCanvasClick(e) {
-    if (STATE === 2) return;
+    if (STATE === 2 || isPulling) return;
 
     if (STATE === 0) {
       var cx = (e.clientX - W / 2) / W;
       var cy = (e.clientY - H / 2) / H;
       var dist = Math.sqrt(cx * cx + (cy * 1.35) * (cy * 1.35));
       if (dist < 0.17) {
-        goToState(2); // Shadow click -> Horizon dive into Atlas
-      } else {
-        triggerPullToMagazine(); // Disk click -> Open separate Magazine
+        goToState(2); // Center shadow click -> Dive into Cosmos Atlas
       }
+      // Clicking anywhere else on the black hole does NOT enter the magazine.
+      // Only the dedicated "Enter Magazine →" button opens the magazine!
       return;
-    }
-
-    if (STATE === 1) {
-      triggerPullToMagazine();
     }
   }
 
-  var ctaDisk   = document.querySelector('.cta-disk');
+  var ctaDisk = document.querySelector('.cta-disk');
   var ctaShadow = document.querySelector('.cta-shadow');
-  if (ctaDisk)   ctaDisk.addEventListener('click',   function (e) { e.preventDefault(); triggerPullToMagazine(); });
-  if (ctaShadow) ctaShadow.addEventListener('click', function () { goToState(2); });
+  if (ctaDisk) {
+    ctaDisk.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      triggerPullToMagazine();
+    });
+  }
+  if (ctaShadow) {
+    ctaShadow.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      goToState(2);
+    });
+  }
 
   var magBackBtn = document.getElementById('mag-back');
   if (magBackBtn) magBackBtn.addEventListener('click', function () { goToState(0); });
@@ -679,11 +686,7 @@
 
   canvas.addEventListener('touchend', function (e) {
     var dy = e.changedTouches[0].clientY - touchY0;
-    if (Math.abs(dy) > 50) {
-      if (dy < 0 && STATE === 0) {
-        triggerPullToMagazine();
-      }
-    } else {
+    if (Math.abs(dy) < 15 && e.changedTouches.length > 0) {
       onCanvasClick({ clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY });
     }
   }, { passive: true });
