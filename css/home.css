@@ -806,3 +806,19 @@ button:focus-visible {
   }
   #loading-ring { animation: none; }
 }
+
+
+.state-link {
+  color: rgba(232, 223, 200, 0.6);
+  text-decoration: none;
+  font: 11px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color var(--trans), background var(--trans);
+}
+.state-link:hover {
+  color: var(--c-accent);
+  background: rgba(200,169,110,0.1);
+}

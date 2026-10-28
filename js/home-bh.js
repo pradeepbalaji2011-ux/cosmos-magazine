@@ -338,28 +338,21 @@
   }
 
   function goToState(n) {
+    if (n === 1) {
+      window.location.href = 'magazine.html';
+      return;
+    }
     if (n === STATE && n !== 0) return;
     STATE = n;
     updateStateLabel();
 
-    var magView = document.getElementById('magazine-view');
-
     if (n === 0) {
       showHomeCTA(true);
-      if (magView) magView.classList.remove('open');
       bhMesh.visible = true;
       bhUniforms.uDimness.value = 0.0;
       try { history.pushState({ s: 0 }, '', '#home'); } catch (e) {}
-    } else if (n === 1) {
-      showHomeCTA(false);
-      if (magView) {
-        magView.classList.add('open');
-        magView.scrollTop = 0;
-      }
-      try { history.pushState({ s: 1 }, '', '#magazine'); } catch (e) {}
     } else if (n === 2) {
       showHomeCTA(false);
-      if (magView) magView.classList.remove('open');
       triggerDive();
       try { history.pushState({ s: 2 }, '', '#horizon'); } catch (e) {}
     }
@@ -655,19 +648,15 @@
       var cy = (e.clientY - H / 2) / H;
       var dist = Math.sqrt(cx * cx + (cy * 1.35) * (cy * 1.35));
       if (dist < 0.17) {
-        goToState(2); // Shadow click -> Horizon dive
+        goToState(2); // Shadow click -> Horizon dive into Atlas
       } else {
-        goToState(1); // Disk click -> Enter Magazine
+        window.location.href = 'magazine.html'; // Disk click -> Open separate Magazine
       }
       return;
     }
 
     if (STATE === 1) {
-      if (hoveredStrand) {
-        openInfoPanel(hoveredStrand.userData.art);
-      } else {
-        goToState(0);
-      }
+      window.location.href = 'magazine.html';
     }
   }
 
@@ -688,13 +677,11 @@
   });
 
   window.addEventListener('wheel', function (e) {
-    e.preventDefault();
-    var now = Date.now();
-    if (now - lastScrollTime < 650) return;
-    lastScrollTime = now;
-    if (e.deltaY > 0 && STATE < 1) goToState(STATE + 1);
-    else if (e.deltaY < 0 && STATE > 0) goToState(STATE - 1);
-  }, { passive: false });
+    // Passive wheel listener - never prevents default scrolling
+    if (e.deltaY > 80 && STATE === 0) {
+      // Optional subtle hint or smooth transition
+    }
+  }, { passive: true });
 
   var touchY0 = 0;
   canvas.addEventListener('touchstart', function (e) {
@@ -703,9 +690,10 @@
 
   canvas.addEventListener('touchend', function (e) {
     var dy = e.changedTouches[0].clientY - touchY0;
-    if (Math.abs(dy) > 40) {
-      if (dy < 0 && STATE < 1) goToState(STATE + 1);
-      else if (dy > 0 && STATE > 0) goToState(STATE - 1);
+    if (Math.abs(dy) > 50) {
+      if (dy < 0 && STATE === 0) {
+        window.location.href = 'magazine.html';
+      }
     } else {
       onCanvasClick({ clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY });
     }
