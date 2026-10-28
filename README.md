@@ -6,56 +6,54 @@ A high-performance, dark-themed astronomical web magazine and interactive 3D uni
 
 ---
 
-## 🌑 Immersive Black Hole Home Page
+## 🌑 Cinematic Gargantua Black Hole Home Page
 
 `index.html` is a full-screen, cinematic WebGL experience powered by a **ray-marched Schwarzschild black hole shader** (Three.js r128). The black hole fills the entire viewport and *is* the navigation.
 
-### What you see
-| Feature | Detail |
+### The Visuals (Gargantua & Light Strands)
+| View | Description |
 |---|---|
-| Shadow size | ~37–40 % of viewport height (camera z = 12, FOV 60°) |
-| Accretion disk | Turbulent Keplerian disk, orange-white inner → amber outer, relativistic Doppler beaming |
-| Gravitational lensing | Far side of disk bent over and under the shadow (Interstellar halo), thin photon ring glow |
-| Starfield | Procedural hash-based starfield bent by the geodesic ray march |
-| Post-processing | Inline bloom brightpass, chromatic aberration, film grain, CSS vignette |
-| Quality levels | **Low** (60 steps, ×0.5 pixel ratio) / **Med** (110, ×0.75, bloom on) / **High** (160, ×1.0, bloom on) — auto-detects mobile |
-| Reduced motion | Disk animation and camera drift freeze when `prefers-reduced-motion: reduce` is set |
+| **Home (Gargantua)** | Matches the iconic look of Gargantua (*Interstellar*). Large central shadow with a razor-sharp, blinding white photon ring. Accretion disk seen nearly edge-on (~83.5° inclination) extending past both screen edges, with the rear of the disk gravitationally lensed into a luminous arch over the shadow and a secondary arch under the bottom. Turbulent gas clouds, multi-frequency FBM wisps, differential Keplerian rotation, and dark dust lanes with copper/cream/rust color grading. |
+| **Light Strands** | Zooming into the disk fills the screen with hundreds of fine, straight vertical gold-yellow light filaments (dense center, softly fading at edges) crossed by faint horizontal threads. Interactive article strands have glowing tips and reveal titles on hover. |
+| **Horizon Dive** | Clicking the shadow initiates a 1-second gravitational dive (light bends, stars streak, fades to black) and transitions seamlessly into the Cosmos Atlas. |
 
-### Three zoom levels
-1. **Ring (default)** — Glowing nodes orbit the photon ring, one per article. Hover for a glass tooltip; click to read the article.
-2. **Threads** — Scroll in; nodes unfold into luminous 3D filaments coloured by category (News=gold, Observing=cyan, Exploration=orange, Learn=violet). Click a thread for a card with hero image.
-3. **Horizon** — Zoom to the event horizon; a dive animation fades to black and navigates to `atlas.html?v=7&ref=index.html#sgr-a-star` (or `#m87-star`).
+### 3-State Navigation
+1. **Home (State 0)** — Cinematic Gargantua in 3D motion with gentle camera drift. Interactive labels: *"Enter the light ↓"* and *"Dive into the shadow →"*.
+2. **Light Strands (State 1)** — One click/scroll tick rushes into the glowing disk, presenting article strands. Hovering a strand widens and illuminates it with a title tooltip. Clicking opens a frosted-glass Info Panel with category, title, summary, hero image, and direct links.
+3. **Horizon (State 2)** — One click on the black shadow plunges into the event horizon and opens `atlas.html?v=7&ref=index.html#sgr-a-star` (or `#m87-star`).
 
-### Controls
+### Controls & Navigation
 | Input | Action |
 |---|---|
-| Scroll wheel | Zoom in/out |
-| Pinch (touch) | Zoom in/out |
-| Hover / tap | Show article tooltip |
-| Click node | Read article (Level 1) or show card (Level 2) |
-| ◎ Ring · ⟡ Threads · ● Horizon | Jump between zoom levels |
-| Sgr A* / M87* | Switch black hole (changes disk inclination & colour temperature) |
-| Quality button | Cycle Low / Med / High |
-| Balanced light | Toggle physical Doppler beaming vs Interstellar-style balanced look |
-| Sky & News ✦ | Open side panel with live Moon phase, planetary visibility & newsletter |
-| Esc | Close cards / panel |
+| **Scroll wheel** | One tick jumps a full level (Home ↔ Light Strands) |
+| **Touch swipe** | Swipe up/down jumps between Home and Light Strands |
+| **Click on disk** | Enter Light Strands (State 1) |
+| **Click on shadow** | Dive into Black Hole / Open Cosmos Atlas (State 2) |
+| **Hover strand** | Glows and shows article title |
+| **Click strand** | Slides open the frosted-glass Info Panel |
+| **Home / Light / Horizon** | Jump directly using bottom pill navigation |
+| **Sgr A* / M87*** | Switch between black holes (adjusts disk inclination & Doppler balance) |
+| **Quality button** | Cycle Low / Med / High render resolution and ray steps |
+| **Esc / ← Back** | Close Info Panel / return to previous state |
+| **Browser Back** | Supported via HTML5 history pushState |
 
-### Adding a new article node
+### Adding an Article or Observation Strand
 Edit the `ARTICLES` array in `js/home-bh.js`:
-```js
-{ slug:'your-article', title:'Your Title',
-  cat:'News', catColor:'#ffb454',
-  summary:'One-sentence description.',
-  atlasId: null,        // or an Atlas object id, e.g. 'mars'
-  angle: 6.1 }          // radians, 0–2π, spread evenly around ring
+```javascript
+{
+  slug: 'your-article',
+  title: 'Your Article Title',
+  cat: 'News',           // 'News' (#c8a96e), 'Observing' (#a0c8d8), 'Exploration' (#c87050), 'Learn' (#9080c8)
+  catColor: '#c8a96e',
+  summary: 'A short one-sentence summary.',
+  atlasId: null          // Optional: matching Cosmos Atlas object id (e.g. 'mars', 'earth', 'orion-nebula')
+}
 ```
-Use a unique `angle` and add a matching `articles/your-article.html`.
 
-### Classic fallback
-`index-classic.html` is the original scrolling 3D magazine. `index.html` redirects there automatically if WebGL fails. A "Classic view" link is in the top bar, and a "✦ Immersive view" link is in the classic page header.
-
-### Atlas transition
-Zoom to the event horizon → 2.5-second dive animation → `atlas.html?v=7&ref=index.html#<black-hole-id>`. The Atlas shows a "← Back to the black hole" button when `ref=index.html` is present.
+### Fallbacks
+- **Classic View**: `index-classic.html` preserves the original scrolling 3D magazine.
+- **WebGL Failure**: Automatic silent redirect to `index-classic.html`.
+- **Accessibility**: Screen readers and search engines access the hidden semantic `<nav>` with full article hierarchy and one `<h1>`.
 
 ---
 
