@@ -32,10 +32,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--cy); outline-of
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 12px 24px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 20px 10px;
   background: rgba(3,4,10,.9);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .back-link {
   color: var(--dim);
@@ -43,6 +44,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--cy); outline-of
   font-size: 13px;
   letter-spacing: .06em;
   transition: color .2s;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 .back-link:hover { color: var(--tx); }
 .site-name {
@@ -151,7 +155,9 @@ p + p { margin-top: 0; }
 
 /* Atlas button */
 .atlas-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   margin: 8px 0 24px;
   padding: 11px 20px;
   background: transparent;
