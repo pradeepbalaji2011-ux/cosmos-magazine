@@ -1473,6 +1473,55 @@ const vis=showLab&&proj.z<1&&Math.abs(proj.x)<1.05&&Math.abs(proj.y)<1.05&&(b.id
 if(vis)b.lab.style.transform="translate("+((proj.x*.5+.5)*innerWidth+10)+"px,"+((-proj.y*.5+.5)*innerHeight-8)+"px)"});
 dsoFrame(now,dt);hud(now);layers(dt);d4(now,dt);renderer.render(scene,camera)}
 crumb();renderList("");bar(100);
-window.__cosmosReady=true;Promise.all([starsP,Promise.race([texP,new Promise(r=>setTimeout(r,5000))])]).then(()=>setTimeout(()=>{$("load").style.opacity=0;setTimeout(()=>$("load").remove(),1000);function applyHash(){const h=(location.hash||'').slice(1);if(!h)return;if(byId[h])select(h);else if(DSOid[h])selDSO(DSOid[h]);else if(h==='catalog'||h==='side'||h==='search')setSide(false);else if(h==='learn')hub();else if(h.startsWith('star-')){const sn=h.slice(5).replace(/-/g,' ');const sx=NAMED.find(s=>s.n.toLowerCase()===sn)||NAMED.find(s=>starSlug(s.n)===h.slice(5));if(sx)selStar(sx)}else if(h.startsWith('con-')){const ct=h.slice(4).toLowerCase();const cx=CON.find(c=>c.ab.toLowerCase()===ct||c.n.toLowerCase().replace(/\s+/g,'-')===ct);if(cx)selCon(cx)}else{const cx=CON.find(c=>c.ab.toLowerCase()===h.toLowerCase());if(cx)selCon(cx)}};applyHash();window.addEventListener('hashchange',applyHash);try{const refUrl=new URLSearchParams(location.search).get('ref');if(refUrl){const bk=document.createElement('a');bk.id='bref';bk.href=refUrl;bk.className='back-article-link';bk.textContent='← Article';bk.setAttribute('aria-label','Back to article');$('top').insertBefore(bk,$('top').firstChild)}}catch(e){}},starErr?2500:700));
+window.__cosmosReady=true;
+function applyHash(){
+  const h=(location.hash||'').slice(1);
+  if(!h)return;
+  if(byId[h])select(h);
+  else if(DSOid[h])selDSO(DSOid[h]);
+  else if(h==='catalog'||h==='side'||h==='search')setSide(false);
+  else if(h==='learn')hub();
+  else if(h.startsWith('star-')){
+    const sn=h.slice(5).replace(/-/g,' ');
+    const sx=NAMED.find(s=>s.n.toLowerCase()===sn)||NAMED.find(s=>starSlug(s.n)===h.slice(5));
+    if(sx)selStar(sx);
+  }
+  else if(h.startsWith('con-')){
+    const ct=h.slice(4).toLowerCase();
+    const cx=CON.find(c=>c.ab.toLowerCase()===ct||c.n.toLowerCase().replace(/\s+/g,'-')===ct);
+    if(cx)selCon(cx);
+  }
+  else{
+    const cx=CON.find(c=>c.ab.toLowerCase()===h.toLowerCase());
+    if(cx)selCon(cx);
+  }
+}
+applyHash();
+window.addEventListener('hashchange',applyHash);
+
+try{
+  const refUrl=new URLSearchParams(location.search).get('ref');
+  if(refUrl){
+    const bk=document.createElement('a');
+    bk.id='bref';
+    bk.href=refUrl;
+    bk.className='back-article-link';
+    bk.textContent=refUrl.includes('index')?'← Back to Black Hole':'← Article';
+    bk.setAttribute('aria-label','Back');
+    $('top').insertBefore(bk,$('top').firstChild);
+  }
+}catch(e){}
+
+// Instant loading: dismiss loading screen as soon as scene is rendered
+requestAnimationFrame(()=>{
+  requestAnimationFrame(()=>{
+    const l=$("load");
+    if(l){
+      l.style.transition="opacity 0.25s ease";
+      l.style.opacity=0;
+      setTimeout(()=>l.remove(),300);
+    }
+  });
+});
 requestAnimationFrame(t=>{last=t;frame(t)});
 </script></body></html>

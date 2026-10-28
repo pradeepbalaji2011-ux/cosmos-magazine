@@ -272,9 +272,61 @@
     bhUniforms.uCamPos.value.set(camPos.x, camPos.y, camPos.z);
   }
 
+  var isPulling = false;
+
+  function triggerPullToMagazine() {
+    if (isPulling) return;
+    isPulling = true;
+    document.body.classList.add('pulling');
+
+    var flash = document.getElementById('warp-flash');
+    if (flash) flash.classList.add('pull');
+
+    if (window.gsap) {
+      gsap.killTweensOf(camPos);
+      gsap.killTweensOf(bhUniforms.uCamPos.value);
+
+      // 1. Violent acceleration into the black hole
+      gsap.to(camPos, {
+        z: 2.1,
+        y: 0.12,
+        duration: 0.75,
+        ease: 'power3.in',
+        onUpdate: syncCamera
+      });
+
+      // 2. Relativistic optical warp: FOV expands rapidly
+      var fovObj = { fov: bhUniforms.uFov.value };
+      gsap.to(fovObj, {
+        fov: Math.tan(56 * Math.PI / 180),
+        duration: 0.75,
+        ease: 'power2.in',
+        onUpdate: function () {
+          bhUniforms.uFov.value = fovObj.fov;
+        }
+      });
+
+      // 3. Relativistic frame dragging of accretion gas
+      var tObj = { t: bhUniforms.uT.value };
+      gsap.to(tObj, {
+        t: tObj.t + 3.5,
+        duration: 0.75,
+        ease: 'power2.in',
+        onUpdate: function () {
+          bhUniforms.uT.value = tObj.t;
+        },
+        onComplete: function () {
+          window.location.href = 'magazine.html?pull=1';
+        }
+      });
+    } else {
+      window.location.href = 'magazine.html?pull=1';
+    }
+  }
+
   function goToState(n) {
     if (n === 1) {
-      window.location.href = 'magazine.html';
+      triggerPullToMagazine();
       return;
     }
     if (n === STATE && n !== 0) return;
@@ -294,6 +346,8 @@
   }
 
   function triggerDive() {
+    if (isPulling) return;
+    isPulling = true;
     bhMesh.visible = true;
     if (strandsGroup) strandsGroup.visible = false;
     var targetId = currentBH === 'm87-star' ? 'm87-star' : 'sgr-a-star';
@@ -301,19 +355,19 @@
     if (window.gsap) {
       gsap.killTweensOf(camPos);
       gsap.to(camPos, {
-        x: 0, y: 0.1, z: 1.6,
-        duration: 1.2, ease: 'power3.in',
+        x: 0, y: 0.05, z: 1.4,
+        duration: 0.85, ease: 'power3.in',
         onUpdate: syncCamera
       });
       gsap.to(bhUniforms.uDimness, {
         value: 1.0,
-        duration: 0.9, delay: 0.25, ease: 'power2.in',
+        duration: 0.75, delay: 0.1, ease: 'power2.in',
         onComplete: function () {
-          window.location.href = 'atlas.html?v=7&ref=index.html#' + targetId;
+          window.location.href = 'atlas.html?v=8&ref=index.html#' + targetId;
         }
       });
     } else {
-      window.location.href = 'atlas.html?v=7&ref=index.html#' + targetId;
+      window.location.href = 'atlas.html?v=8&ref=index.html#' + targetId;
     }
   }
 
@@ -585,19 +639,19 @@
       if (dist < 0.17) {
         goToState(2); // Shadow click -> Horizon dive into Atlas
       } else {
-        window.location.href = 'magazine.html'; // Disk click -> Open separate Magazine
+        triggerPullToMagazine(); // Disk click -> Open separate Magazine
       }
       return;
     }
 
     if (STATE === 1) {
-      window.location.href = 'magazine.html';
+      triggerPullToMagazine();
     }
   }
 
   var ctaDisk   = document.querySelector('.cta-disk');
   var ctaShadow = document.querySelector('.cta-shadow');
-  if (ctaDisk)   ctaDisk.addEventListener('click',   function () { goToState(1); });
+  if (ctaDisk)   ctaDisk.addEventListener('click',   function (e) { e.preventDefault(); triggerPullToMagazine(); });
   if (ctaShadow) ctaShadow.addEventListener('click', function () { goToState(2); });
 
   var magBackBtn = document.getElementById('mag-back');
@@ -627,7 +681,7 @@
     var dy = e.changedTouches[0].clientY - touchY0;
     if (Math.abs(dy) > 50) {
       if (dy < 0 && STATE === 0) {
-        window.location.href = 'magazine.html';
+        triggerPullToMagazine();
       }
     } else {
       onCanvasClick({ clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY });

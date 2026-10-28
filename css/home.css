@@ -822,3 +822,29 @@ button:focus-visible {
   color: var(--c-accent);
   background: rgba(200,169,110,0.1);
 }
+
+/* ---------- Gravitational Pull Warp Flash ---------- */
+#warp-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255,240,210,0.98) 0%, rgba(240,140,60,0.7) 42%, rgba(10,5,20,0.95) 85%);
+  mix-blend-mode: screen;
+  transition: opacity 0.75s cubic-bezier(0.7, 0, 1, 1);
+}
+#warp-flash.pull {
+  opacity: 1;
+}
+
+body.pulling {
+  cursor: wait !important;
+}
+body.pulling #topbar,
+body.pulling #home-cta,
+body.pulling #state-label {
+  pointer-events: none;
+  opacity: 0 !important;
+  transition: opacity 0.25s ease-out;
+}

@@ -370,4 +370,19 @@ addEventListener('message',function(e){if(e.source!==f.contentWindow||e.origin!=
   });
 })();
 </script>
+
+<div id="warp-in" style="position:fixed;inset:0;z-index:9999;pointer-events:none;background:radial-gradient(circle at 50% 50%, rgba(255,235,190,0.85) 0%, rgba(3,4,10,0.95) 75%);transition:opacity 0.6s cubic-bezier(0.16,1,0.3,1);opacity:1;"></div>
+<script>
+window.addEventListener('DOMContentLoaded', function(){
+  var w = document.getElementById('warp-in');
+  if(w){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        w.style.opacity = '0';
+        setTimeout(function(){ if(w.parentNode) w.parentNode.removeChild(w); }, 650);
+      });
+    });
+  }
+});
+</script>
 </body></html>
