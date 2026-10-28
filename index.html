@@ -31,7 +31,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,700;1,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/home.css?v=10">
+  <link rel="stylesheet" href="css/home.css?v=11">
 </head>
 <body>
 
@@ -69,15 +69,15 @@
 
   <!-- Home view interactive hotspot labels -->
   <div id="home-cta" aria-hidden="true">
-    <div class="cta-disk">Enter the light ↓</div>
+    <div class="cta-disk">Enter Magazine →</div>
     <div class="cta-shadow">Dive into the shadow →</div>
   </div>
 
-  <!-- 3-State navigation indicator -->
+  <!-- Navigation indicator -->
   <nav id="state-label" aria-label="Navigation">
-    <button data-state="0" class="active">Home</button>
+    <button data-state="0" class="active">Black Hole</button>
     <span aria-hidden="true">·</span>
-    <button data-state="1">Light</button>
+    <button data-state="1">Magazine</button>
     <span aria-hidden="true">·</span>
     <button data-state="2">Horizon</button>
   </nav>
@@ -103,6 +103,107 @@
     <p><a href="atlas.html?v=7">Cosmos Atlas — Interactive 3D Universe</a></p>
   </nav>
 
+  <!-- Full-screen Classic Magazine View (Opens when clicking Enter Magazine) -->
+  <div id="magazine-view" aria-label="Cosmos Magazine classic view">
+    <header id="mag-header">
+      <button id="mag-back" aria-label="Return to Black Hole">← Back to Black Hole</button>
+      <div class="mag-brand">✦ COSMOS <b>MAGAZINE</b></div>
+      <nav aria-label="Magazine Sections">
+        <a href="#mag-news">News</a>
+        <a href="#mag-observing">Observing</a>
+        <a href="#mag-missions">Exploration</a>
+        <a href="#mag-learn">Learn</a>
+        <a class="atl" href="atlas.html?v=7" data-atlas>Cosmos Atlas</a>
+      </nav>
+    </header>
+
+    <main id="mag-main">
+      <section id="mag-home" class="mag-section">
+        <div class="card" data-o="stars">
+          <p class="eye">A space for deeper looking and bolder observing</p>
+          <h1>The Cosmos After Dark</h1>
+          <p class="l">Astronomy news, observing guides and a live 3D map of the universe, for people who look up.</p>
+          <a class="btn" href="atlas.html?v=7" data-atlas>Open the Cosmos Atlas</a>
+          <a class="btn g" href="#mag-news">Read the latest</a>
+        </div>
+      </section>
+
+      <section id="mag-news" class="mag-section r">
+        <div class="card" data-o="galaxy">
+          <p class="eye">Latest news</p>
+          <h2>Galaxies &amp; skies</h2>
+          <ul>
+            <li><small>Galaxies</small><a href="articles/galaxies-filaments.html">How galaxies grow filaments of hot gas</a></li>
+            <li><small>Earth</small><a href="articles/atmosphere-glows.html">Earth from orbit: why our atmosphere glows</a></li>
+            <li><small>The Sun</small><a href="articles/solar-cycles.html">Solar cycles explained, from spots to storms</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="mag-observing" class="mag-section">
+        <div class="card" data-o="moon">
+          <p class="eye">Sky this week</p>
+          <h2>Observing</h2>
+          <div id="sky-info" aria-live="polite"><p class="l">Calculating tonight's sky…</p></div>
+          <p id="sky-note">Calculated for your device's date; visibility depends on your location and weather.</p>
+          <ul>
+            <li><small>Tip</small><a href="articles/dark-adapt.html">Give your eyes 20 minutes to dark-adapt</a></li>
+            <li><small>Moon</small><a href="articles/moon-phase.html">Check the phase before planning dark-sky sessions</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="mag-missions" class="mag-section r">
+        <div class="card" data-o="planets">
+          <p class="eye">Space exploration</p>
+          <h2>Worlds beyond Earth</h2>
+          <ul>
+            <li><small>Mars</small><a href="articles/life-on-mars.html">The long search for life on Mars</a></li>
+            <li><small>Giants</small><a href="articles/gas-giants-ice-giants.html">Gas giants versus ice giants</a></li>
+            <li><small>Rings</small><a href="articles/saturns-rings.html">Saturn's rings: young, thin and temporary?</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="mag-learn" class="mag-section">
+        <div class="card" data-o="nebula">
+          <p class="eye">Learn astronomy</p>
+          <h2>Stellar nurseries</h2>
+          <ul>
+            <li><small>Nebulae</small><a href="articles/nebulae.html">Nebulae: nurseries and graveyards of stars</a></li>
+            <li><small>Milky Way</small><a href="articles/milky-way.html">Walking through the spiral arms</a></li>
+            <li><small>Newsletter</small>The night sky, in your inbox
+              <div class="nl-form" id="nl-form-wrap">
+                <form id="nl-form" novalidate>
+                  <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+                  <label for="nl-email">Your email address</label>
+                  <input type="email" id="nl-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+                  <p class="nl-consent">By subscribing you agree to receive occasional astronomy updates from Cosmos Magazine. No spam; unsubscribe any time.</p>
+                  <button type="submit" class="nl-submit">Subscribe</button>
+                </form>
+                <div id="nl-msg" role="status" aria-live="polite"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="mag-atlas" class="mag-section r">
+        <div class="card" data-o="web">
+          <p class="eye">Cosmos Atlas</p>
+          <h2>Zoom out to the cosmic web</h2>
+          <p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p>
+          <a class="btn" href="atlas.html?v=7" data-atlas>Launch the Cosmos Atlas</a>
+          <button class="btn g" id="mag-return-bh">← Back to Black Hole</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mag-footer">
+      © Cosmos Magazine · Click any article to read, or return to the 3D Black Hole.
+    </footer>
+  </div>
+
   <!-- Atlas modal overlay -->
   <div id="atlasView" role="dialog" aria-modal="true" aria-hidden="true">
     <div id="atlasBar">
@@ -124,7 +225,7 @@
   <!-- Three.js r128 & GSAP from cdnjs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="js/home-bh.js?v=10"></script>
+  <script src="js/home-bh.js?v=11"></script>
 
   <!-- Atlas modal iframe communication script -->
   <script>
@@ -164,6 +265,82 @@
 
     addEventListener('message', function (e) {
       if (e.data && e.data.type === 'close-atlas') closeAtlas();
+    });
+  })();
+  </script>
+  <!-- Sky This Week & Newsletter logic for the Magazine view -->
+  <script>
+  (function(){
+    'use strict';
+    try {
+      var now = new Date();
+      var jd = now.getTime() / 86400000 + 2440587.5;
+      var T = (jd - 2451545.0) / 36525;
+      var syno = 29.530588853;
+      var base = 2451549.5;
+      var cycles = (jd - base) / syno;
+      var phaseFrac = cycles - Math.floor(cycles);
+      var phaseName;
+      if (phaseFrac < 0.03 || phaseFrac > 0.97) phaseName = 'New Moon';
+      else if (phaseFrac < 0.23) phaseName = 'Waxing Crescent';
+      else if (phaseFrac < 0.27) phaseName = 'First Quarter';
+      else if (phaseFrac < 0.48) phaseName = 'Waxing Gibbous';
+      else if (phaseFrac < 0.52) phaseName = 'Full Moon';
+      else if (phaseFrac < 0.73) phaseName = 'Waning Gibbous';
+      else if (phaseFrac < 0.77) phaseName = 'Last Quarter';
+      else phaseName = 'Waning Crescent';
+
+      var illumPct = Math.round((1 - Math.abs(phaseFrac * 2 - 1)) * 100);
+      var daysToFull = ((0.5 - phaseFrac + 1) % 1) * syno;
+      var daysToNew  = ((1.0 - phaseFrac) % 1) * syno;
+      function addDays(d, n){ var r=new Date(d); r.setDate(r.getDate()+Math.round(n)); return r; }
+      var nextFull = addDays(now, daysToFull);
+      var nextNew  = addDays(now, daysToNew);
+      var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      function fmt(d){ return d.getDate()+' '+months[d.getMonth()]; }
+
+      var Lsun = (280.46646 + 36000.76983 * T) % 360;
+      if (Lsun < 0) Lsun += 360;
+      var planets = [
+        {name:'Mercury', L0:252.25, n:4.0923, minElong:18},
+        {name:'Venus',   L0:181.98, n:1.6021, minElong:25},
+        {name:'Mars',    L0:-4.553, n:0.5240, minElong:30},
+        {name:'Jupiter', L0:34.396, n:0.0831, minElong:20},
+        {name:'Saturn',  L0:49.954, n:0.0334, minElong:20}
+      ];
+      var dJ = jd - 2451545.0;
+      var visible = [], dawn = [];
+      planets.forEach(function(pl){
+        var L = (pl.L0 + pl.n * dJ) % 360;
+        if (L < 0) L += 360;
+        var elong = L - Lsun;
+        while (elong > 180) elong -= 360;
+        while (elong < -180) elong += 360;
+        if (Math.abs(elong) >= pl.minElong) {
+          if (elong > 0) visible.push(pl.name + ' (east, evening)');
+          else dawn.push(pl.name + ' (west, morning)');
+        }
+      });
+      var allPlanets = visible.concat(dawn);
+      var el = document.getElementById('sky-info');
+      if (el) {
+        var h = '<p class="l"><strong>' + phaseName + '</strong> · ' + illumPct + '% illuminated</p>';
+        h += '<p>Next full Moon: <strong>' + fmt(nextFull) + '</strong> · Next new Moon: <strong>' + fmt(nextNew) + '</strong></p>';
+        if (allPlanets.length > 0) h += '<p>Naked-eye planets well placed: <strong>' + allPlanets.join(', ') + '</strong></p>';
+        el.innerHTML = h;
+      }
+    } catch(e){}
+  })();
+
+  (function(){
+    var form = document.getElementById('nl-form');
+    var msg  = document.getElementById('nl-msg');
+    if (!form) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      msg.textContent = "✓ You're subscribed! Welcome to the night sky.";
+      msg.className = 'ok';
+      form.reset();
     });
   })();
   </script>

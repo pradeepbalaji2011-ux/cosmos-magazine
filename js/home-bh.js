@@ -232,8 +232,8 @@
     '      float boost = pow(max(0.25, 1.0 + dop * 0.38), 2.2);',
     '      boost = mix(boost, 1.0, 1.0 - uInterstellar);',
 
-    '      float stepDensity = gas * boost * dt * 2.8;',
-    '      vec3 stepCol = diskCol * (1.2 + 0.8 * (1.0 - tR));',
+    '      float stepDensity = gas * boost * dt * 1.35;',
+    '      vec3 stepCol = diskCol * (0.85 + 0.35 * (1.0 - tR));',
 
     '      col += stepCol * stepDensity * (1.0 - al);',
     '      al  += stepDensity * (1.0 - al);',
@@ -244,8 +244,8 @@
 
     '  // Razor-sharp, brilliant white photon ring hugging the shadow',
     '  if(!hit) {',
-    '    float pRing = smoothstep(1.55, 1.08, minR) * smoothstep(1.0, 1.035, minR);',
-    '    col += vec3(1.0, 0.98, 0.95) * pRing * (1.0 - al) * 4.8;',
+    '    float pRing = smoothstep(1.30, 1.10, minR) * smoothstep(1.01, 1.04, minR);',
+    '    col += vec3(1.0, 0.94, 0.85) * pRing * (1.0 - al) * 1.6;',
     '    al   = max(al, pRing * 0.92);',
     '  }',
 
@@ -278,7 +278,10 @@
     '  // Horizon dive fade',
     '  col *= (1.0 - uDimness);',
 
-    '  gl_FragColor = vec4(clamp(col, 0.0, 5.0), max(al, 0.01));',
+    '  vec3 mapped = col / (col + vec3(0.85));',
+    '  mapped = pow(mapped, vec3(0.95));',
+    '  mapped *= (1.0 - uDimness);',
+    '  gl_FragColor = vec4(clamp(mapped, 0.0, 1.0), max(al, 0.01));',
     '}'
   ].join('\n');
 
@@ -338,48 +341,24 @@
     STATE = n;
     updateStateLabel();
 
+    var magView = document.getElementById('magazine-view');
+
     if (n === 0) {
       showHomeCTA(true);
-      if (strandsGroup) strandsGroup.visible = false;
+      if (magView) magView.classList.remove('open');
       bhMesh.visible = true;
       bhUniforms.uDimness.value = 0.0;
-
-      if (window.gsap) {
-        gsap.killTweensOf(camPos);
-        gsap.to(camPos, {
-          x: CAM_HOME.x, y: CAM_HOME.y, z: CAM_HOME.z,
-          duration: 1.0, ease: 'power2.inOut',
-          onUpdate: syncCamera
-        });
-      } else {
-        camPos.x = CAM_HOME.x; camPos.y = CAM_HOME.y; camPos.z = CAM_HOME.z;
-        syncCamera();
-      }
       try { history.pushState({ s: 0 }, '', '#home'); } catch (e) {}
     } else if (n === 1) {
       showHomeCTA(false);
-      buildStrands();
-
-      if (window.gsap) {
-        gsap.killTweensOf(camPos);
-        gsap.to(camPos, {
-          x: CAM_STRAND.x, y: CAM_STRAND.y, z: CAM_STRAND.z,
-          duration: 1.1, ease: 'power3.inOut',
-          onUpdate: syncCamera,
-          onComplete: function () {
-            bhMesh.visible = false;
-            if (strandsGroup) strandsGroup.visible = true;
-          }
-        });
-      } else {
-        camPos.x = CAM_STRAND.x; camPos.y = CAM_STRAND.y; camPos.z = CAM_STRAND.z;
-        syncCamera();
-        bhMesh.visible = false;
-        if (strandsGroup) strandsGroup.visible = true;
+      if (magView) {
+        magView.classList.add('open');
+        magView.scrollTop = 0;
       }
-      try { history.pushState({ s: 1 }, '', '#strands'); } catch (e) {}
+      try { history.pushState({ s: 1 }, '', '#magazine'); } catch (e) {}
     } else if (n === 2) {
       showHomeCTA(false);
+      if (magView) magView.classList.remove('open');
       triggerDive();
       try { history.pushState({ s: 2 }, '', '#horizon'); } catch (e) {}
     }
@@ -677,7 +656,7 @@
       if (dist < 0.17) {
         goToState(2); // Shadow click -> Horizon dive
       } else {
-        goToState(1); // Disk click -> Light Strands
+        goToState(1); // Disk click -> Enter Magazine
       }
       return;
     }
@@ -695,6 +674,11 @@
   var ctaShadow = document.querySelector('.cta-shadow');
   if (ctaDisk)   ctaDisk.addEventListener('click',   function () { goToState(1); });
   if (ctaShadow) ctaShadow.addEventListener('click', function () { goToState(2); });
+
+  var magBackBtn = document.getElementById('mag-back');
+  if (magBackBtn) magBackBtn.addEventListener('click', function () { goToState(0); });
+  var magReturnBtn = document.getElementById('mag-return-bh');
+  if (magReturnBtn) magReturnBtn.addEventListener('click', function () { goToState(0); });
 
   document.querySelectorAll('#state-label button').forEach(function (btn) {
     btn.addEventListener('click', function () {

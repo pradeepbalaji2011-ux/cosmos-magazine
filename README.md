@@ -18,24 +18,20 @@ A high-performance, dark-themed astronomical web magazine and interactive 3D uni
 | **Horizon Dive** | Clicking the shadow initiates a 1-second gravitational dive (light bends, stars streak, fades to black) and transitions seamlessly into the Cosmos Atlas. |
 
 ### 3-State Navigation
-1. **Home (State 0)** — Cinematic Gargantua in 3D motion with gentle camera drift. Interactive labels: *"Enter the light ↓"* and *"Dive into the shadow →"*.
-2. **Light Strands (State 1)** — One click/scroll tick rushes into the glowing disk, presenting article strands. Hovering a strand widens and illuminates it with a title tooltip. Clicking opens a frosted-glass Info Panel with category, title, summary, hero image, and direct links.
+1. **Black Hole (State 0)** — Cinematic Gargantua in 3D motion with gentle camera drift. Interactive labels: *"Enter Magazine →"* and *"Dive into the shadow →"*. Features sharp, non-overexposed light balance with filmic tone mapping.
+2. **Magazine (State 1)** — Clicking "Enter Magazine →" or the accretion disk smoothly opens the full classic magazine style with glass cards, latest news, live Moon phase calculations, naked-eye planet visibility, and newsletter. Includes a sticky *"← Back to Black Hole"* button to return anytime.
 3. **Horizon (State 2)** — One click on the black shadow plunges into the event horizon and opens `atlas.html?v=7&ref=index.html#sgr-a-star` (or `#m87-star`).
 
 ### Controls & Navigation
 | Input | Action |
 |---|---|
-| **Scroll wheel** | One tick jumps a full level (Home ↔ Light Strands) |
-| **Touch swipe** | Swipe up/down jumps between Home and Light Strands |
-| **Click on disk** | Enter Light Strands (State 1) |
+| **Click "Enter Magazine →" / disk** | Opens the classic magazine style (State 1) |
+| **Click "← Back to Black Hole" / Esc** | Closes magazine and returns to the 3D black hole |
 | **Click on shadow** | Dive into Black Hole / Open Cosmos Atlas (State 2) |
-| **Hover strand** | Glows and shows article title |
-| **Click strand** | Slides open the frosted-glass Info Panel |
-| **Home / Light / Horizon** | Jump directly using bottom pill navigation |
-| **Sgr A* / M87*** | Switch between black holes (adjusts disk inclination & Doppler balance) |
+| **Black Hole / Magazine / Horizon** | Jump directly using bottom pill navigation |
+| **Sgr A* / M87*** | Switch between black holes (adjusts camera angle & Doppler balance) |
 | **Quality button** | Cycle Low / Med / High render resolution and ray steps |
-| **Esc / ← Back** | Close Info Panel / return to previous state |
-| **Browser Back** | Supported via HTML5 history pushState |
+| **Browser Back** | Supported via HTML5 history pushState (`#home`, `#magazine`, `#horizon`) |
 
 ### Adding an Article or Observation Strand
 Edit the `ARTICLES` array in `js/home-bh.js`:
