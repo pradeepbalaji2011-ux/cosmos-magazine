@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cosmos Magazine — The Cosmos After Dark</title>
+<title>Cosmos Magazine â€” The Cosmos After Dark</title>
 <meta name="description" content="Astronomy news, observing guides and a 3D map of the universe. Scroll through space, then explore every planet, galaxy and star in the Cosmos Atlas.">
 <link rel="canonical" href="https://pradeepbalaji2011-ux.github.io/cosmos-magazine/">
 <meta name="theme-color" content="#000000">
@@ -84,7 +84,7 @@ a:focus-visible,button:focus-visible,.btn:focus-visible,#atlasFrame:focus-visibl
 <a class="skip" href="#top">Skip to content</a>
 <noscript><p style="position:relative;z-index:30;margin:0;padding:14px 20px;background:#1a1440;color:#e9edff;text-align:center">This site uses JavaScript for its 3D journey and the Cosmos Atlas. The articles below still work without it.</p></noscript>
 <canvas id="gl" aria-hidden="true"></canvas><div id="bar"></div>
-<header><a href="index.html?replay=1" class="btn-bh">← Black Hole</a><a class="logo" href="index.html?replay=1">✦ COSMOS</a>
+<header><a href="index.html" class="btn-bh">&larr; Black Hole</a><a class="logo" href="index.html">&#10022; COSMOS</a>
 <nav aria-label="Main"><a href="#news">News</a><a href="#observing">Observing</a><a href="#missions">Exploration</a><a href="#learn">Learn</a><a class="atl" href="atlas.html?ref=magazine.html#solar-system" data-atlas>Cosmos Atlas</a></nav></header>
 <main id="top">
 <section id="home"><div class="card" data-o="stars"><p class="eye">A space for deeper looking and bolder observing</p><h1>The Cosmos After Dark</h1><p class="l">Astronomy news, observing guides and a live 3D map of the universe, for people who look up.</p><a class="btn" href="atlas.html?ref=magazine.html#solar-system" data-atlas>Open the Cosmos Atlas</a><a class="btn g" href="#news">Read the latest</a></div></section>
@@ -94,7 +94,7 @@ a:focus-visible,button:focus-visible,.btn:focus-visible,#atlasFrame:focus-visibl
 <li><small>The Sun</small><a href="articles/solar-cycles.html">Solar cycles explained, from spots to storms</a></li>
 </ul></div></section>
 <section id="observing"><div class="card" data-o="moon"><p class="eye">Sky this week</p><h2>Observing</h2>
-<div id="sky-info" aria-live="polite"><p class="l">Calculating tonight's sky…</p></div>
+<div id="sky-info" aria-live="polite"><p class="l">Calculating tonight's skyâ€¦</p></div>
 <p id="sky-note">Calculated for your device's date; visibility depends on your location and weather.</p>
 <ul>
 <li><small>Tip</small><a href="articles/dark-adapt.html">Give your eyes 20 minutes to dark-adapt</a></li>
@@ -122,10 +122,10 @@ a:focus-visible,button:focus-visible,.btn:focus-visible,#atlasFrame:focus-visibl
   </div>
 </li>
 </ul></div></section>
-<section id="atlas" class="r"><div class="card" data-o="web"><p class="eye">Cosmos Atlas</p><h2>Zoom out to the cosmic web</h2><p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p><a class="btn" href="atlas.html?ref=magazine.html#solar-system" data-atlas>Launch the Cosmos Atlas</a><a class="btn g" href="index.html?replay=1">← Back to Black Hole</a></div></section>
+<section id="atlas" class="r"><div class="card" data-o="web"><p class="eye">Cosmos Atlas</p><h2>Zoom out to the cosmic web</h2><p class="l">From planets to galaxies to the filaments that hold the universe together. Click, zoom and explore every star.</p><a class="btn" href="atlas.html?ref=magazine.html#solar-system" data-atlas>Launch the Cosmos Atlas</a><a class="btn g" href="index.html">&larr; Back to Black Hole</a></div></section>
 </main>
-<div class="hint" id="hint">Scroll to travel ↓</div>
-<footer>© Cosmos Magazine · Fly through space with your scroll wheel. <a href="index.html?replay=1" style="color:#ffb870;margin-left:8px;text-decoration:none">← Return to Black Hole</a></footer>
+<div class="hint" id="hint">Scroll to travel â†“</div>
+<footer>Â© Cosmos Magazine Â· Fly through space with your scroll wheel. <a href="index.html" style="color:#ffb870;margin-left:8px;text-decoration:none">&larr; Return to Black Hole</a></footer>
 <div id="atlasView" role="dialog" aria-modal="true" aria-label="Cosmos Atlas, interactive 3D universe" aria-hidden="true"><div id="atlasBar"><button id="atlasClose">&larr; Back to Magazine</button><span>COSMOS <b>ATLAS</b></span></div><iframe id="atlasFrame" title="Cosmos Atlas" allow="fullscreen"></iframe></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -251,7 +251,7 @@ addEventListener('message',function(e){if(e.source!==f.contentWindow||e.origin!=
     else if (phaseFrac < 0.77) phaseName = 'Last Quarter';
     else phaseName = 'Waning Crescent';
 
-    // Illumination from phase fraction (0=new, 0.5=full → 0 to 1 to 0)
+    // Illumination from phase fraction (0=new, 0.5=full â†’ 0 to 1 to 0)
     var illumPct = Math.round((1 - Math.abs(phaseFrac * 2 - 1)) * 100);
 
     // Next full and new moon dates
@@ -265,7 +265,7 @@ addEventListener('message',function(e){if(e.source!==f.contentWindow||e.origin!=
 
     /* ---- Planetary visibility (very approximate) ---- */
     // Use simplified heliocentric longitudes to estimate evening/morning visibility
-    // Planet elongation from Sun: > ~18° = potentially visible
+    // Planet elongation from Sun: > ~18Â° = potentially visible
     // Rough ecliptic longitude of Sun (degrees) from JD
     var Lsun = (280.46646 + 36000.76983 * T) % 360;
     if (Lsun < 0) Lsun += 360;
@@ -298,8 +298,8 @@ addEventListener('message',function(e){if(e.source!==f.contentWindow||e.origin!=
     var allPlanets = visible.concat(dawn);
 
     /* ---- Build the HTML ---- */
-    var html = '<p class="l"><strong>' + phaseName + '</strong> · ' + illumPct + '% illuminated</p>';
-    html += '<p>Next full Moon: <strong>' + fmt(nextFull) + '</strong> · Next new Moon: <strong>' + fmt(nextNew) + '</strong></p>';
+    var html = '<p class="l"><strong>' + phaseName + '</strong> Â· ' + illumPct + '% illuminated</p>';
+    html += '<p>Next full Moon: <strong>' + fmt(nextFull) + '</strong> Â· Next new Moon: <strong>' + fmt(nextNew) + '</strong></p>';
     if (allPlanets.length > 0) {
       html += '<p>Naked-eye planets well placed: <strong>' + allPlanets.join(', ') + '</strong></p>';
     } else {
@@ -351,7 +351,7 @@ addEventListener('message',function(e){if(e.source!==f.contentWindow||e.origin!=
 
     var btn = form.querySelector('.nl-submit');
     btn.disabled = true;
-    btn.textContent = 'Subscribing…';
+    btn.textContent = 'Subscribingâ€¦';
 
     var body = new FormData();
     body.append('email', email);
@@ -362,7 +362,7 @@ addEventListener('message',function(e){if(e.source!==f.contentWindow||e.origin!=
       headers: {Accept: 'application/json'}
     }).then(function(r){
       if (r.ok) {
-        msg.textContent = '✓ You\'re subscribed! Welcome to the night sky.';
+        msg.textContent = 'âœ“ You\'re subscribed! Welcome to the night sky.';
         msg.className = 'ok';
         form.reset();
       } else {
@@ -395,6 +395,7 @@ window.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 </body></html>
+
 
 
 
