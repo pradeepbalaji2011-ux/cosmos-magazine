@@ -33,6 +33,9 @@ button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy
 .lab{position:fixed;left:0;top:0;font-size:11px;color:#cfe8ff;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap;z-index:2;max-width:140px;overflow:hidden;text-overflow:ellipsis}
 #load{position:fixed;inset:0;background:#000;z-index:20;display:grid;place-content:center;text-align:center;transition:opacity 1s}
 #load h1{letter-spacing:.5em;color:var(--cy);animation:p 2s infinite}#load i{display:block;width:220px;height:2px;background:#123;margin:18px auto}#load i b{display:block;height:100%;width:0;background:var(--cy);transition:width .3s}
+.back-bh-btn{font:500 12px "JetBrains Mono",ui-monospace,monospace;color:#ffb870;border:1px solid rgba(255,184,112,.45);background:rgba(255,184,112,.08);border-radius:8px;padding:5px 12px;text-decoration:none;white-space:nowrap;flex:none;display:inline-flex;align-items:center;gap:6px;transition:.2s}
+.back-bh-btn:hover{background:rgba(255,184,112,.22);border-color:#ffb870;color:#fff}
+@media(max-width:760px){.back-bh-btn{min-height:32px;padding:3px 8px;font-size:11px}}
 @keyframes p{50%{opacity:.4}}
 @media(max-width:760px){
   .sheet-handle{display:block}
@@ -150,7 +153,7 @@ setTimeout(function(){if(document.getElementById('load')&&!window.__cosmosReady)
 </head><body>
 <noscript><p style="position:fixed;inset:0;z-index:30;margin:0;display:grid;place-content:center;padding:24px;background:#02030a;color:#e6ecff;text-align:center">COSMOS ATLAS needs JavaScript to draw the 3D universe.</p></noscript>
 <div id="load"><h1>COSMOS ATLAS</h1><i><b id="lb"></b></i><small style="color:#8a96b8">Charting the heavens…</small></div>
-<div id="top" class="glass"><h1>COSMOS ATLAS</h1><div id="crumb"></div><button id="bs" aria-label="Toggle catalog">☰ Catalog</button><button id="bcr" aria-label="Data sources and credits">ⓘ Credits</button></div>
+<div id="top" class="glass"><a id="btn-back-bh" href="index.html" class="back-bh-btn" aria-label="Back to Black Hole">&larr; Back to Black Hole</a><h1>COSMOS ATLAS</h1><div id="crumb"></div><button id="bs" aria-label="Toggle catalog">☰ Catalog</button><button id="bcr" aria-label="Data sources and credits">ⓘ Credits</button></div>
 <div id="side" class="glass"><div class="sheet-handle" aria-hidden="true"></div><button id="side-close" class="sheet-close" aria-label="Close catalog">✕</button><input id="q" placeholder="Search the cosmos…" aria-label="Search"><div id="list"></div></div>
 <div id="learn" class="glass" aria-live="polite"></div>
 <div id="panel" class="glass" role="region" aria-label="Object details" aria-hidden="true" inert></div>
