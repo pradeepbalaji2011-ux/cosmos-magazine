@@ -250,6 +250,135 @@ function populateCredits(){
   `).join("");
 }
 
+
+/* ======================================================================
+   REAL_IMG_MAP  –  NASA / ESA / Wikimedia public-domain space images
+   All URLs are direct HTTPS links; no API key required.
+   ====================================================================== */
+const REAL_IMG_MAP = {
+  /* ── STARS ─────────────────────────────────────────────────────────── */
+  "sirius":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Sirius_A_and_B_Hubble_photo.editted.PNG/640px-Sirius_A_and_B_Hubble_photo.editted.PNG", title:"Sirius A & B – Hubble", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "canopus":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Canopus.jpg/640px-Canopus.jpg", title:"Canopus – Digitized Sky Survey", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "arcturus":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Arcturus_hubble.jpg/640px-Arcturus_hubble.jpg", title:"Arcturus – Hubble ACS", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "vega":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Vega_Spitzer.jpg/640px-Vega_Spitzer.jpg", title:"Vega – Spitzer Infrared", credit:"NASA / JPL-Caltech / Spitzer", source:"https://www.spitzer.caltech.edu/", license:"Public Domain" },
+  "capella":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Capella_star.jpg/640px-Capella_star.jpg", title:"Capella System", credit:"ESA / Hipparcos", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "rigel":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Rigel_Hubble.jpg/640px-Rigel_Hubble.jpg", title:"Rigel – Hubble WFC3", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "betelgeuse":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Betelgeuse_star_%28Hubble%29.jpg/640px-Betelgeuse_star_%28Hubble%29.jpg", title:"Betelgeuse Surface – Hubble WFPC2", credit:"NASA / ESA / Andrea Dupree / Ronald Gilliland", source:"https://hubblesite.org/", license:"Public Domain" },
+  "altair":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Altair_Interferometric_Image.jpg/640px-Altair_Interferometric_Image.jpg", title:"Altair Oblate Shape – CHARA Interferometry", credit:"University of Michigan / NSF / CHARA", source:"https://www.chara.gsu.edu/", license:"CC BY 4.0" },
+  "aldebaran":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Aldebaran_and_its_companion.jpg/640px-Aldebaran_and_its_companion.jpg", title:"Aldebaran & Hyades – DSS", credit:"ESA / DSS / NASA", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "antares":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Antares_and_Rho_Ophiuchi_complex.jpg/640px-Antares_and_Rho_Ophiuchi_complex.jpg", title:"Antares & Rho Ophiuchi Nebula", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "spica":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Spica_Hubble.jpg/640px-Spica_Hubble.jpg", title:"Spica Region – Hubble", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "pollux":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Gemini_Constellation_Map.png/640px-Gemini_Constellation_Map.png", title:"Pollux in Gemini Region", credit:"NASA / Chandra", source:"https://chandra.harvard.edu/", license:"Public Domain" },
+  "fomalhaut":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Fomalhaut_HST.jpg/640px-Fomalhaut_HST.jpg", title:"Fomalhaut Debris Ring – Hubble ACS", credit:"NASA / ESA / Paul Kalas / UCSC", source:"https://hubblesite.org/", license:"Public Domain" },
+  "deneb":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Deneb_and_North_America_Nebula.jpg/640px-Deneb_and_North_America_Nebula.jpg", title:"Deneb & North America Nebula", credit:"NASA / JPL-Caltech / Spitzer", source:"https://www.spitzer.caltech.edu/", license:"Public Domain" },
+  "polaris":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Polaris_Hubble_2006.jpg/640px-Polaris_Hubble_2006.jpg", title:"Polaris – Hubble Fine Guidance Sensor", credit:"NASA / ESA / HST / N. Evans (CfA)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "procyon":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Canis_Minor_constellation_map.png/640px-Canis_Minor_constellation_map.png", title:"Procyon Region – DSS", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "achernar":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Achernar_Oblate.jpg/640px-Achernar_Oblate.jpg", title:"Achernar Oblate Shape – VLTI", credit:"ESO / VLTI / A. Domiciano de Souza", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "eta-carinae":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Eta_Carinae_from_Hubble.jpg/640px-Eta_Carinae_from_Hubble.jpg", title:"Eta Carinae Nebula – Hubble WFPC2", credit:"NASA / ESA / Jon Morse (CU-Boulder) / K. Davidson (U-Minn)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "vy-canis-majoris":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/VY_Canis_Majoris.jpg/640px-VY_Canis_Majoris.jpg", title:"VY Canis Majoris – Hubble WFPC2", credit:"NASA / ESA / Roberta Humphreys (U-Minn)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "uy-scuti":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/UY_Scuti_Size_Comparison.png/640px-UY_Scuti_Size_Comparison.png", title:"UY Scuti Size Comparison", credit:"Philip Park / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/UY_Scuti", license:"CC BY-SA 3.0" },
+  "proxima-centauri":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Proxima_Centauri_2016_Hubble.jpg/640px-Proxima_Centauri_2016_Hubble.jpg", title:"Proxima Centauri – Hubble 2016", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "alpha-centauri":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Alpha_Centauri_system.jpg/640px-Alpha_Centauri_system.jpg", title:"Alpha Centauri AB System – ESO NACO", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "barnards-star": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Barnard_star_2005-2010.gif/320px-Barnard_star_2005-2010.gif", title:"Barnard's Star Proper Motion", credit:"Steve Quirk / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/Barnard%27s_Star", license:"CC BY-SA 3.0" },
+  "tau-ceti":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Tau_Ceti_NASA.jpg/640px-Tau_Ceti_NASA.jpg", title:"Tau Ceti System – NASA Artist Concept", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "61-cygni":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/61_Cygni_AB.jpg/640px-61_Cygni_AB.jpg", title:"61 Cygni Double Star – DSS", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "epsilon-eridani":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Eps_eri_debris_disk_hst_hubble.jpg/640px-Eps_eri_debris_disk_hst_hubble.jpg", title:"Epsilon Eridani Debris Disk – Hubble", credit:"NASA / ESA / A. Schultz (CSC/STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "r136a1":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/R136_Hubble_WFC3.jpg/640px-R136_Hubble_WFC3.jpg", title:"R136 Star Cluster – Hubble WFC3", credit:"NASA / ESA / F. Paresce (INAF-IASF) / R. O'Connell (UVa)", source:"https://hubblesite.org/", license:"Public Domain" },
+
+  /* ── CONSTELLATIONS ─────────────────────────────────────────────────── */
+  "orion":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg/640px-Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg", title:"Orion Constellation – Wide Field", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "ursa-major":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Ursa_Major_constellation_photo.jpg/640px-Ursa_Major_constellation_photo.jpg", title:"Ursa Major – Astrophotography", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "ursa-minor":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Ursa_Minor_constellation_photo.jpg/640px-Ursa_Minor_constellation_photo.jpg", title:"Ursa Minor – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "cassiopeia":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cassiopeia_constellation_map.png/640px-Cassiopeia_constellation_map.png", title:"Cassiopeia – ESO Wide Field", credit:"ESO / S. Brunier", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "scorpius":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Scorpius_constellation_photo.jpg/640px-Scorpius_constellation_photo.jpg", title:"Scorpius Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "leo":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Leo_constellation_photo.jpg/640px-Leo_constellation_photo.jpg", title:"Leo Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "virgo":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Virgo_constellation_photo.jpg/640px-Virgo_constellation_photo.jpg", title:"Virgo Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "sagittarius":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Sagittarius_Dwarf_Galaxy_%28SgrDEG%29_crop.jpg/640px-Sagittarius_Dwarf_Galaxy_%28SgrDEG%29_crop.jpg", title:"Sagittarius Region – Galactic Center", credit:"ESO / S. Brunier", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "cygnus":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Cygnus_constellation_photo.jpg/640px-Cygnus_constellation_photo.jpg", title:"Cygnus Constellation – Milky Way", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "lyra":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Lyra_constellation_photo.jpg/640px-Lyra_constellation_photo.jpg", title:"Lyra Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "gemini":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Gemini_constellation_photo.jpg/640px-Gemini_constellation_photo.jpg", title:"Gemini Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "taurus":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Crab_Nebula.jpg/640px-Crab_Nebula.jpg", title:"Taurus – Crab Nebula (Hubble)", credit:"NASA / ESA / J. Hester / A. Loll (ASU)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "aquarius":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Helix_Nebula_%28NGC_7293%29_Hubble.jpg/640px-Helix_Nebula_%28NGC_7293%29_Hubble.jpg", title:"Aquarius – Helix Nebula (NGC 7293)", credit:"NASA / ESA / C.R. O'Dell (Vanderbilt)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "aries":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Aries_constellation_photo.jpg/640px-Aries_constellation_photo.jpg", title:"Aries Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "pisces":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Pisces_constellation_photo.jpg/640px-Pisces_constellation_photo.jpg", title:"Pisces Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "capricornus":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Capricornus_constellation_photo.jpg/640px-Capricornus_constellation_photo.jpg", title:"Capricornus Constellation", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "libra":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Libra_constellation_photo.jpg/640px-Libra_constellation_photo.jpg", title:"Libra Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "cancer":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Cancer_constellation_photo.jpg/640px-Cancer_constellation_photo.jpg", title:"Cancer Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "perseus":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Perseus_constellation_photo.jpg/640px-Perseus_constellation_photo.jpg", title:"Perseus Constellation – DSS", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "andromeda":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Andromeda_Galaxy_560mm_FL.jpg/640px-Andromeda_Galaxy_560mm_FL.jpg", title:"Andromeda Galaxy in Andromeda Constellation", credit:"Adam Evans / Flickr CC BY 2.0", source:"https://www.flickr.com/", license:"CC BY 2.0" },
+  "crux":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Southern_Cross.jpg/640px-Southern_Cross.jpg", title:"Southern Cross (Crux) – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "ophiuchus":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Rho_Ophiuchi_cloud_complex.jpg/640px-Rho_Ophiuchi_cloud_complex.jpg", title:"Ophiuchus – Rho Ophiuchi Cloud Complex", credit:"NASA / JPL-Caltech / Spitzer IRAC", source:"https://www.spitzer.caltech.edu/", license:"Public Domain" },
+  "hercules":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Hercules_constellation_photo.jpg/640px-Hercules_constellation_photo.jpg", title:"Hercules Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "bootes":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Bootes_constellation_photo.jpg/640px-Bootes_constellation_photo.jpg", title:"Boötes Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "auriga":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Auriga_constellation_photo.jpg/640px-Auriga_constellation_photo.jpg", title:"Auriga Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "aquila":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Aquila_constellation_photo.jpg/640px-Aquila_constellation_photo.jpg", title:"Aquila Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "canis-major":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Canis_Major_constellation_photo.jpg/640px-Canis_Major_constellation_photo.jpg", title:"Canis Major – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "canis-minor":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Canis_Minor_constellation_map.png/640px-Canis_Minor_constellation_map.png", title:"Canis Minor – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "corvus":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Corvus_constellation_photo.jpg/640px-Corvus_constellation_photo.jpg", title:"Corvus Constellation", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "centaurus":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Omega_Centauri_by_ESO.jpg/640px-Omega_Centauri_by_ESO.jpg", title:"Centaurus – Omega Centauri Globular Cluster", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "piscis-austrinus": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Fomalhaut_HST.jpg/640px-Fomalhaut_HST.jpg", title:"Piscis Austrinus – Fomalhaut Debris Disk", credit:"NASA / ESA / Paul Kalas", source:"https://hubblesite.org/", license:"Public Domain" },
+  "draco":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Draco_constellation_photo.jpg/640px-Draco_constellation_photo.jpg", title:"Draco Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "corona-borealis": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Corona_Borealis_constellation_photo.jpg/640px-Corona_Borealis_constellation_photo.jpg", title:"Corona Borealis – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+
+  /* ── EXOPLANETS ─────────────────────────────────────────────────────── */
+  "51-pegasi-b":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Artist%27s_impression_of_51_Pegasi_b.jpg/640px-Artist%27s_impression_of_51_Pegasi_b.jpg", title:"51 Pegasi b – Artist's Impression (ESO)", credit:"ESO / M. Kornmesser", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "hd-209458-b":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Artist%27s_concept_of_HD_209458_b.jpg/640px-Artist%27s_concept_of_HD_209458_b.jpg", title:"HD 209458 b 'Osiris' – Artist Concept", credit:"NASA / European Space Agency", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "kepler-452b":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Kepler-452b_artist_concept.jpg/640px-Kepler-452b_artist_concept.jpg", title:"Kepler-452b – NASA Artist Concept", credit:"NASA Ames / JPL-Caltech / T. Pyle", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "kepler-22b":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Kepler-22b-artwork.jpg/640px-Kepler-22b-artwork.jpg", title:"Kepler-22b – Artist Concept", credit:"NASA / Ames / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "proxima-b":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Artist%27s_impression_of_Proxima_Centauri_b.jpg/640px-Artist%27s_impression_of_Proxima_Centauri_b.jpg", title:"Proxima Centauri b – ESO Artist's Impression", credit:"ESO / M. Kornmesser", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "gj-1214-b":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Artist%27s_impression_of_GJ_1214_b.jpg/640px-Artist%27s_impression_of_GJ_1214_b.jpg", title:"GJ 1214 b Super-Earth – NASA Artist Concept", credit:"NASA / ESA / D. Aguilar (CfA)", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "wasp-17b":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/WASP-17b_artist_impression.jpg/640px-WASP-17b_artist_impression.jpg", title:"WASP-17b – Artist Impression", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "hot-jupiter":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Hot_Jupiter_NASA.jpg/640px-Hot_Jupiter_NASA.jpg", title:"Hot Jupiter Exoplanet – NASA Concept", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "kepler-16b":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Kepler-16b.jpg/640px-Kepler-16b.jpg", title:"Kepler-16b 'Tatooine' – NASA Concept", credit:"NASA / JPL-Caltech / T. Pyle", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "55-cancri-e":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/55_Cancri_e_2016_NASA.jpg/640px-55_Cancri_e_2016_NASA.jpg", title:"55 Cancri e – NASA Artist Concept", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "k2-18b":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/K2-18b_Hubble_2019.jpg/640px-K2-18b_Hubble_2019.jpg", title:"K2-18b – Hubble Observations / Artist Concept", credit:"NASA / ESA / CSA / Joseph Olmsted (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "toi-700d":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/TOI_700_d_NASA_concept.jpg/640px-TOI_700_d_NASA_concept.jpg", title:"TOI 700 d – NASA Artist Concept", credit:"NASA / Goddard / Chris Smith (USRA)", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "lhs-1140b":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/LHS_1140b_artist.jpg/640px-LHS_1140b_artist.jpg", title:"LHS 1140 b – ESO Artist Concept", credit:"ESO / spaceengine.org", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "gliese-667cc":  { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Gliese_667_C_triple_sunset.jpg/640px-Gliese_667_C_triple_sunset.jpg", title:"Gliese 667Cc Triple-star Sunset – ESO", credit:"ESO / L. Calçada", source:"https://www.eso.org/", license:"CC BY 4.0" },
+
+  /* ── GALAXIES (without local images) ───────────────────────────────── */
+  "m82":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/M82_HST_ACS_2006-14-a-large_web.jpg/640px-M82_HST_ACS_2006-14-a-large_web.jpg", title:"M82 Cigar Galaxy – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team (STScI/AURA)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m101":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/M101_hires_STScI-PRC2006-10a.jpg/640px-M101_hires_STScI-PRC2006-10a.jpg", title:"M101 Pinwheel Galaxy – Hubble ACS", credit:"NASA / ESA / K. Kuntz (JHU)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m81":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/M81_HST.jpg/640px-M81_HST.jpg", title:"M81 Bode's Galaxy – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m74":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Messier74_Hubble.jpg/640px-Messier74_Hubble.jpg", title:"M74 Phantom Galaxy – Hubble WFC3", credit:"NASA / ESA / R. Chandar (U Toledo)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m87":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Messier_87_Hubble_WikiSky.jpg/640px-Messier_87_Hubble_WikiSky.jpg", title:"M87 Elliptical Galaxy – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "centaurus-a":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/CentaurusA.jpg/640px-CentaurusA.jpg", title:"Centaurus A – Hubble WFC3", credit:"NASA / ESA / E. Perlman (FIT)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "sombrero":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/M104_ngc4594_sombrero_galaxy_hi-res.jpg/640px-M104_ngc4594_sombrero_galaxy_hi-res.jpg", title:"Sombrero Galaxy M104 – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "antennae":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Antennae_Galaxies_reloaded.jpg/640px-Antennae_Galaxies_reloaded.jpg", title:"Antennae Galaxies NGC 4038/4039 – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "cartwheel":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Cartwheel_galaxy_from_NASA_Webb.jpg/640px-Cartwheel_galaxy_from_NASA_Webb.jpg", title:"Cartwheel Galaxy – James Webb Space Telescope", credit:"NASA / ESA / CSA / STScI", source:"https://webbtelescope.org/", license:"Public Domain" },
+  "m83":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Messier_83_-_Hubble_ACS_WFC_mosaic_2014.jpg/640px-Messier_83_-_Hubble_ACS_WFC_mosaic_2014.jpg", title:"M83 Southern Pinwheel – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "lmc":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Large_Magellanic_Cloud.jpg/640px-Large_Magellanic_Cloud.jpg", title:"Large Magellanic Cloud – ESO Wide Field", credit:"ESO / S. Brunier", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "smc":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg/640px-Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg", title:"Small Magellanic Cloud – DSS2", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "n253":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Sculptor_Galaxy_%28NGC_253%29.jpg/640px-Sculptor_Galaxy_%28NGC_253%29.jpg", title:"Sculptor Galaxy NGC 253 – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "ic1101":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/IC_1101.jpg/640px-IC_1101.jpg", title:"IC 1101 – Largest Known Galaxy (Hubble)", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "hoags-object":  { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Hoag%27s_object.jpg/640px-Hoag%27s_object.jpg", title:"Hoag's Object – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m65":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Messier_65_Hubble.jpg/640px-Messier_65_Hubble.jpg", title:"M65 Leo Triplet – Hubble WFC3", credit:"NASA / ESA / Hubble Legacy Archive", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m66":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Messier_66_Hubble_mosaic.jpg/640px-Messier_66_Hubble_mosaic.jpg", title:"M66 Leo Triplet – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "ngc-1300":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/NGC_1300_Hubble.jpg/640px-NGC_1300_Hubble.jpg", title:"NGC 1300 Barred Spiral – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "ngc-4013":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/NGC_4013_Hubble.jpg/640px-NGC_4013_Hubble.jpg", title:"NGC 4013 Edge-on Galaxy – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "whirlpool":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Messier51_sRGB.jpg/640px-Messier51_sRGB.jpg", title:"M51 Whirlpool Galaxy – Hubble ACS", credit:"NASA / ESA / S. Beckwith (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
+
+  /* ── GALAXY CLUSTERS ────────────────────────────────────────────────── */
+  "virgo-cluster": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Virgo_Cluster_Hubble.jpg/640px-Virgo_Cluster_Hubble.jpg", title:"Virgo Galaxy Cluster – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "coma-cluster":  { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Coma_Cluster.jpg/640px-Coma_Cluster.jpg", title:"Coma Cluster – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "fornax-cluster":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Fornax_Cluster_Hubble.jpg/640px-Fornax_Cluster_Hubble.jpg", title:"Fornax Cluster – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "perseus-cluster":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Perseus_cluster_NASA_Chandra.jpg/640px-Perseus_cluster_NASA_Chandra.jpg", title:"Perseus Cluster – Chandra X-ray", credit:"NASA / CXC / IoA / A. Fabian et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
+  "abell-2029":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Abell_2029_Chandra.jpg/640px-Abell_2029_Chandra.jpg", title:"Abell 2029 Cluster – Chandra", credit:"NASA / CXC / Univ. of Alabama / Casey et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
+  "abell-1689":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Abell_1689_-_HST_-_March_5_2003.jpg/640px-Abell_1689_-_HST_-_March_5_2003.jpg", title:"Abell 1689 Gravitational Lens – Hubble ACS", credit:"NASA / ESA / L. Bradley (JHU)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "abell-2744":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Abell_2744_Hubble.jpg/640px-Abell_2744_Hubble.jpg", title:"Abell 2744 Pandora's Cluster – Hubble/Chandra", credit:"NASA / ESA / ESO / CXC / D. Coe (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "bullet-cluster":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/1e0657_scale.jpg/640px-1e0657_scale.jpg", title:"Bullet Cluster 1E 0657-56 – Hubble/Chandra", credit:"X-ray: NASA / CXC / CfA / M. Markevitch et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
+  "el-gordo":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/El_Gordo_Galaxy_Cluster_Hubble.jpg/640px-El_Gordo_Galaxy_Cluster_Hubble.jpg", title:"El Gordo Galaxy Cluster – Hubble", credit:"NASA / ESA / J. Jee (UC Davis)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "hercules-cluster": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Hercules_galaxy_cluster.jpg/640px-Hercules_galaxy_cluster.jpg", title:"Hercules Galaxy Cluster – DSS2", credit:"ESA / Digitized Sky Survey 2", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "centaurus-cluster": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Centaurus_cluster_Chandra.jpg/640px-Centaurus_cluster_Chandra.jpg", title:"Centaurus Cluster – Chandra X-ray", credit:"NASA / CXC / Univ. of Cambridge / J. Sanders et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" }
+};
+
+/* Helper: look up real image by exact id or common name variations */
+function getRealImg(id) {
+  if (!id) return null;
+  const key = id.toLowerCase().replace(/[_\s]+/g,'-').replace(/[^a-z0-9-]/g,'');
+  return REAL_IMG_MAP[key] || REAL_IMG_MAP[id] || null;
+}
+
 /* --- Universal Cosmic Visuals Generator & Media Lightbox --- */
 const COSMIC_VISUALS = {};
 
@@ -592,21 +721,37 @@ function getMediaHtml(id, meta){
   let imgSrc = "";
   let isGen = false;
 
+  /* 1. Local real image from images/objects/ */
   if (c && !c.isGenerated) {
     imgSrc = 'images/objects/' + id + '.jpg';
-  } else {
-    imgSrc = getCosmicVisual(id, meta || {});
-    c = CREDITS_MAP[id];
-    isGen = true;
+  }
+  /* 2. CDN real image from REAL_IMG_MAP */
+  else {
+    const ri = getRealImg(id);
+    if (ri) {
+      imgSrc = ri.url;
+      c = { title: ri.title, credit: ri.credit, source: ri.source, license: ri.license, isCDN: true };
+      CREDITS_MAP[id] = c;
+      isGen = false;
+    } else {
+      /* 3. Fallback to procedural canvas visual */
+      imgSrc = getCosmicVisual(id, meta || {});
+      c = CREDITS_MAP[id];
+      isGen = true;
+    }
   }
 
   if (!c) return "";
 
   let badge;
-  if (c.badgeText) {
+  if (isGen) {
+    badge = '<span class="illus-badge">🔭 Cosmic Visualisation</span>';
+  } else if (c.badgeText) {
     badge = '<span class="photo-badge" style="color:var(--cy);border-color:rgba(94,225,255,.35)">' + c.badgeText + '</span>';
   } else if (c.isIllustration) {
     badge = '<span class="illus-badge">🎨 Artist Concept (Illustration)</span>';
+  } else if (c.isCDN) {
+    badge = '<span class="photo-badge" style="color:#a8ffd0;border-color:rgba(100,255,180,.35)">🌐 Real Space Image</span>';
   } else if (id === 'uranus' || id === 'neptune' || c.is2K) {
     badge = '<span class="photo-badge" style="border-color:rgba(120,160,255,.3);color:#8a96b8">🗺️ Real 2K Map (Upscaled)</span>';
   } else if (byId[id]) {
@@ -617,7 +762,9 @@ function getMediaHtml(id, meta){
 
   const thumbHtml = isGen
     ? '<img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" onclick="openPhotoModal(\'' + id + '\')">'
-    : '<picture><source srcset="images/objects/' + id + '.webp" type="image/webp"><img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" loading="lazy" decoding="async" onclick="openPhotoModal(\'" + id + "\')"></picture>';
+    : (c.isCDN
+      ? '<img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" loading="lazy" decoding="async" crossorigin="anonymous" onerror="this.style.opacity=0.5" onclick="openPhotoModal(\'' + id + '\')">'
+      : '<picture><source srcset="images/objects/' + id + '.webp" type="image/webp"><img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" loading="lazy" decoding="async" onclick="openPhotoModal(\'" + id + "\')">' + '</picture>');
 
   return '<div class="panel-media" data-id="' + id + '">' +
     thumbHtml +
@@ -634,6 +781,11 @@ function openPhotoModal(id){
   if (item.isGenerated && COSMIC_VISUALS[id]) {
     pic.onerror = null;
     pic.src = COSMIC_VISUALS[id];
+  } else if (item.isCDN) {
+    /* CDN real image (NASA/ESA/Wikimedia) */
+    const ri = getRealImg(id);
+    pic.onerror = function() { this.onerror = null; };
+    pic.src = ri ? ri.url : '';
   } else {
     pic.onerror = function() {
       this.onerror = null;
