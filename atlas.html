@@ -250,38 +250,401 @@ function populateCredits(){
   `).join("");
 }
 
-function getMediaHtml(id){
-  const c=CREDITS_MAP[id];if(!c)return "";
-  let badge;
-  if(c.isIllustration){
-    badge='<span class="illus-badge">🎨 Artist Concept (Illustration)</span>';
-  }else if(id==='uranus'||id==='neptune'||c.is2K){
-    badge='<span class="photo-badge" style="border-color:rgba(120,160,255,.3);color:#8a96b8">🗺️ Real 2K Map (Upscaled)</span>';
-  }else if(byId[id]){
-    badge='<span class="photo-badge">🗺️ Real Planetary Map</span>';
-  }else{
-    badge='<span class="photo-badge">📷 Real 4K Imagery</span>';
+/* --- Universal Cosmic Visuals Generator & Media Lightbox --- */
+const COSMIC_VISUALS = {};
+
+function getCosmicVisual(id, meta) {
+  if (COSMIC_VISUALS[id]) return COSMIC_VISUALS[id];
+  const cv = document.createElement("canvas");
+  cv.width = 640; cv.height = 400;
+  const g = cv.getContext("2d");
+  if (!g) return "";
+
+  // 1. Cosmic Canvas Background
+  const bg = g.createRadialGradient(320, 200, 10, 320, 200, 340);
+  bg.addColorStop(0, "#080c1a");
+  bg.addColorStop(0.65, "#03040a");
+  bg.addColorStop(1, "#010206");
+  g.fillStyle = bg;
+  g.fillRect(0, 0, 640, 400);
+
+  // Background micro-stars using deterministic pseudo-random seed from id
+  let seed = 0;
+  for (let i = 0; i < id.length; i++) seed = (seed * 31 + id.charCodeAt(i)) & 0xffffffff;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 4294967296; };
+
+  g.fillStyle = "#fff";
+  for (let i = 0; i < 90; i++) {
+    const sx = rnd() * 640, sy = rnd() * 400, sr = rnd() * 1.3 + 0.3;
+    g.globalAlpha = rnd() * 0.7 + 0.2;
+    g.beginPath(); g.arc(sx, sy, sr, 0, Math.PI * 2); g.fill();
   }
-  return '<div class="panel-media" data-id="'+id+'">'+
-    '<picture><source srcset="images/objects/'+id+'.webp" type="image/webp"><img src="images/objects/'+id+'.jpg" alt="'+c.title+'" class="panel-thumb" loading="lazy" decoding="async" onclick="openPhotoModal(\''+id+'\')"></picture>'+
-    '<div class="panel-media-meta">'+badge+'<button class="expand-btn" type="button" onclick="openPhotoModal(\''+id+'\')">⛶ Fullscreen</button></div>'+
-    '<div class="panel-media-credit">'+c.credit+' · <a href="'+c.source+'" target="_blank" rel="noopener">'+c.license+'</a></div>'+
+  g.globalAlpha = 1;
+
+  const type = (meta && meta.type) || "";
+
+  // A) STAR VISUAL
+  if (type === "star" || meta.star) {
+    const st = meta.star || {};
+    const sp = (st.sp || "").toUpperCase();
+    let starCol = "#ffffff", glowCol = "#e6f0ff", haloCol = "rgba(180, 215, 255, 0.4)";
+    let badgeText = "⭐ Spectral Class " + (sp || "Star");
+
+    if (sp.startsWith("O")) { starCol = "#70aaff"; glowCol = "#99c4ff"; haloCol = "rgba(100, 170, 255, 0.45)"; }
+    else if (sp.startsWith("B")) { starCol = "#a8cbff"; glowCol = "#d0e4ff"; haloCol = "rgba(140, 195, 255, 0.45)"; }
+    else if (sp.startsWith("A")) { starCol = "#f2f7ff"; glowCol = "#ffffff"; haloCol = "rgba(200, 225, 255, 0.4)"; }
+    else if (sp.startsWith("F")) { starCol = "#fff3d4"; glowCol = "#fff9ea"; haloCol = "rgba(255, 235, 180, 0.4)"; }
+    else if (sp.startsWith("G")) { starCol = "#ffcc44"; glowCol = "#ffe680"; haloCol = "rgba(255, 195, 70, 0.45)"; }
+    else if (sp.startsWith("K")) { starCol = "#ff8c26"; glowCol = "#ffb066"; haloCol = "rgba(255, 130, 40, 0.45)"; }
+    else if (sp.startsWith("M")) { starCol = "#ff3b1a"; glowCol = "#ff6a4d"; haloCol = "rgba(255, 55, 30, 0.5)"; }
+
+    const cx = 320, cy = 200;
+    const hGr = g.createRadialGradient(cx, cy, 2, cx, cy, 180);
+    hGr.addColorStop(0, haloCol);
+    hGr.addColorStop(0.35, haloCol.replace("0.4", "0.15").replace("0.5", "0.18").replace("0.45", "0.16"));
+    hGr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = hGr;
+    g.fillRect(0, 0, 640, 400);
+
+    const spikeGrH = g.createLinearGradient(0, cy, 640, cy);
+    spikeGrH.addColorStop(0, "rgba(255,255,255,0)");
+    spikeGrH.addColorStop(0.48, glowCol);
+    spikeGrH.addColorStop(0.5, "#ffffff");
+    spikeGrH.addColorStop(0.52, glowCol);
+    spikeGrH.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = spikeGrH;
+    g.fillRect(0, cy - 1.5, 640, 3);
+
+    const spikeGrV = g.createLinearGradient(cx, 0, cx, 400);
+    spikeGrV.addColorStop(0, "rgba(255,255,255,0)");
+    spikeGrV.addColorStop(0.48, glowCol);
+    spikeGrV.addColorStop(0.5, "#ffffff");
+    spikeGrV.addColorStop(0.52, glowCol);
+    spikeGrV.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = spikeGrV;
+    g.fillRect(cx - 1.5, 0, 3, 400);
+
+    g.save();
+    g.translate(cx, cy);
+    g.rotate(Math.PI / 4);
+    g.globalAlpha = 0.35;
+    g.fillRect(-180, -1, 360, 2);
+    g.fillRect(-1, -180, 2, 360);
+    g.restore();
+
+    const cGr = g.createRadialGradient(cx, cy, 2, cx, cy, 48);
+    cGr.addColorStop(0, "#ffffff");
+    cGr.addColorStop(0.35, glowCol);
+    cGr.addColorStop(0.75, starCol);
+    cGr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = cGr;
+    g.beginPath(); g.arc(cx, cy, 48, 0, Math.PI * 2); g.fill();
+
+    CREDITS_MAP[id] = {
+      title: st.n || id,
+      credit: "Telescopic Spectrophotometry Synthesis · Hipparcos & Gaia Astrometry",
+      source: "https://hubblesite.org",
+      license: "Public Domain / NASA / ESA",
+      badgeText: badgeText,
+      isGenerated: true
+    };
+  }
+  // B) CONSTELLATION VISUAL
+  else if (type === "con" || meta.con) {
+    const c = meta.con || {};
+    const cx = 320, cy = 200;
+
+    g.strokeStyle = "rgba(94, 225, 255, 0.08)";
+    g.lineWidth = 1;
+    for (let r = 50; r <= 220; r += 45) {
+      g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+    }
+    for (let a = 0; a < 8; a++) {
+      const rad = (a * Math.PI) / 4;
+      g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(rad) * 240, cy + Math.sin(rad) * 240); g.stroke();
+    }
+
+    const nGr = g.createRadialGradient(cx + 20, cy - 10, 10, cx + 20, cy - 10, 180);
+    nGr.addColorStop(0, "rgba(94, 180, 255, 0.16)");
+    nGr.addColorStop(0.6, "rgba(155, 140, 255, 0.08)");
+    nGr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = nGr;
+    g.fillRect(0, 0, 640, 400);
+
+    const starPts = [
+      { x: cx - 110, y: cy - 70 }, { x: cx - 40, y: cy - 100 },
+      { x: cx + 55, y: cy - 85 }, { x: cx + 115, y: cy - 20 },
+      { x: cx + 70, y: cy + 70 }, { x: cx - 10, y: cy + 95 },
+      { x: cx - 90, y: cy + 50 }, { x: cx - 10, y: cy - 10 }
+    ];
+
+    g.strokeStyle = "rgba(94, 225, 255, 0.75)";
+    g.lineWidth = 1.8;
+    g.beginPath();
+    g.moveTo(starPts[0].x, starPts[0].y);
+    g.lineTo(starPts[1].x, starPts[1].y);
+    g.lineTo(starPts[2].x, starPts[2].y);
+    g.lineTo(starPts[3].x, starPts[3].y);
+    g.lineTo(starPts[4].x, starPts[4].y);
+    g.lineTo(starPts[5].x, starPts[5].y);
+    g.lineTo(starPts[6].x, starPts[6].y);
+    g.lineTo(starPts[0].x, starPts[0].y);
+    g.stroke();
+
+    g.beginPath();
+    g.moveTo(starPts[1].x, starPts[1].y);
+    g.lineTo(starPts[7].x, starPts[7].y);
+    g.lineTo(starPts[5].x, starPts[5].y);
+    g.stroke();
+
+    starPts.forEach(pt => {
+      const sGr = g.createRadialGradient(pt.x, pt.y, 1, pt.x, pt.y, 14);
+      sGr.addColorStop(0, "#ffffff");
+      sGr.addColorStop(0.35, "rgba(94, 225, 255, 0.9)");
+      sGr.addColorStop(1, "rgba(94, 225, 255, 0)");
+      g.fillStyle = sGr;
+      g.beginPath(); g.arc(pt.x, pt.y, 14, 0, Math.PI * 2); g.fill();
+      g.fillStyle = "#ffffff";
+      g.beginPath(); g.arc(pt.x, pt.y, 3, 0, Math.PI * 2); g.fill();
+    });
+
+    g.font = '700 44px "Space Grotesk", sans-serif';
+    g.fillStyle = "rgba(94, 225, 255, 0.1)";
+    g.textAlign = "center";
+    g.fillText((c.ab || "CON").toUpperCase(), cx, cy + 16);
+
+    CREDITS_MAP[id] = {
+      title: (c.n || id) + " Constellation",
+      credit: "International Astronomical Union (IAU) · Star Chart Asterism",
+      source: "https://www.iau.org",
+      license: "Public Domain / IAU",
+      badgeText: (c.z ? "✨ Zodiac Asterism" : "✨ IAU Constellation"),
+      isGenerated: true
+    };
+  }
+  // C) EXOPLANET VISUAL
+  else if (type === "exop" || type === "exo" || (meta.dso && (meta.dso.k === "exo" || meta.dso.k === "exop"))) {
+    const dso = meta.dso || {};
+    const cx = 300, cy = 200, r = 108;
+
+    const starX = 520, starY = 80;
+    const sGr = g.createRadialGradient(starX, starY, 2, starX, starY, 60);
+    sGr.addColorStop(0, "#ffffff");
+    sGr.addColorStop(0.3, "rgba(255, 200, 100, 0.8)");
+    sGr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = sGr;
+    g.fillRect(400, 0, 240, 200);
+
+    g.save();
+    g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.clip();
+
+    const pGr = g.createRadialGradient(cx + 45, cy - 35, 10, cx, cy, r);
+    pGr.addColorStop(0, "#2a628f");
+    pGr.addColorStop(0.45, "#183e60");
+    pGr.addColorStop(0.8, "#0d1e30");
+    pGr.addColorStop(1, "#03070d");
+    g.fillStyle = pGr;
+    g.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+    g.fillStyle = "#2d5236"; g.globalAlpha = 0.65;
+    g.beginPath(); g.ellipse(cx + 20, cy - 20, 50, 30, 0.4, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.ellipse(cx - 10, cy + 30, 40, 25, -0.2, 0, Math.PI * 2); g.fill();
+
+    g.fillStyle = "#ffffff"; g.globalAlpha = 0.45;
+    for (let cl = -60; cl <= 60; cl += 25) {
+      g.beginPath(); g.ellipse(cx + 15, cy + cl, 85, 14, 0.15, 0, Math.PI * 2); g.fill();
+    }
+    g.globalAlpha = 1;
+
+    const tGr = g.createLinearGradient(cx - r, cy + r * 0.7, cx + r, cy - r * 0.7);
+    tGr.addColorStop(0, "rgba(0,0,0,0.95)");
+    tGr.addColorStop(0.5, "rgba(0,0,0,0.7)");
+    tGr.addColorStop(0.85, "rgba(0,0,0,0)");
+    g.fillStyle = tGr;
+    g.fillRect(cx - r, cy - r, r * 2, r * 2);
+    g.restore();
+
+    const aGr = g.createRadialGradient(cx, cy, r - 4, cx, cy, r + 12);
+    aGr.addColorStop(0, "rgba(94, 225, 255, 0)");
+    aGr.addColorStop(0.65, "rgba(94, 225, 255, 0.75)");
+    aGr.addColorStop(1, "rgba(94, 225, 255, 0)");
+    g.fillStyle = aGr;
+    g.beginPath(); g.arc(cx, cy, r + 12, 0, Math.PI * 2); g.fill();
+
+    CREDITS_MAP[id] = {
+      title: dso.n || id,
+      credit: "Exoplanet Scientific Visualization · NASA/JPL-Caltech Exoplanet Exploration",
+      source: "https://exoplanets.nasa.gov",
+      license: "Public Domain / NASA",
+      badgeText: "🪐 Exoplanet Concept",
+      isGenerated: true
+    };
+  }
+  // D) GALAXY VISUAL
+  else if (type === "gal" || (meta.dso && meta.dso.k === "gal" && !meta.dso.cl)) {
+    const dso = meta.dso || {};
+    const cx = 320, cy = 200;
+
+    g.save();
+    g.translate(cx, cy);
+    g.rotate(-0.45);
+    g.scale(1.0, 0.48);
+
+    const coreGr = g.createRadialGradient(0, 0, 5, 0, 0, 160);
+    coreGr.addColorStop(0, "#ffffff");
+    coreGr.addColorStop(0.12, "#ffeedd");
+    coreGr.addColorStop(0.3, "rgba(255, 200, 130, 0.7)");
+    coreGr.addColorStop(0.65, "rgba(94, 160, 255, 0.35)");
+    coreGr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = coreGr;
+    g.beginPath(); g.arc(0, 0, 160, 0, Math.PI * 2); g.fill();
+
+    for (let arm = 0; arm < 2; arm++) {
+      const armOffset = arm * Math.PI;
+      g.strokeStyle = arm === 0 ? "rgba(140, 190, 255, 0.55)" : "rgba(180, 210, 255, 0.55)";
+      g.lineWidth = 14;
+      g.beginPath();
+      for (let theta = 0.5; theta < 4.2; theta += 0.1) {
+        const rad = 25 * Math.exp(0.38 * theta);
+        const x = Math.cos(theta + armOffset) * rad;
+        const y = Math.sin(theta + armOffset) * rad;
+        if (theta === 0.5) g.moveTo(x, y); else g.lineTo(x, y);
+      }
+      g.stroke();
+    }
+
+    g.strokeStyle = "rgba(10, 8, 16, 0.7)";
+    g.lineWidth = 6;
+    for (let arm = 0; arm < 2; arm++) {
+      const armOffset = arm * Math.PI + 0.18;
+      g.beginPath();
+      for (let theta = 0.8; theta < 3.8; theta += 0.12) {
+        const rad = 24 * Math.exp(0.38 * theta);
+        const x = Math.cos(theta + armOffset) * rad;
+        const y = Math.sin(theta + armOffset) * rad;
+        if (theta === 0.8) g.moveTo(x, y); else g.lineTo(x, y);
+      }
+      g.stroke();
+    }
+    g.restore();
+
+    CREDITS_MAP[id] = {
+      title: dso.n || id,
+      credit: "Extragalactic Deep-Sky Synthesis · Hubble Heritage & Webb Cosmic Surveys",
+      source: "https://hubblesite.org",
+      license: "Public Domain / NASA / STScI",
+      badgeText: "🌌 Deep-Sky Galaxy",
+      isGenerated: true
+    };
+  }
+  // E) GALAXY CLUSTER VISUAL
+  else {
+    const dso = meta.dso || {};
+    const cx = 320, cy = 200;
+
+    const gGr = g.createRadialGradient(cx, cy, 10, cx, cy, 210);
+    gGr.addColorStop(0, "rgba(160, 140, 255, 0.28)");
+    gGr.addColorStop(0.45, "rgba(94, 180, 255, 0.16)");
+    gGr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = gGr;
+    g.fillRect(0, 0, 640, 400);
+
+    g.strokeStyle = "rgba(120, 200, 255, 0.6)";
+    g.lineWidth = 2.2;
+    g.beginPath(); g.arc(cx - 30, cy + 20, 110, 0.3, 1.2); g.stroke();
+    g.beginPath(); g.arc(cx + 40, cy - 25, 125, 3.4, 4.3); g.stroke();
+
+    const galCenters = [
+      { x: cx - 20, y: cy - 10, r: 42, col: "#ffeaaf" },
+      { x: cx + 70, y: cy + 30, r: 32, col: "#ffe3b8" },
+      { x: cx - 90, y: cy + 45, r: 24, col: "#d4e6ff" },
+      { x: cx + 110, y: cy - 65, r: 20, col: "#fff0d0" },
+      { x: cx - 130, y: cy - 70, r: 18, col: "#d8e4ff" }
+    ];
+
+    galCenters.forEach(gc => {
+      const cGr = g.createRadialGradient(gc.x, gc.y, 2, gc.x, gc.y, gc.r);
+      cGr.addColorStop(0, "#ffffff");
+      cGr.addColorStop(0.3, gc.col);
+      cGr.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = cGr;
+      g.beginPath(); g.arc(gc.x, gc.y, gc.r, 0, Math.PI * 2); g.fill();
+    });
+
+    CREDITS_MAP[id] = {
+      title: dso.n || id,
+      credit: "Galaxy Cluster Cosmic Survey · Gravitational Lensing & Intracluster Medium",
+      source: "https://hubblesite.org",
+      license: "Public Domain / NASA / ESA",
+      badgeText: "🔭 Galaxy Cluster Field",
+      isGenerated: true
+    };
+  }
+
+  const url = cv.toDataURL("image/jpeg", 0.9);
+  COSMIC_VISUALS[id] = url;
+  return url;
+}
+
+function getMediaHtml(id, meta){
+  if (!id) return "";
+  let c = CREDITS_MAP[id];
+  let imgSrc = "";
+  let isGen = false;
+
+  if (c && !c.isGenerated) {
+    imgSrc = 'images/objects/' + id + '.jpg';
+  } else {
+    imgSrc = getCosmicVisual(id, meta || {});
+    c = CREDITS_MAP[id];
+    isGen = true;
+  }
+
+  if (!c) return "";
+
+  let badge;
+  if (c.badgeText) {
+    badge = '<span class="photo-badge" style="color:var(--cy);border-color:rgba(94,225,255,.35)">' + c.badgeText + '</span>';
+  } else if (c.isIllustration) {
+    badge = '<span class="illus-badge">🎨 Artist Concept (Illustration)</span>';
+  } else if (id === 'uranus' || id === 'neptune' || c.is2K) {
+    badge = '<span class="photo-badge" style="border-color:rgba(120,160,255,.3);color:#8a96b8">🗺️ Real 2K Map (Upscaled)</span>';
+  } else if (byId[id]) {
+    badge = '<span class="photo-badge">🗺️ Real Planetary Map</span>';
+  } else {
+    badge = '<span class="photo-badge">📷 Real 4K Imagery</span>';
+  }
+
+  const thumbHtml = isGen
+    ? '<img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" onclick="openPhotoModal(\'' + id + '\')">'
+    : '<picture><source srcset="images/objects/' + id + '.webp" type="image/webp"><img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" loading="lazy" decoding="async" onclick="openPhotoModal(\'" + id + "\')"></picture>';
+
+  return '<div class="panel-media" data-id="' + id + '">' +
+    thumbHtml +
+    '<div class="panel-media-meta">' + badge + '<button class="expand-btn" type="button" onclick="openPhotoModal(\'" + id + "\')">⛶ Fullscreen</button></div>' +
+    '<div class="panel-media-credit">' + c.credit + (c.source ? ' · <a href="' + c.source + '" target="_blank" rel="noopener">' + c.license + '</a>' : '') + '</div>' +
   '</div>';
 }
 
 function openPhotoModal(id){
-  const item=CREDITS_MAP[id];if(!item)return;
-  const m=$("imgModal");if(!m)return;
-  const pic=$("imgModal-pic"),info=$("imgModal-info");
-  pic.alt=item.title;
-  pic.onerror=function(){
-    this.onerror=null;
-    this.src="images/objects/"+id+".jpg";
-  };
-  pic.src="images/objects/"+id+".webp";
-  info.innerHTML='<h3>'+item.title+(item.isIllustration?' <span style="color:var(--am);font-size:12px">[Artist Concept]</span>':(id==='uranus'||id==='neptune'||item.is2K?' <span style="color:#8a96b8;font-size:12px">[2K Base Map]</span>':''))+'</h3>'+
-    '<p>'+item.credit+' · <a href="'+item.source+'" target="_blank" rel="noopener" style="color:var(--cy)">'+item.license+'</a></p>';
-  m.classList.add("active");m.setAttribute("aria-hidden","false");
+  const item = CREDITS_MAP[id]; if (!item) return;
+  const m = $("imgModal"); if (!m) return;
+  const pic = $("imgModal-pic"), info = $("imgModal-info");
+  pic.alt = item.title;
+  if (item.isGenerated && COSMIC_VISUALS[id]) {
+    pic.onerror = null;
+    pic.src = COSMIC_VISUALS[id];
+  } else {
+    pic.onerror = function() {
+      this.onerror = null;
+      this.src = "images/objects/" + id + ".jpg";
+    };
+    pic.src = "images/objects/" + id + ".webp";
+  }
+  const badgeSuffix = item.badgeText ? ' <span style="color:var(--cy);font-size:12px">[' + item.badgeText + ']</span>' : (item.isIllustration ? ' <span style="color:var(--am);font-size:12px">[Artist Concept]</span>' : (id === 'uranus' || id === 'neptune' || item.is2K ? ' <span style="color:#8a96b8;font-size:12px">[2K Base Map]</span>' : ''));
+  info.innerHTML = '<h3>' + item.title + badgeSuffix + '</h3>' +
+    '<p>' + item.credit + (item.source ? ' · <a href="' + item.source + '" target="_blank" rel="noopener" style="color:var(--cy)">' + item.license + '</a>' : '') + '</p>';
+  m.classList.add("active"); m.setAttribute("aria-hidden", "false");
 }
 function closePhotoModal(){const m=$("imgModal");if(m){m.classList.remove("active");m.setAttribute("aria-hidden","true")}}
 window.openPhotoModal=openPhotoModal;window.closePhotoModal=closePhotoModal;
@@ -345,8 +708,163 @@ const matFor=b=>{const t=tex(b),rocky=["mercury","moon","mars","earth"].includes
 const atmMat=c=>new THREE.ShaderMaterial({uniforms:{c:{value:new THREE.Color(c)}},side:THREE.BackSide,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,
 vertexShader:"varying vec3 n;void main(){n=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
 fragmentShader:"uniform vec3 c;varying vec3 n;void main(){float i=pow(max(.72-dot(n,vec3(0,0,1)),0.),3.);gl_FragColor=vec4(c,1.)*i*2.2;}"});
-const sunMat=new THREE.ShaderMaterial({uniforms:{t:{value:0}},vertexShader:"varying vec3 p;void main(){p=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
-fragmentShader:"uniform float t;varying vec3 p;void main(){vec3 q=p*.35;float n=sin(q.x*3.+t)+sin(q.y*4.-t*1.3)+sin(q.z*5.+t*.7)+sin((q.x+q.y+q.z)*6.-t*2.)*.5;n=n*.2+.5;gl_FragColor=vec4(mix(vec3(.9,.3,.02),vec3(1.,.85,.35),clamp(n,0.,1.)),1.);}"});
+/* --- Photorealistic Burning 3D Sun Photosphere & Corona --- */
+const solarNoiseGLSL = `
+vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+
+float snoise(vec3 v){
+  const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+  vec3 i = floor(v + dot(v, C.yyy));
+  vec3 x0 = v - i + dot(i, C.xxx);
+  vec3 g = step(x0.yzx, x0.xyz);
+  vec3 l = 1.0 - g;
+  vec3 i1 = min(g.xyz, l.zxy);
+  vec3 i2 = max(g.xyz, l.zxy);
+  vec3 x1 = x0 - i1 + C.xxx;
+  vec3 x2 = x0 - i2 + C.yyy;
+  vec3 x3 = x0 - D.yyy;
+  i = mod289(vec4(i, 0.0)).xyz;
+  vec4 p = permute(permute(permute(
+             i.z + vec4(0.0, i1.z, i2.z, 1.0))
+           + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+           + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+  float n_ = 0.142857142857;
+  vec3 ns = n_ * D.wyz - D.xzx;
+  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+  vec4 x_ = floor(j * ns.z);
+  vec4 y_ = floor(j - 7.0 * x_);
+  vec4 x = x_ *ns.x + ns.yyyy;
+  vec4 y = y_ *ns.x + ns.yyyy;
+  vec4 h = 1.0 - abs(x) - abs(y);
+  vec4 b0 = vec4(x.xy, y.xy);
+  vec4 b1 = vec4(x.zw, y.zw);
+  vec4 s0 = floor(b0)*2.0 + 1.0;
+  vec4 s1 = floor(b1)*2.0 + 1.0;
+  vec4 sh = -step(h, vec4(0.0));
+  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+  vec3 p0 = vec3(a0.xy, h.x);
+  vec3 p1 = vec3(a0.zw, h.y);
+  vec3 p2 = vec3(a1.xy, h.z);
+  vec3 p3 = vec3(a1.zw, h.w);
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+  m = m * m;
+  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+}
+
+float fbm(vec3 p, float time) {
+  float v = 0.0;
+  v += 0.500 * snoise(p + vec3(time * 0.22, -time * 0.14, time * 0.08));
+  v += 0.250 * snoise(p * 2.05 - vec3(-time * 0.18, time * 0.28, 0.0));
+  v += 0.125 * snoise(p * 4.2 + vec3(0.0, -time * 0.35, time * 0.2));
+  v += 0.0625 * snoise(p * 8.2 + vec3(time * 0.45, 0.0, -time * 0.4));
+  return v;
+}
+`;
+
+const sunMat = new THREE.ShaderMaterial({
+  uniforms: { t: { value: 0 } },
+  vertexShader: `
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    varying vec3 vViewPosition;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      vPosition = position;
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      vViewPosition = mv.xyz;
+      gl_Position = projectionMatrix * mv;
+    }
+  `,
+  fragmentShader: `
+    uniform float t;
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    varying vec3 vViewPosition;
+    ${solarNoiseGLSL}
+    void main() {
+      vec3 norm = normalize(vNormal);
+      vec3 viewDir = normalize(-vViewPosition);
+      vec3 coord = normalize(vPosition) * 4.0;
+
+      float n1 = fbm(coord, t * 0.85);
+      float n2 = fbm(coord * 1.8 + vec3(2.1, 7.3, 0.5), -t * 0.65);
+      float granules = snoise(coord * 10.0 + vec3(t * 0.4));
+      granules = pow(granules * 0.5 + 0.5, 1.3);
+
+      float plasma = (n1 * 0.65 + n2 * 0.35) * 0.5 + 0.5;
+      float spotNoise = snoise(coord * 0.85 + vec3(t * 0.06));
+      float sunspots = smoothstep(0.68, 0.79, spotNoise);
+
+      float flareNoise = snoise(coord * 3.4 - vec3(t * 1.6, t * 1.2, 0.0));
+      float flare = pow(max(flareNoise, 0.0), 3.0) * 1.8;
+
+      vec3 colDark = vec3(0.35, 0.04, 0.00);
+      vec3 colLane = vec3(0.85, 0.20, 0.01);
+      vec3 colBase = vec3(1.00, 0.62, 0.04);
+      vec3 colGran = vec3(1.00, 0.92, 0.42);
+      vec3 colHot  = vec3(1.00, 0.98, 0.92);
+
+      vec3 color = mix(colLane, colBase, smoothstep(0.2, 0.55, plasma));
+      color = mix(color, colGran, granules * 0.65);
+      color = mix(color, colHot, smoothstep(0.72, 0.96, plasma) + flare);
+      color = mix(color, colDark, sunspots * 0.88);
+
+      float vDot = max(dot(norm, viewDir), 0.0);
+      float limbDarkening = pow(vDot, 0.52);
+      color *= mix(vec3(1.15, 0.42, 0.06), vec3(1.06, 1.04, 1.0), limbDarkening);
+
+      float rim = pow(1.0 - vDot, 3.2);
+      color += vec3(1.0, 0.55, 0.1) * rim * 2.4;
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `
+});
+
+const coronaMat = new THREE.ShaderMaterial({
+  uniforms: { t: { value: 0 } },
+  vertexShader: `
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    varying vec3 vViewPosition;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      vPosition = position;
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      vViewPosition = mv.xyz;
+      gl_Position = projectionMatrix * mv;
+    }
+  `,
+  fragmentShader: `
+    uniform float t;
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    varying vec3 vViewPosition;
+    ${solarNoiseGLSL}
+    void main() {
+      vec3 norm = normalize(vNormal);
+      vec3 viewDir = normalize(-vViewPosition);
+      float vDot = max(dot(norm, viewDir), 0.0);
+      float rim = pow(1.0 - vDot, 2.2);
+      vec3 p = normalize(vPosition) * 3.5;
+      float flames = fbm(p + vec3(0.0, -t * 1.2, t * 0.7), t * 0.95);
+      flames = flames * 0.5 + 0.5;
+      float alpha = rim * pow(flames, 1.4) * 1.5;
+      vec3 flameColor = mix(vec3(0.92, 0.25, 0.01), vec3(1.0, 0.85, 0.22), flames);
+      gl_FragColor = vec4(flameColor * 1.6, alpha);
+    }
+  `,
+  transparent: true,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  side: THREE.BackSide
+});
 function glowSprite(col,s){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d"),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,col);gr.addColorStop(.3,col.replace("1)",".25)"));gr.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=gr;g.fillRect(0,0,128,128);
 const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),blending:THREE.AdditiveBlending,depthWrite:false}));sp.scale.set(s,s,1);return sp}
 
@@ -372,7 +890,12 @@ const tilt=new THREE.Group();tilt.rotation.z=TILT[b.id]||0;b.orbit.add(tilt);b.t
 b.mesh=new THREE.Mesh(new THREE.SphereGeometry(b.r,48,32),b.id=="sun"?sunMat:matFor(b));tilt.add(b.mesh);
 if(b.id=="earth"){b.cloud=new THREE.Mesh(new THREE.SphereGeometry(b.r*1.015,48,32),new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(cloudCv()),transparent:true,depthWrite:false,roughness:1}));tilt.add(b.cloud)}
 if(b.atm){const a=new THREE.Mesh(new THREE.SphereGeometry(b.r*1.12,48,32),atmMat(b.atm));tilt.add(a)}
-if(b.id=="sun"){b.glow=glowSprite("rgba(255,170,60,1)",b.r*7);b.orbit.add(b.glow)}
+if(b.id=="sun"){
+  b.glow=glowSprite("rgba(255,140,30,0.95)",b.r*7.5);
+  b.orbit.add(b.glow);
+  b.corona=new THREE.Mesh(new THREE.SphereGeometry(b.r*1.12,64,48),coronaMat);
+  tilt.add(b.corona);
+}
 if(b.id=="saturn"){const rg=new THREE.RingGeometry(b.r*1.3,b.r*2.3,128),p=rg.attributes.position,uv=rg.attributes.uv,v=new THREE.Vector3();
 for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);uv.setXY(k,(v.length()-b.r*1.3)/(b.r),.5)}
 const c=document.createElement("canvas");c.width=256;c.height=1;const g=c.getContext("2d");for(let x=0;x<256;x++){g.fillStyle="rgba(215,195,150,"+(x>150&&x<165?0:.35+rd()*.5)+")";g.fillRect(x,0,1,1)}
@@ -835,7 +1358,8 @@ const m=/^[OBAFGKM]/.exec(x.sp||""),lc=/^[OBAFGKM][0-9.]*\s*(Iab|Ia|Ib|III|II|IV
 const desc=x.n+(x.des?" ("+x.des+")":"")+" is "+(m?SPD[m[0]]:"a star")+(lc&&LCN[lc[1]]?", a "+LCN[lc[1]]:"")+(x.con?" in "+x.con:"")+", about "+ys+" light-years away.";
 const st=[["Distance",ys+" light-years"],["Apparent magnitude",fmN(x.mag)],["Absolute magnitude",fmN(x.am)],["Spectral class",x.sp||"—"],["Temperature",T?fmN(T)+" K"+(x.T?"":" (from colour)"):"—"],["Luminosity",x.Lm!=null?fmN(x.Lm)+" × Sun":"—"],["Mass",x.M!=null?fmN(x.M)+" × Sun":"—"],["Radius",x.R!=null?fmN(x.R)+" × Sun":"—"]];
 const rel=NAMED.filter(s=>s!==x&&s.con&&s.con==x.con).slice(0,6);
-panelOpen('<div id="typ">Star'+(x.sp?" · "+x.sp:"")+'</div><h2>'+x.n+'</h2><div id="tag">'+(x.con||"")+'</div><div id="grid">'+st.map(a=>"<div><small>"+a[0]+"</small><b>"+a[1]+"</b></div>").join("")+'</div><p>'+desc+'</p><div id="fact"><b>Did you know?</b><br>'+(FF[key]||"")+(FF[key]?" ":"")+'You see it as it was about '+ys+' years ago, because that is how long its light has travelled.</div>'+(rel.length?"<div>Related</div>":"")+rel.map((s,i)=>'<span class="chip" data-i="'+i+'">'+s.n+"</span>").join("")+'<p><button id="sm">Show on map</button> <button id="shs">Share link</button></p><p class="note">Position and brightness are real'+(x.cur?" (curated table; values rounded)":" (HYG catalogue)")+'. Blank fields are not known to this atlas.</p>',x.n+", star, "+ys+" light-years away");
+const starId = starSlug(x.n);
+panelOpen('<div id="typ">Star'+(x.sp?" · "+x.sp:"")+'</div><h2>'+x.n+'</h2><div id="tag">'+(x.con||"")+'</div>'+getMediaHtml(starId, { type: 'star', star: x })+'<div id="grid">'+st.map(a=>"<div><small>"+a[0]+"</small><b>"+a[1]+"</b></div>").join("")+'</div><p>'+desc+'</p><div id="fact"><b>Did you know?</b><br>'+(FF[key]||"")+(FF[key]?" ":"")+'You see it as it was about '+ys+' years ago, because that is how long its light has travelled.</div>'+(rel.length?"<div>Related</div>":"")+rel.map((s,i)=>'<span class="chip" data-i="'+i+'">'+s.n+"</span>").join("")+'<p><button id="sm">Show on map</button> <button id="shs">Share link</button></p><p class="note">Position and brightness are real'+(x.cur?" (curated table; values rounded)":" (HYG catalogue)")+'. Blank fields are not known to this atlas.</p>',x.n+", star, "+ys+" light-years away");
 $("panel").querySelectorAll(".chip").forEach(c=>c.onclick=()=>selStar(rel[+c.dataset.i]));
 $("sm").onclick=()=>{selS=x;cam.follow=null;cam.tgt.copy(x.p).multiplyScalar(.5);cam.tr=Math.max(x.p.length()*1.4,50)};
 $("shs").onclick=()=>{shareLink(location.href.split("#")[0]+"#star-"+starSlug(x.n),$("shs"))};
@@ -845,7 +1369,8 @@ if(typeof c==="string"){const q=c.toLowerCase();c=CON.find(x=>x.n.toLowerCase()=
 if(!c)return;
 if(c.c){const d=c.c.clone().normalize(),R=1000;cam.follow=null;cam.tgt.copy(d).multiplyScalar(R);cam.ph=Math.acos(clamp(-d.y,-1,1));cam.th=Math.atan2(-d.x,-d.z);cam.tr=R}
 const myth=MYTH[c.n]||MYTH[c.n.replace(/ö/g,'o')]||(Object.entries(MYTH).find(([k])=>k.toLowerCase()===c.n.toLowerCase())||[])[1]||(`${c.n} (${c.ab}) is one of the 88 IAU constellations.`+(c.bs?` Its brightest listed star is ${c.bs.n}.`:'')+(c.z?' It lies on the ecliptic, so the Sun passes through it — it is a zodiac constellation.':''));
-panelOpen('<div id="typ">Constellation · '+(c.z?"Zodiac":"IAU")+'</div><h2>'+c.n+'</h2><div id="tag">'+c.ab+'</div><div id="grid"><div><small>Zodiac</small><b>'+(c.z?"Yes":"No")+'</b></div><div><small>Brightest listed star</small><b>'+(c.bs?c.bs.n:"—")+'</b></div><div><small>Figure</small><b>'+(c.cnt?"Full":(c.fig?"Simplified":"Not loaded"))+'</b></div></div><p>'+myth+'</p><p class="note">Constellations are sky patterns. The lines join real stars, but the stars lie at very different distances. Seen from far away the shape falls apart.</p>',c.n+", constellation");try{history.replaceState(null,"","#con-"+(c.ab||c.n).toLowerCase())}catch(e){}}
+const conId = "con-" + (c.ab||c.n).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+panelOpen('<div id="typ">Constellation · '+(c.z?"Zodiac":"IAU")+'</div><h2>'+c.n+'</h2><div id="tag">'+c.ab+'</div>'+getMediaHtml(conId, { type: 'con', con: c })+'<div id="grid"><div><small>Zodiac</small><b>'+(c.z?"Yes":"No")+'</b></div><div><small>Brightest listed star</small><b>'+(c.bs?c.bs.n:"—")+'</b></div><div><small>Figure</small><b>'+(c.cnt?"Full":(c.fig?"Simplified":"Not loaded"))+'</b></div></div><p>'+myth+'</p><p class="note">Constellations are sky patterns. The lines join real stars, but the stars lie at very different distances. Seen from far away the shape falls apart.</p>',c.n+", constellation");try{history.replaceState(null,"","#con-"+(c.ab||c.n).toLowerCase())}catch(e){}}
 /* Catalog sections + search across stars and constellations */
 const _rl=renderList;renderList=function(f){_rl(f);const l=$("list");f=(f||"").toLowerCase();
 const add=(h,items)=>{if(!items.length)return;const t=document.createElement("h4");t.textContent=h;l.appendChild(t);items.forEach(([a,b,fn])=>{const d=document.createElement("div");d.innerHTML=a+"<small>"+b+"</small>";d.tabIndex=0;d.setAttribute("role","button");d.onclick=fn;d.onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();fn()}};l.appendChild(d)})};
@@ -1524,7 +2049,7 @@ const upp=h*cam.r/innerHeight,[fa,un]=unit(upp*110),v=nice(upp*110/fa);$("sbl").
 let tx=sig(v)+" "+un;const dist=cam.r,[fd,ud]=unit(dist);tx+=" · "+(sel?sel.n:selD?selD.n:"view centre")+": "+sig(dist/fd)+" "+ud;if($("sbt").textContent!=tx)$("sbt").textContent=tx;
 if(now-lastDt>500&&document.activeElement!==dtI){lastDt=now;dtI.value=new Date((jd-2440587.5)*864e5).toISOString().slice(0,10)}}
 function frame(now){requestAnimationFrame(frame);if(document.hidden){last=now;return}const dt=Math.min((now-last)/1000,.1);last=now;const dps=playing?speed/24:0;days+=dps*dt;jd=Math.min(2469807,Math.max(2378497,jd+dps*dt));
-starMat.uniforms.t.value=now/1000;sunMat.uniforms.t.value=now/1500;
+starMat.uniforms.t.value=now/1000;sunMat.uniforms.t.value=now/1000;if(byId.sun&&byId.sun.corona)byId.sun.corona.material.uniforms.t.value=now/1000;
 updateBodies();D.forEach(b=>{b.mesh.rotation.y+=dt*6.2832*clamp(dps/b.rot,-.5,.5)});
 placeCam(dt);if(byId.earth.cloud)byId.earth.cloud.rotation.y+=dt*.02;
 if(sel){sel.orbit.getWorldPosition(ring.position);ring.scale.setScalar(sel.R*1.2);ring.quaternion.copy(camera.quaternion)}
