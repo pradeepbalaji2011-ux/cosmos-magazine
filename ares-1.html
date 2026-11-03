@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1b1514">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23211b19'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23f2a65a' stroke-width='3'/%3E%3Cpath d='M18 32h28M32 18v28' stroke='%23f2a65a' stroke-width='3'/%3E%3C/svg%3E">
+<title>ARES-1 — Mars Base Builder</title>
+<style>
+:root{--ink:#f3e9d8;--muted:#b9ab9c;--amber:#f2a65a;--orange:#d96b3b;--green:#8ed6ad;--red:#f08070;--glass:rgba(24,20,19,.88);--line:rgba(243,233,216,.16);--thin:rgba(243,233,216,.08)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#1b1514;color:var(--ink);font-family:"Aptos Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace}button,input{font:inherit}button{color:inherit}button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:3px}button{touch-action:manipulation}#scene{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:grab}#scene:active{cursor:grabbing}#scene.building{cursor:crosshair}.ui{position:fixed;z-index:5;pointer-events:none}.ui button,.ui input,.ui [data-action]{pointer-events:auto}.glass{background:var(--glass);border:1px solid var(--line);box-shadow:0 12px 35px rgba(0,0,0,.2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#top{left:16px;right:16px;top:14px;display:grid;grid-template-columns:minmax(180px,.75fr) minmax(490px,1.7fr) minmax(190px,.7fr);gap:10px;align-items:stretch}.brand,.resources,.mission{min-height:74px;border-radius:4px}.brand{padding:13px 16px;display:flex;align-items:center;gap:13px}.brandmark{width:35px;height:35px;border:1px solid var(--amber);border-radius:50%;position:relative;flex:none}.brandmark:before,.brandmark:after{content:"";position:absolute;background:var(--amber)}.brandmark:before{width:21px;height:1px;left:6px;top:16px}.brandmark:after{height:21px;width:1px;left:16px;top:6px}.brand h1{font-family:"Arial Narrow","Aptos Display",sans-serif;font-stretch:condensed;font-size:25px;letter-spacing:.16em;line-height:1;margin:0;font-weight:700}.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:.15em;margin-top:7px}.resources{display:grid;grid-template-columns:repeat(5,1fr);padding:9px 6px}.res{padding:3px 10px;border-right:1px solid var(--thin);min-width:0}.res:last-child{border:0}.res label{display:block;font-size:9px;letter-spacing:.13em;color:var(--muted);white-space:nowrap}.res strong{display:block;font-family:"Arial Narrow",sans-serif;font-size:21px;line-height:1.2;font-weight:500;margin-top:4px}.res em{font-style:normal;font-size:9px;color:var(--green);white-space:nowrap}.res em.neg{color:var(--red)}.res.low strong{color:var(--red)}.mission{padding:11px 14px}.missionline{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.08em}.missionline b{font-size:12px;color:var(--amber)}.progress{height:3px;background:var(--thin);margin:10px 0 8px;overflow:hidden}.progress i{display:block;height:100%;width:12%;background:var(--amber);transition:width .3s}.missionfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:9px}.textbtn{border:0;background:none;padding:0;color:var(--amber);cursor:pointer;font-size:9px;text-transform:uppercase;letter-spacing:.08em;min-height:20px}
+#tools{right:16px;top:98px;width:198px;padding:8px;border-radius:4px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.tool{border:1px solid var(--thin);background:rgba(255,255,255,.025);min-height:36px;padding:5px 3px;cursor:pointer;font-size:9px;color:var(--muted);border-radius:2px;transition:background .15s,color .15s,border-color .15s}.tool:hover{background:rgba(242,166,90,.1);color:var(--ink)}.tool.on{color:var(--amber);border-color:rgba(242,166,90,.4)}.tool.wide{grid-column:span 2}.tool.danger:hover{color:var(--red);border-color:var(--red)}#timeWrap{grid-column:1/-1;padding:5px 4px 2px;display:grid;grid-template-columns:36px 1fr 40px;align-items:center;gap:6px;font-size:9px;color:var(--muted)}#timeSlider{width:100%;height:18px;accent-color:var(--amber);cursor:pointer}#clock{color:var(--ink);text-align:right}
+#objective{left:16px;top:98px;width:214px;padding:12px 14px;border-radius:4px}.eyebrow{font-size:9px;letter-spacing:.15em;color:var(--amber);text-transform:uppercase}#objective h2{font-family:"Arial Narrow",sans-serif;font-size:17px;letter-spacing:.03em;margin:5px 0 8px;font-weight:500}#objective p{font-size:10px;line-height:1.55;color:var(--muted);margin:0}.netstatus{display:flex;gap:6px;align-items:center;margin-top:10px;font-size:9px}.dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px currentColor}.dot.bad{background:var(--red)}
+#buildArea{left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(1120px,calc(100vw - 32px));pointer-events:auto}#buildHint{min-height:34px;margin:0 auto 7px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:3px;font-size:10px;color:var(--muted);width:fit-content;max-width:100%}#buildHint b{color:var(--ink);font-weight:500}#buildHint .keys{white-space:nowrap;color:var(--amber)}.miniBtn{border:1px solid var(--line);background:transparent;min-height:24px;padding:2px 7px;font-size:9px;cursor:pointer;color:var(--muted)}.miniBtn:hover{color:var(--ink);border-color:var(--amber)}#buildMenu{display:flex;gap:6px;overflow-x:auto;padding:7px;border-radius:4px;scrollbar-width:thin;scrollbar-color:var(--orange) transparent}.buildCard{position:relative;flex:1 0 78px;max-width:100px;min-height:70px;border:1px solid var(--thin);background:rgba(255,255,255,.025);padding:9px 7px 7px;text-align:left;cursor:pointer;border-radius:2px;transition:transform .15s,border-color .15s,background .15s}.buildCard:hover{transform:translateY(-2px);border-color:rgba(242,166,90,.55);background:rgba(242,166,90,.07)}.buildCard.active{border-color:var(--amber);background:rgba(242,166,90,.12)}.buildCard:disabled{opacity:.42;cursor:not-allowed;transform:none}.buildCard .ico{display:block;font-family:"Arial Narrow",sans-serif;font-size:18px;color:var(--amber);height:23px;letter-spacing:-.04em}.buildCard .name{display:block;font-size:9px;line-height:1.25;min-height:23px}.buildCard .cost{display:block;font-size:8px;color:var(--muted);margin-top:4px}
+#info{right:16px;top:360px;width:250px;padding:15px;border-radius:4px;transform:translateX(285px);opacity:0;transition:transform .22s ease-out,opacity .18s;pointer-events:none}#info.show{transform:none;opacity:1;pointer-events:auto}#infoClose{position:absolute;right:8px;top:7px;width:30px;height:30px;background:none;border:0;color:var(--muted);font-size:18px;cursor:pointer}#info h2{font-family:"Arial Narrow",sans-serif;font-size:22px;font-weight:500;margin:5px 25px 4px 0}#infoType{font-size:9px;color:var(--muted);letter-spacing:.1em}#infoStatus{margin:12px 0;padding:8px 0;border-top:1px solid var(--thin);border-bottom:1px solid var(--thin);font-size:10px;line-height:1.6;color:var(--muted)}#infoStatus b{color:var(--ink);font-weight:500}.health{height:3px;background:var(--thin);margin:8px 0 12px}.health i{display:block;height:100%;background:var(--green)}#infoActions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.actionBtn{min-height:36px;background:rgba(242,166,90,.08);border:1px solid rgba(242,166,90,.3);color:var(--amber);font-size:9px;padding:6px;cursor:pointer}.actionBtn:hover{background:rgba(242,166,90,.16)}.actionBtn.delete{color:var(--red);border-color:rgba(240,128,112,.3);background:rgba(240,128,112,.05)}
+#events{left:16px;bottom:133px;width:250px;display:flex;flex-direction:column;gap:5px}.event{font-size:9px;line-height:1.45;padding:7px 10px;border-left:2px solid var(--amber);background:rgba(24,20,19,.67);color:var(--muted);animation:eventin .2s ease-out}.event b{color:var(--ink);font-weight:500}@keyframes eventin{from{opacity:0;transform:translateX(-6px)}}
+#toast{left:50%;top:105px;transform:translate(-50%,-8px);background:var(--glass);border:1px solid var(--line);padding:9px 16px;font-size:10px;opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}#toast.show{opacity:1;transform:translate(-50%,0)}
+.overlay{position:fixed;inset:0;z-index:20;background:rgba(14,11,11,.8);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px}.overlay.show{display:flex}.modal{width:min(660px,94vw);max-height:88vh;overflow:auto;background:#211b19;border:1px solid rgba(242,166,90,.28);padding:28px 30px;box-shadow:0 24px 80px rgba(0,0,0,.4)}.modal h2{font-family:"Arial Narrow",sans-serif;font-size:29px;letter-spacing:.08em;margin:0 0 7px;font-weight:500}.modal .sub{color:var(--amber);font-size:10px;letter-spacing:.16em;margin-bottom:20px}.modal p,.modal li{font-family:"Aptos",Arial,sans-serif;font-size:14px;line-height:1.65;color:#d1c4b5}.modal h3{font-size:10px;color:var(--amber);letter-spacing:.12em;margin:20px 0 5px;text-transform:uppercase}.modal ul{padding-left:18px;margin:5px 0}.modal kbd{font:11px "Aptos Mono",monospace;border:1px solid var(--line);padding:2px 5px;color:var(--ink);background:rgba(255,255,255,.04)}.modalClose{float:right;border:1px solid var(--line);background:none;width:40px;height:40px;cursor:pointer;color:var(--muted);font-size:20px}.primary{border:1px solid var(--amber);background:var(--amber);color:#211713;min-height:46px;padding:10px 20px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.primary:hover{background:#ffc17f}.primary:disabled{opacity:.4;cursor:wait}.secondary{border:1px solid var(--line);background:transparent;color:var(--ink);min-height:46px;padding:10px 18px;font-size:11px;cursor:pointer;margin-left:6px}
+#loading{display:flex;background:radial-gradient(circle at 55% 40%,#3b2822 0,#181312 58%,#100e0d 100%)}#loading:not(.show){display:none}#loading .loadbox{width:min(560px,88vw)}#loading h1{font-family:"Arial Narrow",sans-serif;font-size:clamp(48px,9vw,82px);line-height:.9;letter-spacing:.12em;margin:0;font-weight:600}#loading .loadsub{font-size:10px;letter-spacing:.27em;color:var(--amber);margin:15px 0 44px}.loadline{height:2px;background:rgba(255,255,255,.1);margin-bottom:12px}.loadline i{display:block;width:0;height:100%;background:var(--amber);transition:width .25s}#loadStatus{font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:24px}.loadmeta{display:flex;justify-content:space-between;gap:12px;color:#796c63;font-size:8px;letter-spacing:.12em;margin-top:25px}.loadmeta span:last-child{text-align:right}
+#crosshair{left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);display:none}#crosshair:before,#crosshair:after{content:"";position:absolute;background:rgba(255,255,255,.7)}#crosshair:before{height:1px;width:18px;top:8px}#crosshair:after{width:1px;height:18px;left:8px}#walkHint{left:50%;bottom:132px;transform:translateX(-50%);font-size:10px;background:var(--glass);padding:8px 12px;display:none;white-space:nowrap}body.walking #crosshair,body.walking #walkHint{display:block}#mobileMove{display:none;left:16px;bottom:145px;grid-template-columns:repeat(3,44px);gap:3px}#mobileMove button{width:44px;height:44px;background:var(--glass);border:1px solid var(--line);color:var(--ink)}body.walking #mobileMove{display:none}
+@media(max-width:1050px){#top{grid-template-columns:180px 1fr}.mission{display:none}#objective{top:100px}.resources{min-width:0}.res{padding:3px 6px}.res strong{font-size:18px}#info{top:360px}#events{width:210px}.buildCard{flex-basis:82px}}
+@media(max-width:700px){#top{left:8px;right:8px;top:8px;grid-template-columns:1fr;gap:6px}.brand{min-height:48px;padding:8px 11px}.brandmark{width:28px;height:28px}.brandmark:before{width:17px;left:5px;top:13px}.brandmark:after{height:17px;left:13px;top:5px}.brand h1{font-size:20px}.brand small{margin-top:4px;font-size:8px}.brand .solTag{margin-left:auto;font-size:9px;color:var(--muted)}.resources{min-height:53px;padding:6px 2px}.res{padding:2px 5px}.res label{font-size:7px}.res strong{font-size:16px;margin-top:2px}.res em{font-size:7px}#tools{top:115px;right:8px;width:174px;grid-template-columns:repeat(4,1fr);padding:5px;gap:3px;max-height:46px;overflow:hidden;transition:max-height .2s}#tools.expanded{max-height:260px}.tool{min-height:34px;font-size:8px}#toolsToggle{display:block!important;grid-column:1/-1;min-height:30px}#timeWrap{display:none}#tools.expanded #timeWrap{display:grid}#objective{left:8px;top:115px;width:155px;padding:9px 10px}#objective h2{font-size:14px;margin:4px 0}#objective p{font-size:8px}.netstatus{font-size:8px;margin-top:6px}#info{right:8px;top:auto;bottom:125px;width:min(250px,calc(100vw - 16px));max-height:45vh;overflow:auto}#buildArea{width:calc(100vw - 16px);bottom:max(8px,env(safe-area-inset-bottom))}#buildHint{width:100%;font-size:8px;padding:6px 8px;margin-bottom:4px;min-height:30px}#buildHint .keys{display:none}#buildMenu{padding:5px;gap:4px}.buildCard{flex-basis:70px;min-height:62px;padding:6px}.buildCard .ico{font-size:15px;height:19px}.buildCard .name{font-size:8px;min-height:20px}.buildCard .cost{font-size:7px;margin-top:2px}#events{left:8px;bottom:119px;width:180px}.event{font-size:8px;padding:5px 7px}#events .event:nth-child(n+3){display:none}#toast{top:174px;font-size:9px}.modal{padding:22px 20px}.modal p,.modal li{font-size:13px}#walkHint{bottom:115px;font-size:8px}body.walking #mobileMove{display:grid}.desktopOnly{display:none!important}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="scene" aria-label="Interactive 3D Mars base"></canvas>
+<header id="top" class="ui">
+  <a href="index.html" class="glass" style="display:flex;align-items:center;gap:6px;padding:7px 14px;color:#f2a65a;text-decoration:none;font-weight:700;font-size:11px;letter-spacing:1.5px;border-radius:8px;border:1px solid rgba(242,166,90,0.4);background:rgba(24,20,19,0.9);backdrop-filter:blur(10px);transition:all 0.2s;text-transform:uppercase;box-shadow:0 2px 10px rgba(0,0,0,0.4)" onmouseover="this.style.borderColor='#f2a65a';this.style.boxShadow='0 0 12px rgba(242,166,90,0.4)'" onmouseout="this.style.borderColor='rgba(242,166,90,0.4)';this.style.boxShadow='0 2px 10px rgba(0,0,0,0.4)'">← Cosmos</a>
+  <section class="brand glass"><span class="brandmark"></span><div><h1>ARES-1</h1><small>UTOPIA PLANITIA · MARS</small></div><span class="solTag" id="solLabel" style="margin-left:auto;font-size:10px;color:var(--muted)">SOL 001</span></section>
+  <section class="resources glass" aria-label="Base resources">
+    <div class="res" data-res="power"><label>POWER</label><strong id="powerVal">120</strong><em id="powerRate">+0 / SOL</em></div>
+    <div class="res" data-res="oxygen"><label>OXYGEN</label><strong id="oxygenVal">180</strong><em id="oxygenRate">+0 / SOL</em></div>
+    <div class="res" data-res="water"><label>WATER</label><strong id="waterVal">140</strong><em id="waterRate">+0 / SOL</em></div>
+    <div class="res" data-res="food"><label>FOOD</label><strong id="foodVal">150</strong><em id="foodRate">+0 / SOL</em></div>
+    <div class="res" data-res="materials"><label>MATERIALS</label><strong id="materialsVal">320</strong><em id="materialsRate">+0 / SOL</em></div>
+  </section>
+  <section class="mission glass"><div class="missionline"><span>MISSION TARGET</span><b id="popLabel">6 / 50</b></div><div class="progress"><i id="popProgress"></i></div><div class="missionfoot"><span id="housingLabel">16 BERTHS</span><button class="textbtn" id="modeBtn">MISSION MODE</button></div></section>
+</header>
+<nav id="tools" class="ui glass" aria-label="Simulation toolbar">
+  <button class="tool wide on" id="toolsToggle" style="display:none">CONTROLS</button>
+  <button class="tool" id="pauseBtn" title="Pause / resume (Space)">PAUSE</button><button class="tool" id="speedBtn" title="Simulation speed">1×</button><button class="tool on" id="cycleBtn" title="Automatic day cycle">CYCLE</button><button class="tool" id="walkBtn" title="First-person walk (F)">WALK</button>
+  <div id="timeWrap"><span>TIME</span><input id="timeSlider" aria-label="Time of day" type="range" min="0" max="1000" value="320"><span id="clock">07:40</span></div>
+  <button class="tool" id="stormBtn">STORM</button><button class="tool" id="meteorBtn">METEOR</button><button class="tool on" id="lightsBtn">LIGHTS</button><button class="tool" id="labelsBtn">LABELS</button>
+  <button class="tool on" id="shadowsBtn">SHADOW</button><button class="tool" id="bloomBtn">BLOOM</button><button class="tool on" id="soundBtn">SOUND</button><button class="tool" id="helpBtn" title="Help (?)">HELP ?</button>
+  <button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
+  <button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
+</nav>
+<aside id="objective" class="ui glass"><span class="eyebrow">Current directive</span><h2 id="directiveTitle">Establish a foothold</h2><p id="directiveText">Keep life support positive. Expand with connected habitats to grow the crew.</p><div class="netstatus"><span class="dot" id="netDot"></span><span id="networkLabel">2 / 2 HABITATS PRESSURIZED</span></div></aside>
+<aside id="info" class="ui glass" aria-live="polite"><button id="infoClose" aria-label="Close information">×</button><span class="eyebrow">Module telemetry</span><h2 id="infoName">Habitat</h2><div id="infoType">HAB-01 · ONLINE</div><div id="infoStatus"></div><div class="health"><i id="healthFill"></i></div><div id="infoActions"></div></aside>
+<div id="events" class="ui" aria-live="polite"></div><div id="toast" class="ui" role="status"></div>
+<section id="buildArea" class="ui"><div id="buildHint" class="glass"><span id="hintText"><b>SELECT A MODULE</b> · click the terrain to deploy</span><span class="keys">R ROTATE · X DELETE · F WALK</span><button class="miniBtn" id="cancelBuild" hidden>CANCEL</button></div><div id="buildMenu" class="glass" aria-label="Building categories"></div></section>
+<div id="crosshair" class="ui"></div><div id="walkHint" class="ui">WASD MOVE · DRAG TO LOOK · SHIFT SPRINT · F EXIT</div><div id="mobileMove" class="ui"><span></span><button data-move="forward" aria-label="Walk forward">▲</button><span></span><button data-move="left" aria-label="Walk left">◀</button><button data-move="back" aria-label="Walk backward">▼</button><button data-move="right" aria-label="Walk right">▶</button></div>
+<div id="help" class="overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal"><button class="modalClose" id="helpClose" aria-label="Close help">×</button><h2 id="helpTitle">FIELD MANUAL</h2><div class="sub">ARES-1 · BASE OPERATIONS</div><p>Grow a self-sufficient settlement to <b>50 colonists</b>. Habitats only provide berths when connected to the core by airlocks or tunnels. In Sandbox, construction is free and the crew cannot be lost.</p><h3>Construction</h3><ul><li>Choose a module below. Move the ghost over the slab; green means valid, red means blocked. Click or tap to deploy.</li><li><kbd>R</kbd> rotates · <kbd>X</kbd> deletes the selected module · <kbd>Ctrl Z</kbd> / <kbd>Ctrl Y</kbd> undo / redo.</li><li>Connect living modules with short airlocks or tunnel pieces. Watch oxygen, food, water, and stored power.</li></ul><h3>Camera & surface</h3><ul><li>Left-drag orbits, right-drag pans, wheel zooms. Double-click resets. Number keys <kbd>1–5</kbd> select viewpoints.</li><li><kbd>F</kbd> enters surface walk. Use <kbd>WASD</kbd>, drag to look, and <kbd>Shift</kbd> to sprint. Touch devices get direction buttons.</li></ul><h3>Operations</h3><ul><li>Click any module for telemetry and actions. Landing pads call supply rockets; garages dispatch rovers; radar stations launch survey drones.</li><li>Dust storms suppress solar output. Batteries keep life support alive. Meteors and failures damage modules; repair them from their info panel.</li><li><kbd>Space</kbd> pauses. Save / load uses this browser’s localStorage only; it does not sync between devices.</li></ul></div></div>
+<div id="endOverlay" class="overlay" role="dialog" aria-modal="true"><div class="modal"><span class="eyebrow" id="endEyebrow">MISSION COMPLETE</span><h2 id="endTitle">A NEW WORLD, INHABITED.</h2><p id="endText"></p><button class="primary" id="continueBtn">Continue building</button><button class="secondary" id="restartBtn">New mission</button></div></div>
+<div id="loading" class="overlay show"><div class="loadbox"><h1>ARES-1</h1><div class="loadsub">MARS BASE BUILDER · TABLETOP DIORAMA</div><div class="loadline"><i id="loadFill"></i></div><div id="loadStatus">INITIALIZING ORBITAL LINK</div><button class="primary" id="beginBtn" disabled>Establish base</button><div class="loadmeta"><span>THREE.JS · PROCEDURAL WORLD</span><span>BUILD · BALANCE · SURVIVE</span></div></div></div>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+
+// ARES-1: all geometry, simulation and audio are generated locally. The fixed seed
+// keeps the diorama reproducible; game events use the same deterministic stream.
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
+let seed=741103;
+function rnd(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}
+const rr=(a,b)=>lerp(a,b,rnd());
+const pick=a=>a[Math.floor(rnd()*a.length)];
+function hash(x,z){let h=Math.imul(x|0,374761393)+Math.imul(z|0,668265263);h=Math.imul(h^h>>>13,1274126177);return((h^h>>>16)>>>0)/4294967295}
+function noise(x,z){const xi=Math.floor(x),zi=Math.floor(z),xf=x-xi,zf=z-zi,u=smooth(xf),v=smooth(zf);return lerp(lerp(hash(xi,zi),hash(xi+1,zi),u),lerp(hash(xi,zi+1),hash(xi+1,zi+1),u),v)}
+function fbm(x,z,oct=4){let v=0,a=.5;for(let i=0;i<oct;i++){v+=noise(x,z)*a;x=x*2.03+17.1;z=z*2.03-9.2;a*=.5}return v}
+const V3=(x=0,y=0,z=0)=>new THREE.Vector3(x,y,z);
+const frame=()=>new Promise(r=>requestAnimationFrame(r));
+const GRID=4,DAY_SECONDS=150,SAVE_KEY='ares1-save-v2';
+const WORLD={w:112,d:96,minX:-52,maxX:52,minZ:-44,maxZ:44};
+const TYPES={
+ habitat:{name:'Habitat module',short:'HAB',icon:'H–01',cost:60,w:8,d:8,power:4,housing:8,pressurized:true,desc:'8 berths · requires network pressure'},
+ solar:{name:'Solar array',short:'SOL',icon:'S≡≡',cost:25,w:8,d:8,powerGen:30,desc:'30 power · daylight dependent'},
+ greenhouse:{name:'Greenhouse dome',short:'GRN',icon:'G◒',cost:75,w:12,d:8,power:6,food:24,waterUse:3,pressurized:true,desc:'24 food · consumes water & power'},
+ isru:{name:'Oxygen / ISRU plant',short:'ISRU',icon:'O₂',cost:90,w:12,d:8,power:10,oxygen:32,waterUse:1,pressurized:true,desc:'32 oxygen · atmospheric processing'},
+ miner:{name:'Water ice miner',short:'ICE',icon:'W↓',cost:80,w:12,d:8,power:8,water:20,materials:2.5,desc:'20 water + 2.5 materials'},
+ battery:{name:'Battery station',short:'BAT',icon:'B▥',cost:55,w:8,d:8,power:1,powerCap:180,desc:'180 stored power reserve'},
+ landing:{name:'Landing pad',short:'PAD',icon:'L↓',cost:110,w:16,d:16,power:1,desc:'Calls reusable supply rockets'},
+ garage:{name:'Rover garage',short:'GAR',icon:'R▰',cost:85,w:12,d:12,power:3,desc:'Dispatches surface patrols'},
+ radar:{name:'Radar / comms dish',short:'COM',icon:'C◝',cost:70,w:8,d:8,power:4,desc:'Survey drones & event warnings'},
+ lab:{name:'Research lab',short:'LAB',icon:'L+',cost:95,w:12,d:8,power:7,materials:.8,pressurized:true,desc:'Analysis yields 0.8 materials'},
+ storage:{name:'Storage depot',short:'STO',icon:'S▦',cost:45,w:8,d:8,power:1,storage:180,desc:'Expands resource capacity'},
+ tunnel:{name:'Connecting tunnel',short:'TUN',icon:'T═',cost:12,w:4,d:4,power:.2,pressurized:true,desc:'Links pressurized modules'}
+};
+const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320},rates:{power:0,oxygen:0,water:0,food:0,materials:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,selected:null,buildType:null,buildRotation:0,critical:0,won:false};
+let buildings=[],nextId=1,undoStack=[],redoStack=[],terrainMesh,ghost=null,ghostValid=false,ghostPos=V3(),connectionGroup,coreId=0;
+let roverRoute,rovers=[],agents=[],drones=[],meteors=[],rocket=null,eventId=0;
+const keys={};
+
+// ---------- Renderer, camera and shared physically based materials ----------
+const canvas=$('scene');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xbd8067);scene.fog=new THREE.Fog(0xbd8067,115,330);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.15,900);
+camera.position.set(68,57,76);
+const controls=new OrbitControls(camera,canvas);controls.target.set(0,3,0);controls.enableDamping=true;controls.dampingFactor=.075;
+controls.minDistance=12;controls.maxDistance=190;controls.maxPolarAngle=Math.PI*.485;controls.minPolarAngle=.12;controls.panSpeed=.65;controls.rotateSpeed=.55;
+const pmrem=new THREE.PMREMGenerator(renderer);const roomEnv=new RoomEnvironment();scene.environment=pmrem.fromScene(roomEnv,.04).texture;scene.environmentIntensity=.3;roomEnv.dispose();pmrem.dispose();
+const hemi=new THREE.HemisphereLight(0xf4b99a,0x512a20,1.4);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xffe2bd,3.2);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-72;sun.shadow.camera.right=72;sun.shadow.camera.top=64;sun.shadow.camera.bottom=-64;sun.shadow.camera.near=1;sun.shadow.camera.far=260;sun.shadow.bias=-.00025;sun.shadow.normalBias=.055;scene.add(sun,sun.target);
+const fill=new THREE.DirectionalLight(0xb7b4d0,.38);fill.position.set(-40,30,-50);scene.add(fill);
+const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
+const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.32,.5,1.05);composer.addPass(bloomPass);composer.addPass(new OutputPass());
+const MAT={
+ ivory:new THREE.MeshStandardMaterial({color:0xd8d0bd,roughness:.58,metalness:.34}),
+ white:new THREE.MeshStandardMaterial({color:0xeee4ce,roughness:.45,metalness:.25}),
+ orange:new THREE.MeshStandardMaterial({color:0xb95029,roughness:.6,metalness:.25}),
+ dark:new THREE.MeshStandardMaterial({color:0x252628,roughness:.64,metalness:.62}),
+ metal:new THREE.MeshStandardMaterial({color:0x777a77,roughness:.42,metalness:.82}),
+ panel:new THREE.MeshStandardMaterial({color:0x8e8c80,roughness:.67,metalness:.4}),
+ glass:new THREE.MeshStandardMaterial({color:0x6caaa0,roughness:.18,metalness:.12,transparent:true,opacity:.5,side:THREE.DoubleSide}),
+ solar:new THREE.MeshStandardMaterial({color:0x172d43,roughness:.24,metalness:.72}),
+ green:new THREE.MeshStandardMaterial({color:0x49643b,roughness:.9}),
+ soil:new THREE.MeshStandardMaterial({color:0x4a2b20,roughness:1}),
+ window:new THREE.MeshStandardMaterial({color:0x8fb9b5,emissive:0xffc77e,emissiveIntensity:1.6,roughness:.25,metalness:.25}),
+ cyan:new THREE.MeshStandardMaterial({color:0x8cbdb6,emissive:0x70d6c4,emissiveIntensity:1.25,roughness:.35}),
+ redLight:new THREE.MeshStandardMaterial({color:0xef795d,emissive:0xff4325,emissiveIntensity:2}),
+ rock:new THREE.MeshStandardMaterial({color:0x85513a,roughness:1,vertexColors:true}),
+ black:new THREE.MeshStandardMaterial({color:0x16191a,roughness:.72,metalness:.5})
+};
+const unitBox=new THREE.BoxGeometry(1,1,1),unitCylinder=new THREE.CylinderGeometry(1,1,1,20),tempObj=new THREE.Object3D(),tempV=V3(),tempV2=V3();
+function disposeGroup(root){root?.traverse(o=>{if(o.isSprite){o.material.map?.dispose();o.material.dispose()}else if(o.isMesh&&o.geometry&&o.geometry!==unitBox&&o.geometry!==unitCylinder)o.geometry.dispose()})}
+function mesh(geo,mat,parent,x=0,y=0,z=0){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function box(parent,mat,x,y,z,w,h,d){const m=mesh(unitBox,mat,parent,x,y,z);m.scale.set(w,h,d);return m}
+function cyl(parent,mat,x,y,z,r,h,segments=20){const geo=segments===20?unitCylinder:new THREE.CylinderGeometry(1,1,1,segments);const m=mesh(geo,mat,parent,x,y,z);m.scale.set(r,h,r);return m}
+function ring(parent,mat,x,y,z,r,t=.09,rx=Math.PI/2){const m=mesh(new THREE.TorusGeometry(r,t,6,32),mat,parent,x,y,z);m.rotation.x=rx;return m}
+function cylinderBetween(parent,mat,a,b,r=.1){const d=tempV.copy(b).sub(a),len=d.length();const m=mesh(unitCylinder,mat,parent);m.position.copy(a).add(b).multiplyScalar(.5);m.scale.set(r,len,r);m.quaternion.setFromUnitVectors(V3(0,1,0),d.normalize());return m}
+function lightMesh(parent,x,y,z,w=.3,h=.15,d=.12,mat=MAT.window){const m=box(parent,mat,x,y,z,w,h,d);m.userData.isLight=true;return m}
+function antenna(parent,x,y,z,h=2){cyl(parent,MAT.metal,x,y+h/2,z,.06,h,8);lightMesh(parent,x,y+h,z,.13,.13,.13,MAT.redLight);box(parent,MAT.dark,x,y+.12,z,.55,.22,.55)}
+
+// ---------- Procedural terrain: dunes, fBm regolith, crater and rear ridge ----------
+function terrainHeight(x,z){
+ let h=(fbm(x*.045+4,z*.045-3)-.48)*2.1+(noise(x*.15,z*.15)-.5)*.28;
+ h+=Math.sin(x*.115+z*.035)*.24*smooth((Math.abs(x)-25)/20);
+ const cd=Math.hypot(x-30,z+23)/14;
+ if(cd<1)h-=4.6*Math.pow(1-cd*cd,1.45);
+ if(cd>.72&&cd<1.32)h+=1.3*(1-Math.abs(cd-1.02)/.3);
+ if(z<-32)h+=Math.pow((-32-z)/12,1.7)*(2.8+2*fbm(x*.09,z*.09));
+ return h;
+}
+function regolithTexture(){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d'),im=g.createImageData(256,256);for(let y=0;y<256;y++)for(let x=0;x<256;x++){const n=fbm(x*.045,y*.045,4),grain=hash(x,y)*18,i=(y*256+x)*4;im.data[i]=126+n*62+grain;im.data[i+1]=59+n*40+grain*.45;im.data[i+2]=35+n*25+grain*.25;im.data[i+3]=255}g.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(8,8);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return t}
+function buildTerrain(){
+ const tex=regolithTexture();const geo=new THREE.PlaneGeometry(WORLD.w,WORLD.d,112,96);geo.rotateX(-Math.PI/2);
+ const pos=geo.attributes.position,colors=[];const c=new THREE.Color();
+ for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),h=terrainHeight(x,z);pos.setY(i,h);const tint=.82+noise(x*.3,z*.3)*.18;c.setRGB(tint,tint,tint);colors.push(c.r,c.g,c.b)}
+ geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
+ const mat=new THREE.MeshStandardMaterial({map:tex,vertexColors:true,roughness:.97,metalness:0,bumpMap:tex,bumpScale:.12});
+ terrainMesh=mesh(geo,mat,scene);terrainMesh.castShadow=false;terrainMesh.name='Mars terrain';
+ const sideMat=new THREE.MeshStandardMaterial({color:0x5e2f22,roughness:1,map:tex});
+ box(scene,sideMat,0,-3.2,0,WORLD.w+1,5.6,WORLD.d+1);box(scene,new THREE.MeshStandardMaterial({color:0x39231e,roughness:1}),0,-6.25,0,WORLD.w-1,.7,WORLD.d-1);
+ // Fine sedimentary layers around the exposed floating slab.
+ for(let i=0;i<4;i++){const band=box(scene,new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(.045,.38,.17+i*.022),roughness:1}),0,-1.25-i*1.15,0,WORLD.w+1.04,.12,WORLD.d+1.04);band.castShadow=false}
+ // Distant ridge is part of the diorama silhouette, built as a coherent mass family.
+ const ridgeMat=new THREE.MeshStandardMaterial({color:0x81513d,roughness:1,flatShading:true});
+ for(let i=0;i<15;i++){const x=-54+i*7.7,z=-43+rr(-1.8,1.8),h=rr(3,8),r=rr(5,10),rg=new THREE.ConeGeometry(r,h,9,3),rp=rg.attributes.position;for(let j=0;j<rp.count;j++){const px=rp.getX(j),py=rp.getY(j),pz=rp.getZ(j),rough=1+(noise(px*.7+i,pz*.7)-.5)*.28;rp.setXYZ(j,px*rough,py+noise(px+i,pz)*.35,pz*rough)}rg.computeVertexNormals();const m=mesh(rg,ridgeMat,scene,x,terrainHeight(x,z)+h*.34,z);m.scale.z=.55;m.rotation.y=rr(-.5,.5)}
+ // Instanced basalt and regolith rocks, kept away from the central building field.
+ const rockGeo=new THREE.DodecahedronGeometry(1,0);rockGeo.scale(1,.65,.85);const rocks=new THREE.InstancedMesh(rockGeo,MAT.rock,150);rocks.castShadow=true;rocks.receiveShadow=true;
+ for(let i=0;i<150;i++){let x,z;do{x=rr(-53,53);z=rr(-44,44)}while(Math.abs(x)<35&&Math.abs(z)<28);const s=rr(.18,1.05);tempObj.position.set(x,terrainHeight(x,z)+s*.25,z);tempObj.scale.set(s*rr(.8,1.4),s,s*rr(.75,1.3));tempObj.rotation.set(rr(-.2,.2),rr(0,6.28),rr(-.15,.15));tempObj.updateMatrix();rocks.setMatrixAt(i,tempObj.matrix);rocks.setColorAt(i,new THREE.Color().setHSL(rr(.035,.065),rr(.32,.52),rr(.24,.4)))}scene.add(rocks);
+ // Dark neutral receiver under the miniature makes its thickness legible.
+ const floor=mesh(new THREE.PlaneGeometry(900,900),new THREE.MeshStandardMaterial({color:0x251c1a,roughness:1}),scene,0,-6.7,0);floor.rotation.x=-Math.PI/2;floor.castShadow=false;
+ buildSky();
+}
+let sky,stars,sunDirection=V3();
+function buildSky(){
+ const uniforms={topColor:{value:new THREE.Color(0x9f7180)},horizonColor:{value:new THREE.Color(0xd99b77)},bottomColor:{value:new THREE.Color(0x5e3933)},sunDir:{value:V3(.4,.7,.2)},sunColor:{value:new THREE.Color(0xffe0ad)},night:{value:0}};
+ const mat=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,uniforms,vertexShader:`varying vec3 vDir;void main(){vDir=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`varying vec3 vDir;uniform vec3 topColor;uniform vec3 horizonColor;uniform vec3 bottomColor;uniform vec3 sunDir;uniform vec3 sunColor;uniform float night;void main(){float h=normalize(vDir).y;vec3 col=mix(horizonColor,topColor,pow(max(h,0.),.52));col=mix(col,bottomColor,smoothstep(0.,-.35,h));float sd=max(dot(normalize(vDir),normalize(sunDir)),0.);col+=sunColor*(pow(sd,1600.)*2.2+pow(sd,90.)*.16+pow(sd,8.)*.035)*(1.-night);gl_FragColor=vec4(col,1.);}`});
+ sky=mesh(new THREE.SphereGeometry(430,32,20),mat,scene);sky.castShadow=false;sky.receiveShadow=false;
+ const sg=new THREE.BufferGeometry(),sp=[];for(let i=0;i<400;i++){const a=rr(0,Math.PI*2),y=rr(.08,.95),r=380;sp.push(Math.cos(a)*r*Math.sqrt(1-y*y),y*r,Math.sin(a)*r*Math.sqrt(1-y*y))}sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));stars=new THREE.Points(sg,new THREE.PointsMaterial({color:0xf6dfd0,size:.55,transparent:true,opacity:0,depthWrite:false}));scene.add(stars);
+}
+
+// ---------- Modular building generator. Every module shares a construction grammar. ----------
+function createLabel(text,y){const c=document.createElement('canvas');c.width=384;c.height=64;const g=c.getContext('2d');g.fillStyle='rgba(25,20,18,.8)';g.fillRect(24,8,336,44);g.strokeStyle='rgba(242,166,90,.55)';g.strokeRect(24,8,336,44);g.font='22px monospace';g.textAlign='center';g.fillStyle='#f3e9d8';g.fillText(text.toUpperCase(),192,38);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:false}));s.position.y=y;s.scale.set(10,1.67,1);s.visible=state.labels;s.userData.label=true;return s}
+function foundation(g,w,d){box(g,MAT.dark,0,.16,0,w+.3,.32,d+.3);for(const x of[-w*.38,w*.38])for(const z of[-d*.38,d*.38])cyl(g,MAT.metal,x,.35,z,.22,.7,8)}
+function makeBuilding(type,ghostMode=false){
+ const g=new THREE.Group(),t=TYPES[type],w=t.w,d=t.d;foundation(g,w,d);
+ if(type==='habitat'){
+  const body=mesh(new THREE.CylinderGeometry(2.65,2.65,6.2,24,1,false),MAT.ivory,g,0,3.05,0);body.rotation.z=Math.PI/2;
+  for(const x of[-3.15,3.15]){const cap=mesh(new THREE.SphereGeometry(2.64,20,12),MAT.white,g,x,3.05,0);cap.scale.x=.28}
+  for(const x of[-2.35,-.8,.8,2.35]){const rib=ring(g,MAT.dark,x,3.05,0,2.7,.08,0);rib.rotation.y=Math.PI/2}
+  box(g,MAT.orange,0,5.56,0,4.8,.12,.7);box(g,MAT.dark,0,1.15,3.05,2.2,2.15,.5);lightMesh(g,0,2.05,3.34,1.45,.18,.08,MAT.cyan);
+  for(const x of[-2,0,2])lightMesh(g,x,3.4,2.48,1.05,.65,.12);
+  for(const x of[-2.4,2.4])for(const z of[-1.8,1.8])box(g,MAT.metal,x,.85,z,.35,1.25,.35);
+  box(g,MAT.panel,0,5.73,-.55,2.4,.18,1.6);antenna(g,1.8,5.7,-.3,1.7);
+ }else if(type==='solar'){
+  cyl(g,MAT.metal,0,1.5,0,.22,2.5,12);box(g,MAT.dark,0,.5,0,2,.35,2);
+  for(const x of[-2.1,2.1]){const pg=new THREE.Group();pg.position.set(x,2.7,0);pg.rotation.x=-.32;g.add(pg);box(pg,MAT.metal,0,0,0,3.9,.14,5.7);box(pg,MAT.solar,0,.09,0,3.7,.06,5.5);for(let i=-2;i<=2;i++)box(pg,MAT.panel,0,.14,i*1.05,3.65,.018,.025);for(const xx of[-1.2,0,1.2])box(pg,MAT.panel,xx,.14,0,.025,.018,5.4)}
+  lightMesh(g,0,1.2,.32,.28,.15,.08,MAT.cyan);
+ }else if(type==='greenhouse'){
+  cyl(g,MAT.ivory,0,.65,0,4.2,1,32);ring(g,MAT.dark,0,1.12,0,4.12,.12);
+  const dome=mesh(new THREE.SphereGeometry(4.05,28,14,0,Math.PI*2,0,Math.PI/2),MAT.glass,g,0,1.12,0);dome.castShadow=false;
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;const rib=mesh(new THREE.TorusGeometry(4.07,.045,5,32,Math.PI),MAT.metal,g,0,1.12,0);rib.rotation.set(0,a,Math.PI/2)}
+  for(const z of[-2.1,0,2.1]){box(g,MAT.soil,0,1.18,z,5.6,.18,1.1);for(let x=-2;x<=2;x++){const p=mesh(new THREE.ConeGeometry(.27,.65,6),MAT.green,g,x,1.62,z);p.castShadow=false}}
+  lightMesh(g,0,1.35,4.12,2.3,.16,.1,MAT.cyan);box(g,MAT.dark,0,1.1,4.1,1.8,1.7,.35);
+ }else if(type==='isru'){
+  box(g,MAT.panel,0,1.45,0,6.4,2.4,4.8);box(g,MAT.orange,0,2.55,2.42,6.4,.28,.1);
+  for(const x of[-3.8,3.8]){cyl(g,MAT.white,x,3.3,0,1.25,5.2,24);const top=mesh(new THREE.SphereGeometry(1.24,16,8),MAT.white,g,x,5.9,0);top.scale.y=.5;ring(g,MAT.dark,x,3.4,0,1.28,.09);cyl(g,MAT.metal,x,6.4,0,.28,1.2,12)}
+  cylinderBetween(g,MAT.orange,V3(-3.8,2,-1.5),V3(3.8,2,-1.5),.16);for(const x of[-2,0,2])lightMesh(g,x,1.65,2.46,1.1,.4,.08);antenna(g,4.8,.4,-2.4,5.2);
+ }else if(type==='miner'){
+  box(g,MAT.orange,0,1.2,0,6,1.8,5);for(const x of[-3.6,3.6])cyl(g,MAT.metal,x,2.25,-1.2,1.35,3.6,20);
+  const drill=mesh(new THREE.ConeGeometry(.75,4.5,12),MAT.dark,g,0,1.3,2.6);drill.rotation.x=Math.PI;box(g,MAT.metal,0,2.8,1.6,.5,3.5,.5);lightMesh(g,0,2.1,2.54,2,.25,.1,MAT.cyan);antenna(g,-4,.5,2,3.5);
+ }else if(type==='battery'){
+  for(const x of[-2.25,0,2.25]){box(g,MAT.ivory,x,2.05,0,1.85,3.4,5.4);for(let y=.8;y<3.5;y+=.55)box(g,MAT.dark,x,y,2.73,1.65,.08,.06);lightMesh(g,x,3.15,2.77,1.1,.18,.08,MAT.cyan)}box(g,MAT.orange,0,.65,3.2,6.5,.35,1);
+ }else if(type==='landing'){
+  cyl(g,MAT.dark,0,.35,0,7.7,.55,48);cyl(g,MAT.panel,0,.66,0,7.15,.12,48);ring(g,MAT.orange,0,.76,0,5.7,.16);ring(g,MAT.ivory,0,.77,0,2.8,.08);
+  box(g,MAT.orange,0,.79,0,6,.025,.32);box(g,MAT.orange,0,.79,0,.32,.025,6);for(let i=0;i<12;i++){const a=i*Math.PI/6;lightMesh(g,Math.cos(a)*6.6,.82,Math.sin(a)*6.6,.28,.18,.28,MAT.window)}
+ }else if(type==='garage'){
+  box(g,MAT.ivory,0,2.7,0,10,4.8,9);box(g,MAT.dark,0,2.25,4.53,7.8,3.7,.15);for(let y=.7;y<4;y+=.48)box(g,MAT.panel,0,y,4.64,7.6,.07,.06);box(g,MAT.orange,0,5.18,0,10.3,.28,9.3);for(const x of[-4.2,4.2])lightMesh(g,x,4.2,4.7,.6,.25,.1);box(g,MAT.panel,-3.4,5.65,-1.8,2.4,.7,2.4);antenna(g,3.8,5.3,-2.5,3);
+ }else if(type==='radar'){
+  cyl(g,MAT.ivory,0,1.7,0,1.65,2.8,20);cyl(g,MAT.dark,0,3.5,0,.45,1.5,12);const yaw=new THREE.Group();yaw.position.y=4.2;yaw.userData.dish=true;g.add(yaw);const dish=mesh(new THREE.SphereGeometry(2.8,28,10,0,Math.PI*2,0,.68),MAT.ivory,yaw);dish.rotation.x=-1.05;dish.position.z=-.6;cylinderBetween(yaw,MAT.orange,V3(0,0,0),V3(0,2.6,1.2),.08);lightMesh(yaw,0,2.65,1.25,.25,.25,.25,MAT.redLight);
+ }else if(type==='lab'){
+  box(g,MAT.ivory,0,2.2,0,9.6,3.6,6);box(g,MAT.orange,0,3.85,0,9.8,.25,6.2);for(const x of[-3,0,3])lightMesh(g,x,2.35,3.05,1.7,.8,.12);const skylight=mesh(new THREE.SphereGeometry(2.1,20,10,0,Math.PI*2,0,Math.PI/2),MAT.glass,g,0,4,0);skylight.scale.z=1.25;box(g,MAT.dark,4.8,1.6,0,.35,2.4,2);antenna(g,-3.8,4,0,3.2);
+ }else if(type==='storage'){
+  for(const [x,z,y,c] of[[-2,-1.8,1.25,MAT.orange],[2,-1.8,1.25,MAT.ivory],[0,1.8,1.25,MAT.panel],[-2,-1.8,3.65,MAT.ivory]]){box(g,c,x,y,z,3.5,2.2,3);for(const xx of[-1.4,1.4])box(g,MAT.dark,x+xx,y,z+1.52,.12,1.9,.08)}lightMesh(g,3.4,2,2.5,.2,1.2,.2,MAT.cyan);
+ }else if(type==='tunnel'){
+  const tube=mesh(new THREE.CylinderGeometry(1.18,1.18,4,16,1,true),MAT.ivory,g,0,1.45,0);tube.rotation.z=Math.PI/2;for(const x of[-2,2]){const r=ring(g,MAT.dark,x,1.45,0,1.2,.13,0);r.rotation.y=Math.PI/2}lightMesh(g,0,2.6,0,1.6,.1,.2,MAT.cyan);
+ }
+ if(ghostMode){const gm=new THREE.MeshStandardMaterial({color:0x77e5aa,transparent:true,opacity:.42,depthWrite:false,emissive:0x225533,emissiveIntensity:.45});g.traverse(o=>{if(o.isMesh){o.material=gm;o.castShadow=false;o.receiveShadow=false}});g.userData.ghostMat=gm}else{const hit=box(g,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,colorWrite:false}),0,Math.max(2,t.pressurized?2.5:2),0,w,Math.max(4,type==='radar'?8:5),d);hit.userData.hitbox=true;g.add(createLabel(t.short,type==='landing'?2:8))}
+ g.userData.type=type;return g;
+}
+
+// ---------- Placement, connectivity, undo history and defensive persistence ----------
+function dims(b){const t=TYPES[b.type],swap=(b.rotation%180)!==0;return{w:swap?t.d:t.w,d:swap?t.w:t.d}}
+function addBuilding(type,x,z,rotation=0,options={}){
+ const b={id:options.id||nextId++,type,x,z,rotation,health:options.health??100,operational:options.operational??true,lights:options.lights??true,connected:false,pressurized:false,core:options.core||false,failure:options.failure||0};
+ nextId=Math.max(nextId,b.id+1);b.mesh=makeBuilding(type);b.mesh.position.set(x,terrainHeight(x,z)+.03,z);b.mesh.rotation.y=THREE.MathUtils.degToRad(rotation);b.mesh.userData.buildingId=b.id;b.mesh.traverse(o=>{o.userData.buildingId=b.id});scene.add(b.mesh);buildings.push(b);if(b.core)coreId=b.id;
+ if(!options.defer)afterBaseChange();return b;
+}
+function removeBuilding(id,refund=false){const i=buildings.findIndex(b=>b.id===id);if(i<0)return;const b=buildings[i];if(b.core)return false;if(refund)state.res.materials+=TYPES[b.type].cost*.5;scene.remove(b.mesh);disposeGroup(b.mesh);buildings.splice(i,1);if(state.selected===id)selectBuilding(null);afterBaseChange();return true}
+function clearBuildings(){for(const b of buildings){scene.remove(b.mesh);disposeGroup(b.mesh)}buildings=[];if(connectionGroup){scene.remove(connectionGroup);disposeGroup(connectionGroup)}coreId=0}
+function overlap(a,b){const ad=dims(a),bd=dims(b);return Math.abs(a.x-b.x)<(ad.w+bd.w)/2-.15&&Math.abs(a.z-b.z)<(ad.d+bd.d)/2-.15}
+function validPlacement(type,x,z,rotation=0,ignoreId=-1){
+ const probe={type,x,z,rotation},d=dims(probe);if(x-d.w/2<WORLD.minX||x+d.w/2>WORLD.maxX||z-d.d/2<WORLD.minZ||z+d.d/2>WORLD.maxZ)return{ok:false,reason:'Outside construction zone'};
+ const h=terrainHeight(x,z),slope=Math.max(Math.abs(terrainHeight(x-d.w*.42,z)-h),Math.abs(terrainHeight(x+d.w*.42,z)-h),Math.abs(terrainHeight(x,z-d.d*.42)-h),Math.abs(terrainHeight(x,z+d.d*.42)-h));if(slope>1.45)return{ok:false,reason:'Terrain too steep'};
+ if(buildings.some(b=>b.id!==ignoreId&&overlap(probe,b)))return{ok:false,reason:'Footprint obstructed'};
+ if(!state.sandbox&&state.res.materials<TYPES[type].cost)return{ok:false,reason:'Insufficient materials'};return{ok:true,reason:'Valid deployment site'};
+}
+function selectBuild(type){if(state.mode==='title')return;state.buildType=state.buildType===type?null:type;state.buildRotation=0;selectBuilding(null);document.querySelectorAll('.buildCard').forEach(b=>b.classList.toggle('active',b.dataset.type===state.buildType));canvas.classList.toggle('building',!!state.buildType);$('cancelBuild').hidden=!state.buildType;
+ if(ghost){scene.remove(ghost);disposeGroup(ghost);ghost.userData.ghostMat.dispose();ghost=null}if(state.buildType){ghost=makeBuilding(state.buildType,true);scene.add(ghost);$('hintText').innerHTML=`<b>${TYPES[type].name.toUpperCase()}</b> · ${TYPES[type].cost} materials · click to deploy`;audio.play('select')}else $('hintText').innerHTML='<b>SELECT A MODULE</b> · click the terrain to deploy';updateBuildCards()}
+function updateGhost(clientX,clientY){if(!ghost)return;const p=screenToGround(clientX,clientY);if(!p){ghost.visible=false;return}ghost.visible=true;ghostPos.set(Math.round(p.x/GRID)*GRID,0,Math.round(p.z/GRID)*GRID);ghost.position.set(ghostPos.x,terrainHeight(ghostPos.x,ghostPos.z)+.08,ghostPos.z);ghost.rotation.y=THREE.MathUtils.degToRad(state.buildRotation);const v=validPlacement(state.buildType,ghostPos.x,ghostPos.z,state.buildRotation);ghostValid=v.ok;ghost.userData.ghostMat.color.setHex(v.ok?0x77e5aa:0xf07062);ghost.userData.ghostMat.emissive.setHex(v.ok?0x225533:0x551f18);ghost.userData.reason=v.reason}
+function placeGhost(){if(!ghost||!ghost.visible)return;const v=validPlacement(state.buildType,ghostPos.x,ghostPos.z,state.buildRotation);if(!v.ok){toast(v.reason);audio.play('error');return}pushUndo();const type=state.buildType;state.res.materials=state.sandbox?state.res.materials:state.res.materials-TYPES[type].cost;const b=addBuilding(type,ghostPos.x,ghostPos.z,state.buildRotation);spawnDust(b.x,terrainHeight(b.x,b.z)+.4,b.z,18,0xc27a52);audio.play('place');logEvent(`${TYPES[type].name} deployed`,'CONSTRUCTION');toast(`${TYPES[type].name} online`);selectBuilding(b.id)}
+function afterBaseChange(){computeNetwork();syncVehicles();syncAgents();updateHUD();updateInfo();updateLabels()}
+function isNetworkNode(b){return TYPES[b.type].pressurized}
+function computeNetwork(){
+ for(const b of buildings){b.connected=false;b.pressurized=false}
+ const nodes=buildings.filter(isNetworkNode),adj=new Map(nodes.map(b=>[b.id,[]]));
+ for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+  const a=nodes[i],b=nodes[j],dist=Math.hypot(a.x-b.x,a.z-b.z),ad=dims(a),bd=dims(b);let linked=false;
+  if(a.type==='tunnel'||b.type==='tunnel')linked=dist<=10.2;
+  else{const gapX=Math.max(0,Math.abs(a.x-b.x)-(ad.w+bd.w)/2),gapZ=Math.max(0,Math.abs(a.z-b.z)-(ad.d+bd.d)/2);linked=Math.hypot(gapX,gapZ)<=2.25&&dist<17}
+  if(linked){adj.get(a.id).push(b.id);adj.get(b.id).push(a.id)}
+ }
+ const core=buildings.find(b=>b.id===coreId&&isNetworkNode(b));if(core){const q=[core.id],seen=new Set(q);while(q.length){const id=q.shift(),b=buildings.find(v=>v.id===id);b.connected=true;b.pressurized=true;for(const n of adj.get(id)||[])if(!seen.has(n)){seen.add(n);q.push(n)}}}
+ if(connectionGroup){scene.remove(connectionGroup);disposeGroup(connectionGroup)}connectionGroup=new THREE.Group();scene.add(connectionGroup);
+ // Short automatic airlocks visualize direct links; placed tunnel pieces remain independent.
+ for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];if(a.type==='tunnel'||b.type==='tunnel')continue;if(!adj.get(a.id).includes(b.id))continue;const ay=terrainHeight(a.x,a.z)+1.35,by=terrainHeight(b.x,b.z)+1.35;cylinderBetween(connectionGroup,MAT.ivory,V3(a.x,ay,a.z),V3(b.x,by,b.z),.82);const len=Math.hypot(a.x-b.x,a.z-b.z);if(len>11){for(const f of[.32,.68]){const p=V3(lerp(a.x,b.x,f),lerp(ay,by,f),lerp(a.z,b.z,f));ring(connectionGroup,MAT.dark,p.x,p.y,p.z,.84,.08,0)}}}
+}
+function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
+function restore(s){
+ if(!s||s.version!==2||!Array.isArray(s.buildings)||!s.state)throw new Error('Invalid ARES-1 save');
+ clearBuildings();Object.assign(state,{sandbox:!!s.state.sandbox,phase:clamp(+s.state.phase||0,0,1),sol:Math.max(1,+s.state.sol||1),solFraction:clamp(+s.state.solFraction||0,0,1),simTime:Math.max(0,+s.state.simTime||0),pop:clamp(+s.state.pop||1,1,50),growth:0,stormUntil:0,nextEvent:55,won:!!s.state.won});Object.assign(state.res,s.state.res);for(const k of Object.keys(state.res))state.res[k]=clamp(+state.res[k]||0,0,99999);nextId=Math.max(1,+s.nextId||1);coreId=+s.coreId||0;
+ for(const b of s.buildings){if(!TYPES[b.type]||!Number.isFinite(b.x)||!Number.isFinite(b.z))continue;addBuilding(b.type,clamp(b.x,-50,50),clamp(b.z,-42,42),+b.rotation||0,{...b,defer:true})}afterBaseChange();updateModeUI();updateSun();
+}
+function pushUndo(){undoStack.push(snapshot());if(undoStack.length>35)undoStack.shift();redoStack=[]}
+function undo(){if(!undoStack.length){toast('Nothing to undo');return}redoStack.push(snapshot());restore(undoStack.pop());toast('Action undone');audio.play('select')}
+function redo(){if(!redoStack.length){toast('Nothing to redo');return}undoStack.push(snapshot());restore(redoStack.pop());toast('Action restored');audio.play('select')}
+function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot()));toast('Base saved in this browser');logEvent('Manual save complete','SYSTEM');audio.play('select')}catch(e){toast('Save unavailable: '+e.message)}}
+function loadGame(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw){toast('No saved base in this browser');return}pushUndo();restore(JSON.parse(raw));toast('Saved base restored');logEvent('Local save loaded','SYSTEM')}catch(e){toast('Load failed: '+e.message)}}
+
+// ---------- Resource model: one sol integrates production, storage and life support ----------
+function capacities(){let power=150,other=240,materials=500;for(const b of buildings){if(b.type==='battery')power+=TYPES.battery.powerCap;if(b.type==='storage'){other+=TYPES.storage.storage;materials+=TYPES.storage.storage*2}}return{power,oxygen:other,water:other,food:other,materials}}
+function pressurizedHousing(){return buildings.reduce((n,b)=>n+(b.type==='habitat'&&b.pressurized?TYPES.habitat.housing:0),0)}
+function daylight(){return Math.max(0,Math.sin((state.phase-.25)*Math.PI*2))}
+function calculateRates(){
+ let solar=0,use=0,oxygen=0,water=0,food=0,materials=0;const brownout=state.res.power<=.01&&state.rates.power<0,scale=brownout?.12:1;
+ for(const b of buildings){const t=TYPES[b.type],active=b.operational&&b.health>15;if(!active)continue;use+=t.power||0;if(b.type==='solar')solar+=t.powerGen;if(active&&scale>.2){oxygen+=t.oxygen||0;water+=(t.water||0)-(t.waterUse||0);food+=t.food||0;materials+=t.materials||0}else{water-=(t.waterUse||0)*scale;food+=(t.food||0)*scale;materials+=(t.materials||0)*scale;oxygen+=(t.oxygen||0)*scale}}
+ use+=state.pop*.22;oxygen-=state.pop*1.25;water-=state.pop*.95;food-=state.pop*1.2;
+ const dust=1-state.storm*.84,solarOut=solar*Math.pow(daylight(),.7)*dust;
+ state.rates.power=solarOut-use;state.rates.oxygen=oxygen;state.rates.water=water;state.rates.food=food;state.rates.materials=materials;
+}
+function simulate(dtSol){
+ calculateRates();const cap=capacities();for(const k of Object.keys(state.res))state.res[k]=clamp(state.res[k]+state.rates[k]*dtSol,0,cap[k]);
+ calculateRates();const balanced=state.rates.oxygen>=-.01&&state.rates.water>=-.01&&state.rates.food>=-.01&&state.res.oxygen>25&&state.res.water>20&&state.res.food>20&&state.res.power>2;
+ const housing=pressurizedHousing();if(balanced&&state.pop<housing&&state.pop<50){state.growth+=dtSol*1.55;if(state.growth>=1){state.growth=0;state.pop++;logEvent(`Crew complement increased to ${state.pop}`,'POPULATION');toast('A new colonist joins ARES-1');audio.play('grow');syncAgents();if(state.pop>=50&&!state.sandbox&&!state.won)endGame(true)}}else state.growth=Math.max(0,state.growth-dtSol*.25);
+ const depleted=Math.min(state.res.oxygen,state.res.water,state.res.food)<=.01;if(depleted&&!state.sandbox){state.critical+=dtSol;if(state.critical>.09){state.critical=0;state.pop=Math.max(0,state.pop-1);logEvent('Life support loss claimed a colonist','EMERGENCY');audio.play('alarm');syncAgents();if(state.pop<=0)endGame(false)}}else state.critical=Math.max(0,state.critical-dtSol);
+ for(const b of buildings){if(b.failure>0){b.failure-=dtSol*DAY_SECONDS;if(b.failure<=0){b.operational=true;b.health=Math.max(45,b.health);logEvent(`${TYPES[b.type].name} auto-recovered`,'ENGINEERING')}}}
+ if(state.simTime>=state.nextEvent&&state.mode==='play'){triggerRandomEvent();state.nextEvent=state.simTime+rr(55,95)}
+}
+function updateModeUI(){$('sandboxBtn').textContent='SANDBOX: '+(state.sandbox?'ON':'OFF');$('sandboxBtn').classList.toggle('on',state.sandbox);$('modeBtn').textContent=state.sandbox?'SANDBOX MODE':'MISSION MODE';if(state.sandbox)state.res.materials=Math.max(9999,state.res.materials);updateBuildCards()}
+function toggleSandbox(){state.sandbox=!state.sandbox;if(state.sandbox){state.res.materials=9999;toast('Sandbox enabled · free construction')}else{state.res.materials=Math.min(state.res.materials,capacities().materials);toast('Mission rules enabled')}updateModeUI()}
+
+// ---------- UI readout and selected-module telemetry ----------
+function fmtRate(v){return`${v>=0?'+':''}${Math.abs(v)<10?v.toFixed(1):Math.round(v)} / SOL`}
+function updateHUD(){
+ for(const k of Object.keys(state.res)){$(k+'Val').textContent=Math.floor(state.res[k]).toLocaleString();const r=$(k+'Rate');r.textContent=fmtRate(state.rates[k]);r.classList.toggle('neg',state.rates[k]<-.01);document.querySelector(`[data-res="${k}"]`).classList.toggle('low',state.res[k]<20)}
+ $('solLabel').textContent='SOL '+String(state.sol).padStart(3,'0');$('popLabel').textContent=state.sandbox?state.pop+' CREW':state.pop+' / 50';$('popProgress').style.width=(state.sandbox?Math.min(100,state.pop*2):state.pop*2)+'%';$('housingLabel').textContent=pressurizedHousing()+' BERTHS';
+ const habs=buildings.filter(b=>b.type==='habitat'),connected=habs.filter(b=>b.pressurized).length;$('networkLabel').textContent=`${connected} / ${habs.length} HABITATS PRESSURIZED`;$('netDot').classList.toggle('bad',connected<habs.length);
+ $('directiveTitle').textContent=state.pop<16?'Establish a foothold':state.pop<32?'Secure the settlement':'Become self-sufficient';$('directiveText').textContent=state.storm>.35?'Dust warning: solar generation suppressed. Battery reserve is keeping systems alive.':state.pop<16?'Keep life support positive. Expand with connected habitats to grow the crew.':'Balance expansion with food, oxygen and water. Isolated habitats cannot house crew.';
+ updateBuildCards();if(state.selected)updateInfo();
+}
+function updateBuildCards(){document.querySelectorAll('.buildCard').forEach(el=>{el.disabled=!state.sandbox&&state.res.materials<TYPES[el.dataset.type].cost})}
+function selectBuilding(id){state.selected=id;const b=buildings.find(v=>v.id===id);$('info').classList.toggle('show',!!b);if(b)updateInfo()}
+function updateInfo(){const b=buildings.find(v=>v.id===state.selected);if(!b)return;const t=TYPES[b.type],status=!b.operational?'EQUIPMENT FAILURE':b.health<40?'DAMAGED':b.type==='habitat'&&!b.pressurized?'UNPRESSURIZED':'ONLINE';$('infoName').textContent=t.name;$('infoType').textContent=`${t.short}-${String(b.id).padStart(2,'0')} · ${status}`;$('healthFill').style.width=b.health+'%';$('healthFill').style.background=b.health<40?'var(--red)':'var(--green)';
+ let detail=`Integrity <b>${Math.round(b.health)}%</b><br>Power draw <b>${t.power||0} kW</b>`;if(t.powerGen)detail+=`<br>Solar rating <b>${t.powerGen} kW</b>`;if(t.housing)detail+=`<br>Berths <b>${b.pressurized?t.housing:0} / ${t.housing}</b>`;if(t.pressurized)detail+=`<br>Network <b>${b.pressurized?'CORE LINKED':'ISOLATED'}</b>`;$('infoStatus').innerHTML=detail;
+ const actions=[];if(b.type==='landing')actions.push(['launch','CALL ROCKET']);if(b.type==='garage')actions.push(['patrol','ROVER PATROL']);if(b.type==='radar')actions.push(['drone','DRONE FLIGHT']);if(b.health<100||!b.operational)actions.push(['repair','REPAIR · 15']);actions.push(['lights',b.lights?'LIGHTS OFF':'LIGHTS ON']);if(!b.core)actions.push(['delete','DELETE +50%']);$('infoActions').innerHTML=actions.map(a=>`<button class="actionBtn ${a[0]==='delete'?'delete':''}" data-action="${a[0]}">${a[1]}</button>`).join('');
+}
+function moduleAction(action){const b=buildings.find(v=>v.id===state.selected);if(!b)return;if(action==='delete'){pushUndo();const name=TYPES[b.type].name;removeBuilding(b.id,true);toast(name+' removed · materials recovered');audio.play('delete')}else if(action==='repair'){if(state.res.materials<15&&!state.sandbox){toast('15 materials required');audio.play('error');return}pushUndo();if(!state.sandbox)state.res.materials-=15;b.health=100;b.operational=true;b.failure=0;toast('Module repaired');audio.play('place');updateHUD()}else if(action==='lights'){b.lights=!b.lights;applyLights();updateInfo()}else if(action==='launch')launchRocket();else if(action==='patrol')spawnPatrol();else if(action==='drone')launchDrone()}
+function updateLabels(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.label)o.visible=state.labels})}
+let toastTimer;function toast(msg){const e=$('toast');e.textContent=msg;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2600)}
+function logEvent(msg,tag='MISSION'){const e=document.createElement('div');e.className='event';e.innerHTML=`<b>${tag}</b> · ${msg}`;$('events').prepend(e);while($('events').children.length>4)$('events').lastChild.remove();setTimeout(()=>{e.style.opacity='0';setTimeout(()=>e.remove(),400)},9000)}
+
+// ---------- Astronauts, rovers, drones and reusable supply rocket ----------
+function astronautModel(accent=MAT.orange){const g=new THREE.Group();box(g,MAT.white,0,1.12,0,.62,.75,.42);box(g,accent,0,1.22,.23,.5,.18,.06);const helmet=mesh(new THREE.SphereGeometry(.34,12,8),MAT.white,g,0,1.78,0);const visor=mesh(new THREE.SphereGeometry(.29,12,8,0,Math.PI*2,0,Math.PI*.55),MAT.solar,g,0,1.8,.07);visor.rotation.x=Math.PI*.45;box(g,MAT.panel,0,1.18,-.32,.52,.68,.28);const limbs=[];for(const [x,z,isArm] of[[-.22,0,false],[.22,0,false],[-.43,0,true],[.43,0,true]]){const pivot=new THREE.Group();pivot.position.set(x,isArm?1.43:.78,z);g.add(pivot);box(pivot,MAT.white,0,-(isArm?.27:.36),0,isArm?.2:.24,isArm?.62:.75,isArm?.2:.25);limbs.push(pivot)}g.userData.limbs=limbs;g.scale.setScalar(.78);return g}
+function spawnAgent(){if(agents.length>=24)return;const homes=buildings.filter(b=>b.type==='habitat');if(!homes.length)return;const home=pick(homes),g=astronautModel(pick([MAT.orange,MAT.panel,MAT.ivory]));g.position.set(home.x+rr(-2,2),terrainHeight(home.x,home.z),home.z+4);scene.add(g);agents.push({mesh:g,at:home.id,target:null,t:rr(1,5),state:'idle',speed:rr(1.4,2.1),phase:rr(0,6.28),home:home.id})}
+function syncAgents(){const wanted=Math.min(24,state.pop);while(agents.length<wanted)spawnAgent();while(agents.length>wanted){const a=agents.pop();scene.remove(a.mesh);disposeGroup(a.mesh)}}
+function chooseAgentTarget(a){const night=daylight()<.08;let choices=buildings.filter(b=>b.operational&&(night?b.type==='habitat':['habitat','greenhouse','isru','lab','storage'].includes(b.type)));if(!choices.length)return;a.target=pick(choices);a.state='walk';a.t=0}
+function updateAgent(a,dt){const g=a.mesh,p=g.position;if(a.state==='idle'){a.t-=dt;a.mesh.visible=true;a.phase+=dt;g.rotation.y+=Math.sin(a.phase)*dt*.08;if(a.t<=0)chooseAgentTarget(a);return}if(a.state==='inside'){a.t-=dt;if(a.t<=0){g.visible=true;a.state='idle';a.t=rr(.5,2)}return}if(!a.target||!buildings.some(b=>b.id===a.target.id)){a.state='idle';a.t=1;return}const dx=a.target.x-p.x,dz=a.target.z-p.z,dist=Math.hypot(dx,dz);if(dist<3.8){a.at=a.target.id;a.state='inside';a.t=a.target.type==='habitat'&&daylight()<.08?rr(8,18):rr(3,9);g.visible=false;return}const step=Math.min(dist,a.speed*dt);p.x+=dx/dist*step;p.z+=dz/dist*step;p.y=terrainHeight(p.x,p.z)+.03;g.rotation.y=Math.atan2(dx,dz);a.phase+=dt*a.speed*5;const limbs=g.userData.limbs;limbs[0].rotation.x=Math.sin(a.phase)*.65;limbs[1].rotation.x=-Math.sin(a.phase)*.65;limbs[2].rotation.x=-Math.sin(a.phase)*.5;limbs[3].rotation.x=Math.sin(a.phase)*.5}
+function roverModel(){const g=new THREE.Group();box(g,MAT.ivory,0,1.25,0,2.8,.65,3.6);box(g,MAT.orange,0,1.7,-.35,2.1,.4,1.9);box(g,MAT.dark,0,1.65,1.25,2.2,.3,.7);for(const x of[-1.55,1.55])for(const z of[-1.25,0,1.25]){const w=mesh(new THREE.CylinderGeometry(.52,.52,.35,12),MAT.black,g,x,.72,z);w.rotation.z=Math.PI/2}const mast=cyl(g,MAT.metal,0,2.5,.4,.07,1.8,8);box(g,MAT.solar,0,3.28,.4,.75,.35,.55);lightMesh(g,0,3.3,.7,.45,.15,.05,MAT.cyan);return g}
+function makeRover(offset=0){const g=roverModel();scene.add(g);const r={mesh:g,u:offset,speed:rr(.012,.017),patrol:0};rovers.push(r);return r}
+function syncVehicles(){const garages=buildings.filter(b=>b.type==='garage'&&b.operational).length;while(rovers.length<Math.min(2,garages))makeRover(rovers.length*.5);while(rovers.length>Math.max(2,Math.min(2,garages))&&rovers.length>0){const r=rovers.pop();scene.remove(r.mesh);disposeGroup(r.mesh)}const radars=buildings.filter(b=>b.type==='radar'&&b.operational).length;while(drones.length<Math.min(2,radars))makeDrone(drones.length);while(drones.length>Math.min(2,radars)){const d=drones.pop();scene.remove(d.mesh);disposeGroup(d.mesh)}
+ const pad=buildings.find(b=>b.type==='landing');if(pad&&!rocket)createRocket(pad);if(rocket&&pad){rocket.pad=pad;if(rocket.state==='pad')rocket.mesh.position.set(pad.x,terrainHeight(pad.x,pad.z)+.8,pad.z)}else if(rocket&&!pad){scene.remove(rocket.mesh);disposeGroup(rocket.mesh);rocket=null}
+}
+function updateRovers(dt){if(!roverRoute)return;for(const r of rovers){r.u=(r.u+r.speed*dt*(r.patrol>0?1.6:1))%1;r.patrol=Math.max(0,r.patrol-dt);const p=roverRoute.getPointAt(r.u,tempV),t=roverRoute.getTangentAt(r.u,tempV2);r.mesh.position.set(p.x,terrainHeight(p.x,p.z)+.08,p.z);r.mesh.rotation.y=Math.atan2(t.x,t.z);if(rnd()<dt*2)spawnDust(p.x,terrainHeight(p.x,p.z)+.2,p.z,1,0xa65c3d)}}
+function spawnPatrol(){if(!buildings.some(b=>b.type==='garage')){toast('Build a rover garage first');return}if(rovers.length<3)makeRover(0);for(const r of rovers)r.patrol=30;toast('Rover patrol dispatched');logEvent('Surface patrol surveying perimeter','ROVERS');audio.play('select');focusCamera(V3(-18,2,20),42)}
+function makeDrone(i){const g=new THREE.Group();box(g,MAT.ivory,0,0,0,1.1,.3,.8);box(g,MAT.orange,0,.23,0,.5,.18,.5);const rotors=[];for(const x of[-.85,.85])for(const z of[-.65,.65]){cylinderBetween(g,MAT.dark,V3(0,0,0),V3(x,0,z),.045);const r=mesh(new THREE.BoxGeometry(1.15,.025,.08),MAT.metal,g,x,.12,z);rotors.push(r)}lightMesh(g,0,-.15,.45,.3,.18,.08,MAT.cyan);scene.add(g);const d={mesh:g,rotors,phase:i*Math.PI,active:0,center:V3()};drones.push(d);return d}
+function launchDrone(){if(!drones.length){toast('Build a radar / comms dish first');return}for(const d of drones)d.active=22;toast('Survey drones airborne · mapping ice deposits');logEvent('Low-altitude survey in progress','DRONES');audio.play('select')}
+function updateDrones(dt){for(const d of drones){d.phase+=dt*(d.active>0?1.15:.4);d.active=Math.max(0,d.active-dt);const radar=buildings.find(b=>b.type==='radar');if(radar)d.center.set(radar.x,0,radar.z);const radius=d.active>0?24:10,height=d.active>0?14:8;d.mesh.position.set(d.center.x+Math.cos(d.phase)*radius,terrainHeight(d.center.x,d.center.z)+height+Math.sin(d.phase*2)*2,d.center.z+Math.sin(d.phase)*radius);d.mesh.rotation.y=-d.phase;for(const r of d.rotors)r.rotation.y+=dt*28}}
+function rocketModel(){const g=new THREE.Group();cyl(g,MAT.white,0,4.5,0,1.25,7.5,24);const nose=mesh(new THREE.ConeGeometry(1.25,2.8,24),MAT.orange,g,0,9.6,0);cyl(g,MAT.dark,0,.7,0,1.35,.7,24);for(let i=0;i<4;i++){const a=i*Math.PI/2,x=Math.cos(a)*1.2,z=Math.sin(a)*1.2;const fin=box(g,MAT.orange,x,1.2,z,.18,2.3,1.3);fin.rotation.y=-a}ring(g,MAT.dark,0,5.4,0,1.27,.1);lightMesh(g,0,6.2,1.26,.5,.5,.05,MAT.window);return g}
+function createRocket(pad){const g=rocketModel();g.position.set(pad.x,terrainHeight(pad.x,pad.z)+.8,pad.z);scene.add(g);rocket={mesh:g,pad,state:'pad',t:0,v:0}}
+function launchRocket(auto=false){if(!rocket||rocket.state!=='pad'){toast('Supply rocket is already in flight');return}rocket.state='ignite';rocket.t=0;rocket.auto=auto;audio.play('launch');logEvent('Reusable cargo rocket ignition','FLIGHT');toast('Launch sequence started');focusCamera(rocket.mesh.position,45)}
+function updateRocket(dt){if(!rocket)return;const r=rocket,p=r.mesh.position,pad=r.pad;if(!pad)return;const baseY=terrainHeight(pad.x,pad.z)+.8;
+ if(r.state==='ignite'){r.t+=dt;spawnDust(p.x,baseY,p.z,2,0xd29a72);if(r.t>2){r.state='ascend';r.v=0}}
+ else if(r.state==='ascend'){r.v+=dt*8;p.y+=r.v*dt;spawnParticle(p.x+rr(-.4,.4),p.y,p.z+rr(-.4,.4),0xffc26b,.7,rr(.3,.7),V3(rr(-1,1),-8,rr(-1,1)));if(p.y>95){r.state='orbit';r.t=0;r.mesh.visible=false}}
+ else if(r.state==='orbit'){r.t+=dt;if(r.t>5){r.state='descend';r.t=0;r.mesh.visible=true;p.set(pad.x+18,95,pad.z-15)}}
+ else if(r.state==='descend'){r.t+=dt/10;const f=clamp(r.t,0,1);p.x=lerp(pad.x+18,pad.x,smooth(f));p.z=lerp(pad.z-15,pad.z,smooth(f));p.y=lerp(95,baseY,1-Math.pow(1-f,2));spawnParticle(p.x,p.y,p.z,0xffad55,.6,.45,V3(0,-8,0));if(f>=1){r.state='pad';p.set(pad.x,baseY,pad.z);const cap=capacities();state.res.materials=clamp(state.res.materials+85,0,cap.materials);state.res.food=clamp(state.res.food+45,0,cap.food);state.res.oxygen=clamp(state.res.oxygen+40,0,cap.oxygen);spawnDust(p.x,baseY,p.z,30,0xc88865);logEvent('Cargo delivered: +85 materials, food & oxygen','SUPPLY');toast('Supply rocket landed safely');audio.play('supply');updateHUD()}}
+}
+function focusCamera(pos,dist=55){if(walkMode)return;controls.target.copy(pos);controls.target.y+=2;const dir=tempV.copy(camera.position).sub(controls.target).normalize();camera.position.copy(controls.target).addScaledVector(dir,dist)}
+
+// ---------- Bounded particle pool, meteors and weather ----------
+const MAX_PARTICLES=260,particleData=[],particleMesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72,depthWrite:false}),MAX_PARTICLES);particleMesh.frustumCulled=false;scene.add(particleMesh);
+for(let i=0;i<MAX_PARTICLES;i++){particleData.push({life:0,max:1,p:V3(),v:V3(),size:0,color:new THREE.Color()});tempObj.scale.setScalar(0);tempObj.updateMatrix();particleMesh.setMatrixAt(i,tempObj.matrix)}
+let particleCursor=0;function spawnParticle(x,y,z,color,size,life,vel){const i=particleCursor++%MAX_PARTICLES,p=particleData[i];p.p.set(x,y,z);p.v.copy(vel||V3());p.life=p.max=life;p.size=size;p.color.setHex(color);particleMesh.setColorAt(i,p.color)}
+function spawnDust(x,y,z,n,color=0xb8734d){for(let i=0;i<n;i++)spawnParticle(x+rr(-2,2),y,z+rr(-2,2),color,rr(.18,.65),rr(.6,1.8),V3(rr(-2,2),rr(.4,2.5),rr(-2,2)))}
+function updateParticles(dt){for(let i=0;i<MAX_PARTICLES;i++){const p=particleData[i];if(p.life>0){p.life-=dt;p.p.addScaledVector(p.v,dt);p.v.y-=dt*.5;const s=p.size*clamp(p.life/p.max,0,1);tempObj.position.copy(p.p);tempObj.scale.setScalar(s)}else tempObj.scale.setScalar(0);tempObj.updateMatrix();particleMesh.setMatrixAt(i,tempObj.matrix)}particleMesh.instanceMatrix.needsUpdate=true;if(particleMesh.instanceColor)particleMesh.instanceColor.needsUpdate=true}
+function triggerStorm(){if(state.stormUntil>state.simTime){state.stormUntil=0;toast('Dust front clearing');return}state.stormUntil=state.simTime+32;logEvent('Dust storm approaching from the west','WEATHER');toast('Storm warning · solar output falling');audio.play('alarm')}
+function triggerMeteor(){state.meteorUntil=state.simTime+15;logEvent('Meteor shower entering the atmosphere','HAZARD');toast('Impact warning · brace the base');audio.play('alarm')}
+function spawnMeteor(){const tx=rr(-45,45),tz=rr(-37,37),start=V3(tx+70,95,tz-60),end=V3(tx,terrainHeight(tx,tz),tz),m=mesh(new THREE.IcosahedronGeometry(.45,0),new THREE.MeshBasicMaterial({color:0xffd29a}),scene);m.castShadow=false;meteors.push({mesh:m,start,end,t:0,duration:rr(.8,1.4)})}
+function updateMeteors(dt){if(state.simTime<state.meteorUntil&&rnd()<dt*2.8)spawnMeteor();for(let i=meteors.length-1;i>=0;i--){const m=meteors[i];m.t+=dt/m.duration;const f=clamp(m.t,0,1);m.mesh.position.lerpVectors(m.start,m.end,f);spawnParticle(m.mesh.position.x,m.mesh.position.y,m.mesh.position.z,0xffa65c,.22,.25,V3(2,4,-2));if(f>=1){const p=m.end;spawnDust(p.x,p.y,p.z,24,0xe18b54);let nearest=null,dist=1e9;for(const b of buildings){const d=Math.hypot(b.x-p.x,b.z-p.z);if(d<dist){dist=d;nearest=b}}if(nearest&&dist<15){nearest.health=Math.max(0,nearest.health-rr(12,30));if(nearest.health<35)nearest.operational=false;logEvent(`${TYPES[nearest.type].name} suffered impact damage`,'IMPACT');updateHUD()}scene.remove(m.mesh);m.mesh.geometry.dispose();m.mesh.material.dispose();meteors.splice(i,1);audio.play('impact')}}}
+function triggerRandomEvent(){const e=pick(['storm','meteor','failure','supply']);if(e==='storm')triggerStorm();else if(e==='meteor')triggerMeteor();else if(e==='supply'){if(rocket&&rocket.state==='pad')launchRocket(true);else{state.res.materials+=60;state.res.food+=25;toast('Orbital supply drop received');logEvent('Emergency cargo received','SUPPLY')}}else{const choices=buildings.filter(b=>!b.core&&b.type!=='tunnel');if(choices.length){const b=pick(choices);b.operational=false;b.failure=rr(18,35);b.health=Math.max(20,b.health-rr(5,18));logEvent(`${TYPES[b.type].name} needs repair`,'FAILURE');toast('Equipment failure · select the module to repair');audio.play('alarm');updateHUD()}}}
+function updateWeather(dt){const active=state.simTime<state.stormUntil;state.storm+=((active?1:0)-state.storm)*Math.min(1,dt*.45);if(state.storm>.04){const n=Math.floor(state.storm*4);for(let i=0;i<n;i++)spawnParticle(rr(-58,15),rr(1,12),rr(-46,46),0xc07954,rr(.1,.35),rr(1.5,3),V3(rr(22,36),rr(-.5,.5),rr(-3,3)))}scene.fog.near=lerp(115,28,state.storm);scene.fog.far=lerp(330,105,state.storm)}
+
+// ---------- Procedural WebAudio: no samples, no network, autoplay safe ----------
+class AudioEngine{
+ constructor(){this.ctx=null;this.on=true;this.master=null}
+ init(){if(this.ctx){this.ctx.resume();return}try{this.ctx=new(window.AudioContext||window.webkitAudioContext)();this.master=this.ctx.createGain();this.master.gain.value=.18;this.master.connect(this.ctx.destination);const osc=this.ctx.createOscillator(),gain=this.ctx.createGain(),filter=this.ctx.createBiquadFilter();osc.type='sine';osc.frequency.value=52;filter.type='lowpass';filter.frequency.value=180;gain.gain.value=.035;osc.connect(filter).connect(gain).connect(this.master);osc.start();const len=this.ctx.sampleRate*2,buf=this.ctx.createBuffer(1,len,this.ctx.sampleRate),data=buf.getChannelData(0);let last=0;for(let i=0;i<len;i++){last=last*.96+(rnd()*2-1)*.04;data[i]=last}const noiseSrc=this.ctx.createBufferSource(),windGain=this.ctx.createGain();noiseSrc.buffer=buf;noiseSrc.loop=true;windGain.gain.value=.05;noiseSrc.connect(windGain).connect(this.master);noiseSrc.start();this.wind=windGain}catch(e){this.on=false}}
+ tone(freq,dur=.12,type='sine',volume=.15,slide=0){if(!this.on)return;this.init();if(!this.ctx)return;const t=this.ctx.currentTime,o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,freq+slide),t+dur);g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(this.master);o.start(t);o.stop(t+dur+.03)}
+ play(name){if(!this.on)return;const map={select:[420,.07,'sine',.09,80],place:[180,.22,'triangle',.2,280],error:[120,.18,'sawtooth',.12,-40],delete:[260,.18,'square',.08,-160],grow:[440,.45,'sine',.13,440],alarm:[220,.55,'sawtooth',.1,80],impact:[70,.35,'square',.22,-40],supply:[330,.6,'triangle',.13,330],launch:[60,1.4,'sawtooth',.18,90]};const p=map[name]||map.select;this.tone(...p)}
+ set(on){this.on=on;if(this.master)this.master.gain.setTargetAtTime(on?.18:0,this.ctx.currentTime,.05);if(on)this.init()}
+ update(){if(this.wind&&this.ctx)this.wind.gain.setTargetAtTime(.04+state.storm*.28,this.ctx.currentTime,.2)}
+}
+const audio=new AudioEngine();
+
+// ---------- Lighting, time-of-day, camera presets and first-person surface mode ----------
+function applyLights(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.isLight)o.visible=state.lights&&b.lights});const night=1-smooth(daylight()*2);MAT.window.emissiveIntensity=state.lights?.55+night*2.1:0;MAT.cyan.emissiveIntensity=state.lights?.55+night*1.35:0;MAT.redLight.emissiveIntensity=state.lights?1.5+night:0}
+function updateSun(){
+ const a=(state.phase-.25)*Math.PI*2,sunHeight=Math.sin(a),day=smooth(Math.max(0,sunHeight)*2.2),dust=state.storm;
+ sunDirection.set(Math.cos(a),sunHeight,-.38).normalize();sun.position.copy(sunDirection).multiplyScalar(145);sun.position.y+=12;sun.target.position.set(0,0,0);sun.intensity=(.08+3.1*day)*(1-dust*.7);sun.color.setHex(day>.4?0xffe2bd:0xf0a079);
+ hemi.intensity=.22+1.25*day;hemi.color.setHex(day>.35?0xf2b79b:0x5f5874);hemi.groundColor.setHex(0x4b281f);fill.intensity=.15+.25*day;
+ const top=new THREE.Color().lerpColors(new THREE.Color(0x171a2a),new THREE.Color(0x9c6d78),day),horizon=new THREE.Color().lerpColors(new THREE.Color(0x392734),new THREE.Color(0xd79773),day);if(dust>.1){horizon.lerp(new THREE.Color(0x9d5e41),dust*.75);top.lerp(new THREE.Color(0x6b443a),dust*.6)}
+ sky.material.uniforms.topColor.value.copy(top);sky.material.uniforms.horizonColor.value.copy(horizon);sky.material.uniforms.sunDir.value.copy(sunDirection);sky.material.uniforms.night.value=1-day;scene.fog.color.copy(horizon);scene.background.copy(horizon);stars.material.opacity=(1-day)*.75;
+ const total=state.phase*24,hh=Math.floor(total)%24,mm=Math.floor((total-Math.floor(total))*60);$('clock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');if(document.activeElement!==$('timeSlider'))$('timeSlider').value=Math.round(state.phase*1000);applyLights();
+}
+const PRESETS={
+ '1':()=>setView(V3(0,3,0),V3(68,57,76)),
+ '2':()=>setView(V3(-2,3,5),V3(25,24,34)),
+ '3':()=>setView(V3(-22,2,-13),V3(-48,23,16)),
+ '4':()=>setView(V3(28,4,22),V3(57,28,53)),
+ '5':()=>setView(V3(0,0,0),V3(.1,112,.1))
+};
+function setView(target,pos){if(walkMode)exitWalk();controls.target.copy(target);camera.position.copy(pos);controls.update()}
+function resetView(){PRESETS['1']();toast('Overview camera')}
+let walkMode=false,walkYaw=0,walkPitch=-.08,walkPos=V3(),walkDragging=false,lastWalkX=0,lastWalkY=0;
+function enterWalk(){if(state.buildType)selectBuild(state.buildType);walkMode=true;controls.enabled=false;walkPos.set(0,terrainHeight(0,18)+1.72,18);walkYaw=0;walkPitch=-.06;document.body.classList.add('walking');$('walkBtn').classList.add('on');toast('Surface walk · WASD to move, F to exit')}
+function exitWalk(){walkMode=false;controls.enabled=true;document.body.classList.remove('walking');$('walkBtn').classList.remove('on');resetView()}
+function updateWalk(dt){let forward=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),side=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0),len=Math.hypot(forward,side);if(len>0){forward/=len;side/=len;const speed=(keys.ShiftLeft||keys.ShiftRight?8:4.2)*dt,sin=Math.sin(walkYaw),cos=Math.cos(walkYaw);walkPos.x+=(-sin*forward+cos*side)*speed;walkPos.z+=(-cos*forward-sin*side)*speed;walkPos.x=clamp(walkPos.x,WORLD.minX+1,WORLD.maxX-1);walkPos.z=clamp(walkPos.z,WORLD.minZ+1,WORLD.maxZ-1)}walkPos.y=terrainHeight(walkPos.x,walkPos.z)+1.72;camera.position.copy(walkPos);camera.rotation.order='YXZ';camera.rotation.y=walkYaw;camera.rotation.x=walkPitch;camera.rotation.z=0}
+
+// ---------- Pointer, keyboard and touch input ----------
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),groundPlane=new THREE.Plane(V3(0,1,0),0);
+function screenToGround(x,y){pointer.set(x/innerWidth*2-1,-y/innerHeight*2+1);raycaster.setFromCamera(pointer,camera);return raycaster.ray.intersectPlane(groundPlane,tempV2)}
+function pickBuilding(x,y){pointer.set(x/innerWidth*2-1,-y/innerHeight*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(buildings.map(b=>b.mesh),true);for(const h of hits){const id=h.object.userData.buildingId;if(id)return buildings.find(b=>b.id===id)}return null}
+let downX=0,downY=0,downTime=0,pointerButton=0;
+canvas.addEventListener('pointerdown',e=>{audio.init();downX=e.clientX;downY=e.clientY;downTime=performance.now();pointerButton=e.button;if(walkMode){walkDragging=true;lastWalkX=e.clientX;lastWalkY=e.clientY;canvas.setPointerCapture(e.pointerId)}});
+canvas.addEventListener('pointermove',e=>{if(walkMode&&walkDragging){walkYaw-=(e.clientX-lastWalkX)*.0045;walkPitch=clamp(walkPitch-(e.clientY-lastWalkY)*.004,-1.15,1.15);lastWalkX=e.clientX;lastWalkY=e.clientY}else updateGhost(e.clientX,e.clientY)});
+canvas.addEventListener('pointerup',e=>{if(walkMode){walkDragging=false;return}const moved=Math.hypot(e.clientX-downX,e.clientY-downY);if(pointerButton===0&&moved<6&&performance.now()-downTime<600){if(state.buildType){updateGhost(e.clientX,e.clientY);placeGhost()}else{const b=pickBuilding(e.clientX,e.clientY);selectBuilding(b?b.id:null);if(b)audio.play('select')}}});
+canvas.addEventListener('pointercancel',()=>{walkDragging=false});canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('dblclick',e=>{if(!state.buildType){resetView();e.preventDefault()}});
+function togglePause(){if(state.mode!=='play'&&state.mode!=='paused')return;state.paused=!state.paused;state.mode=state.paused?'paused':'play';$('pauseBtn').textContent=state.paused?'RESUME':'PAUSE';$('pauseBtn').classList.toggle('on',state.paused);toast(state.paused?'Simulation paused':'Simulation resumed')}
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;keys[e.code]=true;if((e.ctrlKey||e.metaKey)&&e.code==='KeyZ'){e.preventDefault();e.shiftKey?redo():undo();return}if((e.ctrlKey||e.metaKey)&&e.code==='KeyY'){e.preventDefault();redo();return}if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='KeyR'&&state.buildType){state.buildRotation=(state.buildRotation+90)%360;if(ghost)ghost.rotation.y=THREE.MathUtils.degToRad(state.buildRotation);toast('Rotation '+state.buildRotation+'°')}else if(e.code==='KeyX'){if(state.selected)moduleAction('delete')}else if(e.code==='KeyF'){walkMode?exitWalk():enterWalk()}else if(e.key==='?'||e.code==='KeyH')toggleHelp();else if(PRESETS[e.key])PRESETS[e.key]();else if(e.code==='Escape'){if($('help').classList.contains('show'))toggleHelp(false);else if(state.buildType)selectBuild(state.buildType);else selectBuilding(null)}});
+addEventListener('keyup',e=>{keys[e.code]=false});addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;if(state.mode==='play')togglePause()});
+for(const b of document.querySelectorAll('[data-move]')){const code={forward:'KeyW',back:'KeyS',left:'KeyA',right:'KeyD'}[b.dataset.move];b.addEventListener('pointerdown',e=>{e.preventDefault();keys[code]=true;b.setPointerCapture(e.pointerId)});for(const ev of['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>keys[code]=false)}
+
+// ---------- Toolbar and modal bindings ----------
+function toggleHelp(show){const open=show===undefined?!$('help').classList.contains('show'):show;$('help').classList.toggle('show',open);if(open)$('helpClose').focus();else $('helpBtn').focus()}
+$('pauseBtn').onclick=togglePause;$('speedBtn').onclick=()=>{const speeds=[1,2,4],i=(speeds.indexOf(state.speed)+1)%speeds.length;state.speed=speeds[i];$('speedBtn').textContent=state.speed+'×';toast('Simulation speed '+state.speed+'×')};
+$('cycleBtn').onclick=()=>{state.autoCycle=!state.autoCycle;$('cycleBtn').classList.toggle('on',state.autoCycle)};$('timeSlider').oninput=e=>{state.phase=+e.target.value/1000;updateSun()};
+$('walkBtn').onclick=()=>walkMode?exitWalk():enterWalk();$('stormBtn').onclick=triggerStorm;$('meteorBtn').onclick=triggerMeteor;
+$('lightsBtn').onclick=()=>{state.lights=!state.lights;$('lightsBtn').classList.toggle('on',state.lights);applyLights()};$('labelsBtn').onclick=()=>{state.labels=!state.labels;$('labelsBtn').classList.toggle('on',state.labels);updateLabels()};
+$('shadowsBtn').onclick=()=>{state.shadows=!state.shadows;renderer.shadowMap.enabled=state.shadows;$('shadowsBtn').classList.toggle('on',state.shadows)};$('bloomBtn').onclick=()=>{state.bloom=!state.bloom;$('bloomBtn').classList.toggle('on',state.bloom)};
+$('soundBtn').onclick=()=>{state.sound=!state.sound;audio.set(state.sound);$('soundBtn').classList.toggle('on',state.sound);toast(state.sound?'Procedural audio on':'Audio muted')};
+$('helpBtn').onclick=()=>toggleHelp();$('helpClose').onclick=()=>toggleHelp(false);$('help').addEventListener('click',e=>{if(e.target===$('help'))toggleHelp(false)});
+$('saveBtn').onclick=saveGame;$('loadBtn').onclick=loadGame;$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;$('sandboxBtn').onclick=toggleSandbox;$('modeBtn').onclick=toggleSandbox;
+$('resetBtn').onclick=()=>{if(confirm('Reset ARES-1 and abandon the current base?'))resetGame()};$('cancelBuild').onclick=()=>{if(state.buildType)selectBuild(state.buildType)};$('infoClose').onclick=()=>selectBuilding(null);$('infoActions').onclick=e=>{const a=e.target.dataset.action;if(a)moduleAction(a)};
+$('toolsToggle').onclick=()=>$('tools').classList.toggle('expanded');
+$('beginBtn').onclick=()=>{audio.init();state.mode='play';state.paused=false;$('loading').classList.remove('show');toast('ARES-1 online · select a module to expand');logEvent('Mission clock started','ARES-1');audio.play('grow')};
+$('continueBtn').onclick=()=>{$('endOverlay').classList.remove('show');state.mode='play';state.paused=false};$('restartBtn').onclick=()=>{$('endOverlay').classList.remove('show');resetGame()};
+function endGame(win){state.won=win;state.mode=win?'victory':'gameover';state.paused=true;$('endEyebrow').textContent=win?'MISSION COMPLETE':'MISSION LOST';$('endTitle').textContent=win?'A NEW WORLD, INHABITED.':'THE SIGNAL WENT QUIET.';$('endText').textContent=win?`Fifty colonists now call ARES-1 home. The settlement reached independence on sol ${state.sol}, with ${buildings.length} modules and a functioning pressure network. Continue in sandbox-style free play, or begin a new mission.`:'Life support could no longer sustain the crew. Rebalance oxygen, food and water, keep batteries charged for dust storms, and connect every habitat to the core.';$('continueBtn').textContent=win?'Continue building':'Retry from autosave';$('continueBtn').style.display=win?'inline-block':'none';$('endOverlay').classList.add('show');audio.play(win?'grow':'alarm')}
+
+// ---------- Initial base and main loop ----------
+function makeBuildMenu(){const menu=$('buildMenu');for(const [key,t] of Object.entries(TYPES)){const b=document.createElement('button');b.className='buildCard';b.dataset.type=key;b.title=t.desc;b.innerHTML=`<span class="ico">${t.icon}</span><span class="name">${t.name}</span><span class="cost">${t.cost} MAT</span>`;b.onclick=()=>selectBuild(key);menu.appendChild(b)}}
+function initialBase(){
+ clearBuildings();for(const r of rovers){scene.remove(r.mesh);disposeGroup(r.mesh)}rovers=[];for(const d of drones){scene.remove(d.mesh);disposeGroup(d.mesh)}drones=[];for(const a of agents){scene.remove(a.mesh);disposeGroup(a.mesh)}agents=[];if(rocket){scene.remove(rocket.mesh);disposeGroup(rocket.mesh);rocket=null}nextId=1;coreId=0;undoStack=[];redoStack=[];
+ const initial=[['habitat',-8,4,0,{core:true}],['habitat',4,4,0],['tunnel',-2,4,0],['greenhouse',16,4,0],['isru',-4,-14,0],['battery',10,-14,0],['solar',-24,-10,0],['solar',-24,-20,0],['garage',-32,22,0],['landing',30,24,0],['storage',20,-16,0],['radar',-2,26,0]];
+ for(const [type,x,z,rot,opt]of initial)addBuilding(type,x,z,rot,{...opt,defer:true});
+ roverRoute=new THREE.CatmullRomCurve3([V3(-38,0,16),V3(-28,0,-25),V3(4,0,-31),V3(35,0,-12),V3(43,0,14),V3(22,0,36),V3(-12,0,34)],true,'catmullrom',.35);
+ afterBaseChange();applyLights();updateSun();
+}
+function resetGame(){Object.assign(state,{mode:'play',sandbox:false,paused:false,speed:1,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,selected:null,buildType:null,critical:0,won:false});Object.assign(state.res,{power:130,oxygen:180,water:140,food:150,materials:320});if(ghost){scene.remove(ghost);disposeGroup(ghost);ghost.userData.ghostMat.dispose();ghost=null}selectBuilding(null);selectBuild(null);initialBase();$('speedBtn').textContent='1×';$('pauseBtn').textContent='PAUSE';$('pauseBtn').classList.remove('on');updateModeUI();resetView();toast('New ARES-1 mission established');logEvent('Base systems restarted','SYSTEM')}
+async function init(){
+ try{
+  $('loadStatus').textContent='SCULPTING UTOPIA PLANITIA';$('loadFill').style.width='14%';await frame();buildTerrain();
+  $('loadStatus').textContent='ASSEMBLING PRESSURE NETWORK';$('loadFill').style.width='42%';await frame();makeBuildMenu();initialBase();
+  $('loadStatus').textContent='WAKING CREW & AUTONOMOUS VEHICLES';$('loadFill').style.width='72%';await frame();syncAgents();syncVehicles();
+  for(let i=0;i<40;i++)updateDrones(.03);updateRovers(.1);updateHUD();
+  $('loadStatus').textContent='ALL SYSTEMS NOMINAL';$('loadFill').style.width='100%';$('beginBtn').disabled=false;
+  window.__SCENE_READY__=true;window.__GAME_READY__=true;lastTime=performance.now();requestAnimationFrame(loop);
+ }catch(e){console.error(e);$('loadStatus').textContent='STARTUP FAULT · '+e.message;$('beginBtn').textContent='Reload to retry';$('beginBtn').disabled=false;$('beginBtn').onclick=()=>location.reload()}
+}
+let lastTime=0,hudTimer=0,frameEMA=16,qualityTimer=0;
+function loop(now){requestAnimationFrame(loop);let dt=Math.min(.05,Math.max(0,(now-lastTime)/1000));lastTime=now;frameEMA=lerp(frameEMA,dt*1000,.025);qualityTimer+=dt;
+ if(state.mode==='play'&&!state.paused){const sdt=dt*state.speed;state.simTime+=sdt;state.sol=1+Math.floor(state.simTime/DAY_SECONDS);if(state.autoCycle)state.phase=(state.phase+sdt/DAY_SECONDS)%1;state.solFraction=state.phase;simulate(sdt/DAY_SECONDS);for(const a of agents)updateAgent(a,sdt);updateRovers(sdt);updateDrones(sdt);updateRocket(sdt);updateMeteors(sdt);updateWeather(sdt);updateParticles(sdt);updateSun();audio.update();hudTimer+=dt;if(hudTimer>.25){hudTimer=0;updateHUD()}}
+ if(walkMode)updateWalk(dt);else controls.update();
+ // A single conservative quality step protects fill rate on dense mobile screens.
+ if(qualityTimer>8&&frameEMA>31&&renderer.getPixelRatio()>1.3){renderer.setPixelRatio(1.25);composer.setPixelRatio(1.25);sun.shadow.mapSize.set(1024,1024);sun.shadow.map?.dispose();qualityTimer=-9999}
+ if(state.bloom)composer.render();else renderer.render(scene,camera);
+}
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight)});
+
+// Deterministic inspection hooks are intentionally invisible in normal play.
+window.__seek=t=>{state.simTime=Math.max(0,t);state.phase=(.32+t/DAY_SECONDS)%1;updateSun();updateRovers(0);updateDrones(0);renderer.render(scene,camera)};
+window.__ARES__={state,buildings:()=>buildings,metrics:()=>({calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,agents:agents.length,rovers:rovers.length,drones:drones.length,rocket:rocket?.state||'none',walk:walkMode,walkPosition:{x:walkPos.x,y:walkPos.y,z:walkPos.z},frameMS:frameEMA,renderer:renderer.getContext().getParameter(renderer.getContext().RENDERER)}),place:(type,x,z)=>{const v=validPlacement(type,x,z,0);if(v.ok){pushUndo();addBuilding(type,x,z,0);return true}return false},event:triggerRandomEvent,reset:resetGame,screen:(x,z)=>{const p=V3(x,terrainHeight(x,z),z).project(camera);return{x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2}},win:()=>{state.pop=50;endGame(true)},lose:()=>{state.pop=0;endGame(false)}};
+init();
+</script>
+</body>
+</html>
