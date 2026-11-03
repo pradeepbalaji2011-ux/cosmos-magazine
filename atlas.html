@@ -163,6 +163,199 @@ button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy
 #imgModal-info{margin-top:14px;text-align:center;max-width:600px}
 #imgModal-info h3{font-size:18px;color:var(--tx);margin-bottom:4px}
 #imgModal-info p{font-size:12px;color:var(--dim);margin:0}
+
+/* ==========================================================================
+   VIEW LEVEL POPUP MENU (#vlm) & ACCORDION CATALOG (#list)
+   ========================================================================== */
+#vlm {
+  position: fixed !important;
+  z-index: 1200 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  padding: 8px !important;
+  background: rgba(10, 14, 28, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(94, 225, 255, 0.35) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(94, 225, 255, 0.18) !important;
+  min-width: 230px !important;
+  max-width: 280px !important;
+  box-sizing: border-box !important;
+}
+#vlm[hidden] {
+  display: none !important;
+}
+#vlm button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 8px 12px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  color: #e2e8f0 !important;
+  font-size: 13px !important;
+  font-family: inherit !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.16s ease !important;
+  box-sizing: border-box !important;
+}
+#vlm button:hover, #vlm button:focus {
+  background: rgba(94, 225, 255, 0.15) !important;
+  border-color: rgba(94, 225, 255, 0.45) !important;
+  color: var(--cy, #5ee1ff) !important;
+  outline: none !important;
+  transform: translateX(2px) !important;
+}
+#vlm button.on {
+  background: rgba(94, 225, 255, 0.22) !important;
+  border-color: var(--cy, #5ee1ff) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+#vlm button small {
+  color: #8a96b8 !important;
+  font-size: 11px !important;
+  font-weight: normal !important;
+  margin-left: 8px !important;
+}
+
+/* Catalog Sidebar Enhancements */
+#side {
+  width: 270px;
+}
+#list {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding-right: 2px !important;
+}
+.cat-group {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+.cat-group:hover {
+  border-color: rgba(94, 225, 255, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+}
+.cat-group.open {
+  border-color: rgba(94, 225, 255, 0.35);
+  background: rgba(14, 22, 42, 0.65);
+}
+.cat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  user-select: none;
+  gap: 8px;
+  box-sizing: border-box;
+}
+.cat-header:focus-visible {
+  outline: 2px solid var(--cy);
+  outline-offset: -2px;
+}
+.cat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.cat-icon {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.cat-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cat-badge {
+  font-size: 11px;
+  color: var(--dim, #8a96b8);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.cat-arrow {
+  font-size: 10px;
+  color: var(--dim, #8a96b8);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.cat-group.open .cat-arrow {
+  transform: rotate(90deg);
+  color: var(--cy, #5ee1ff);
+}
+.cat-items {
+  display: none;
+  flex-direction: column;
+  padding: 4px 6px 8px 6px;
+  gap: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  max-height: 280px;
+  overflow-y: auto;
+}
+.cat-group.open .cat-items {
+  display: flex;
+}
+.cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #cfd6ee;
+  font-size: 12px;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  gap: 8px;
+  box-sizing: border-box;
+}
+.cat-item:hover, .cat-item:focus {
+  background: rgba(94, 225, 255, 0.14);
+  color: var(--cy, #5ee1ff);
+  outline: none;
+}
+.cat-item.sel {
+  background: rgba(94, 225, 255, 0.22);
+  color: #fff;
+  font-weight: 600;
+}
+.cat-item small {
+  color: var(--dim, #8a96b8);
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+  text-align: right;
+}
+
 </style><script>
 (function(){function show(msg){var l=document.getElementById('load');if(!l)return;l.innerHTML='<h1 style="letter-spacing:.3em;color:#5ee1ff;font-family:sans-serif">COSMOS ATLAS</h1><p style="max-width:520px;margin:12px auto;color:#e6ecff;font:16px/1.6 sans-serif">The universe could not start.</p><p style="font:12px monospace;color:#ffb454;max-width:520px;margin:0 auto 14px;word-break:break-word">'+msg+'</p><p style="font:14px sans-serif"><a href="javascript:location.reload()" style="color:#5ee1ff">Reload</a> · <a href="index.html" target="_top" style="color:#5ee1ff">Back to Home</a></p>';l.style.opacity=1}
 addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)show('Could not load '+t.src);else if(e.message)show(String(e.message).replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':''))},true);
@@ -1095,17 +1288,69 @@ cv.addEventListener("pointerup",e=>{if(moved>=6||ptrs.size)return;const n=perfor
 document.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>{jump=null}));
 /* View Level menu */
 const VLI=[...document.querySelectorAll("#vlm [data-r]")],vlm=$("vlm"),bvl=$("bvl");
-function vlUp(i){$("vln").textContent=VLI[i].dataset.n;VLI.forEach((b,k)=>{b.classList.toggle("on",k==i);k==i?b.setAttribute("aria-current","true"):b.removeAttribute("aria-current")})}
-function vlClose(f){if(vlm.hidden)return;vlm.hidden=true;bvl.setAttribute("aria-expanded","false");if(f)bvl.focus()}
-function vlOpen(){const b=bvl.getBoundingClientRect();vlm.hidden=false;const w=vlm.offsetWidth;vlm.style.left=clamp(b.left,8,innerWidth-w-8)+"px";vlm.style.bottom=(innerHeight-b.top+8)+"px";bvl.setAttribute("aria-expanded","true");(VLI.find(x=>x.classList.contains("on"))||VLI[0]).focus()}
-bvl.onclick=()=>vlm.hidden?vlOpen():vlClose(true);
-VLI.forEach(b=>b.addEventListener("click",e=>{vlClose(e.detail==0)}));
-addEventListener("pointerdown",e=>{if(!vlm.hidden&&!vlm.contains(e.target)&&!bvl.contains(e.target))vlClose()},true);
-addEventListener("resize",()=>vlClose());$("bar").addEventListener("scroll",()=>vlClose());
-addEventListener("keydown",e=>{if(vlm.hidden)return;const k=e.key,i=VLI.indexOf(document.activeElement);
-if(k=="Escape"){e.preventDefault();e.stopImmediatePropagation();vlClose(true)}
-else if(k=="ArrowDown"||k=="ArrowUp"||k=="Home"||k=="End"){e.preventDefault();e.stopImmediatePropagation();VLI[k=="Home"?0:k=="End"?VLI.length-1:(i+(k=="ArrowDown"?1:-1)+VLI.length)%VLI.length].focus()}
-else if(k=="Tab")vlClose()},true);
+function vlUp(i){
+  if(!VLI[i])return;
+  $("vln").textContent=VLI[i].dataset.n;
+  VLI.forEach((b,k)=>{
+    b.classList.toggle("on",k==i);
+    k==i?b.setAttribute("aria-current","true"):b.removeAttribute("aria-current");
+  });
+}
+function vlClose(f){
+  if(!vlm||vlm.hidden)return;
+  vlm.hidden=true;
+  if(bvl)bvl.setAttribute("aria-expanded","false");
+  if(f&&bvl)bvl.focus();
+}
+function vlOpen(){
+  if(!vlm||!bvl)return;
+  vlm.hidden=false;
+  const b=bvl.getBoundingClientRect();
+  const w=vlm.offsetWidth||240;
+  const left=clamp(b.left+(b.width-w)/2,8,innerWidth-w-8);
+  const bottom=Math.max(8,innerHeight-b.top+8);
+  vlm.style.left=left+"px";
+  vlm.style.bottom=bottom+"px";
+  bvl.setAttribute("aria-expanded","true");
+  const onBtn=VLI.find(x=>x.classList.contains("on"))||VLI[0];
+  if(onBtn)onBtn.focus();
+}
+if(bvl){
+  bvl.onclick=e=>{
+    e.stopPropagation();
+    vlm.hidden?vlOpen():vlClose(true);
+  };
+}
+VLI.forEach((x,i)=>{
+  x.onclick=e=>{
+    e.stopPropagation();
+    sel=null;selS=null;selD=null;
+    ring.visible=false;closePanel();
+    const r=+x.dataset.r;
+    cam.follow=r>=5e9?mw:byId.sun.orbit;
+    if(r>=5e9)cam.ph=.9;
+    jump={t:performance.now(),a:cam.tr,b:r};
+    cam.tr=r;
+    vlUp(i);
+    crumb();
+    vlClose();
+  };
+});
+addEventListener("pointerdown",e=>{
+  if(!vlm.hidden&&!vlm.contains(e.target)&&!bvl.contains(e.target))vlClose();
+},true);
+addEventListener("resize",()=>vlClose());
+$("bar").addEventListener("scroll",()=>vlClose());
+addEventListener("keydown",e=>{
+  if(vlm.hidden)return;
+  const k=e.key,i=VLI.indexOf(document.activeElement);
+  if(k=="Escape"){e.preventDefault();e.stopImmediatePropagation();vlClose(true)}
+  else if(k=="ArrowDown"||k=="ArrowUp"||k=="Home"||k=="End"){
+    e.preventDefault();e.stopImmediatePropagation();
+    VLI[k=="Home"?0:k=="End"?VLI.length-1:(i+(k=="ArrowDown"?1:-1)+VLI.length)%VLI.length].focus();
+  }
+  else if(k=="Tab")vlClose();
+},true);
 $("zs").value=String(ZSV);$("zs").onchange=e=>{ZSV=+e.target.value;try{localStorage.setItem("cosmosZS",e.target.value)}catch(x){}};
 cv.addEventListener("wheel",e=>{e.preventDefault();jump=null;cam.tr=zc(cam.tr*Math.exp(e.deltaY*.0022*ZSV*accel(e.deltaY>0?1:-1)))},{passive:false});
 addEventListener("keydown",e=>{if(e.target.tagName=="INPUT")return;keys[e.key.toLowerCase()]=1});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=0);
@@ -1113,7 +1358,192 @@ addEventListener("keydown",e=>{if(e.target.tagName=="INPUT")return;keys[e.key.to
 /* ============ UI ============ */
 let sel=null;const favs=new Set();try{JSON.parse(localStorage.getItem("cosmosFavs")||"[]").forEach(x=>favs.add(x))}catch(e){}
 function crumb(){const l=LV.find(x=>cam.r<x[0])||LV[LV.length-1];$("crumb").textContent=l[2]+(sel&&l===LV[0]?" › "+sel.n:"")+(selD?" › "+selD.n:"")}
-function renderList(f){const l=$("list");l.innerHTML="";D.filter(b=>b.n.toLowerCase().includes(f||"")).forEach(b=>{const d=document.createElement("div");d.innerHTML=b.n+"<small>"+b.t.split(" · ")[0]+"</small>";if(sel==b)d.className="sel";d.onclick=()=>select(b.id);d.tabIndex=0;d.setAttribute("role","button");d.onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();select(b.id)}};l.appendChild(d)})}
+let openCatId = null;
+
+function getCatalogData() {
+  const cats = [
+    {
+      id: "solarsystem",
+      icon: "🪐",
+      title: "Solar System",
+      items: (typeof D !== "undefined" && D ? D : []).map(b => ({
+        id: b.id,
+        n: b.n,
+        sub: b.t ? b.t.split(" · ")[0] : "Planet",
+        isSel: sel === b,
+        go: () => select(b.id)
+      }))
+    },
+    {
+      id: "stars",
+      icon: "⭐",
+      title: "Stars",
+      items: (typeof REC !== "undefined" && REC ? REC : []).map(s => ({
+        id: "star-" + s.n,
+        n: s.n,
+        sub: s.con ? s.con : (s.sp || "Star"),
+        isSel: selS === s,
+        go: () => selStar(s)
+      }))
+    },
+    {
+      id: "constellations",
+      icon: "✨",
+      title: "Constellations",
+      items: (typeof CON !== "undefined" && CON ? CON : []).map(c => ({
+        id: "con-" + c.n,
+        n: c.n,
+        sub: c.z ? "Zodiac" : (c.ab || "Constellation"),
+        isSel: false,
+        go: () => selCon(c)
+      }))
+    },
+    {
+      id: "exoplanets",
+      icon: "🪐",
+      title: "Exoplanets",
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "exo" || d.k === "exop") : []).map(d => ({
+        id: d.id,
+        n: d.n,
+        sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Exoplanet",
+        isSel: selD === d,
+        go: () => selDSO(d)
+      }))
+    },
+    {
+      id: "galaxies",
+      icon: "🌌",
+      title: "Galaxies",
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "gal" && !d.cl) : []).map(d => ({
+        id: d.id,
+        n: d.n,
+        sub: d.info && d.info.t ? d.info.t.replace("Galaxy · ", "") : "Galaxy",
+        isSel: selD === d,
+        go: () => selDSO(d)
+      }))
+    },
+    {
+      id: "nebulae",
+      icon: "☁️",
+      title: "Nebulae",
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "neb") : []).map(d => ({
+        id: d.id,
+        n: d.n,
+        sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Nebula",
+        isSel: selD === d,
+        go: () => selDSO(d)
+      }))
+    },
+    {
+      id: "clusters",
+      icon: "🌟",
+      title: "Star Clusters",
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "cl") : []).map(d => ({
+        id: d.id,
+        n: d.n,
+        sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Cluster",
+        isSel: selD === d,
+        go: () => selDSO(d)
+      }))
+    },
+    {
+      id: "galaxyclusters",
+      icon: "🌀",
+      title: "Galaxy Clusters",
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "gal" && d.cl) : []).map(d => ({
+        id: d.id,
+        n: d.n,
+        sub: d.info && d.info.t ? d.info.t : "Cluster",
+        isSel: selD === d,
+        go: () => selDSO(d)
+      }))
+    },
+    {
+      id: "blackholes",
+      icon: "🕳️",
+      title: "Black Holes",
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "bh") : []).map(d => ({
+        id: d.id,
+        n: d.n,
+        sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Black hole",
+        isSel: selD === d,
+        go: () => selDSO(d)
+      }))
+    }
+  ];
+  return cats.filter(c => c.items && c.items.length > 0);
+}
+
+function renderList(f) {
+  const l = $("list");
+  if (!l) return;
+  l.innerHTML = "";
+  const query = (f || "").trim().toLowerCase();
+  const allCats = getCatalogData();
+
+  allCats.forEach(cat => {
+    const matchingItems = query 
+      ? cat.items.filter(it => it.n.toLowerCase().includes(query) || it.sub.toLowerCase().includes(query))
+      : cat.items;
+
+    if (query && matchingItems.length === 0) return;
+
+    const group = document.createElement("div");
+    group.className = "cat-group";
+    const isOpen = query ? true : (openCatId === cat.id);
+    if (isOpen) group.classList.add("open");
+
+    const header = document.createElement("button");
+    header.className = "cat-header";
+    header.type = "button";
+    header.setAttribute("aria-expanded", String(isOpen));
+    header.innerHTML = '<div class="cat-header-left">' +
+      '<span class="cat-icon">' + cat.icon + '</span>' +
+      '<span class="cat-title">' + cat.title + '</span>' +
+      '</div>' +
+      '<span class="cat-badge">' + (query ? matchingItems.length : cat.items.length) + '</span>' +
+      '<span class="cat-arrow">▸</span>';
+
+    header.onclick = () => {
+      if (query) return; // when searching, stay open
+      openCatId = (openCatId === cat.id) ? null : cat.id;
+      renderList($("q") ? $("q").value : "");
+    };
+
+    group.appendChild(header);
+
+    const itemsContainer = document.createElement("div");
+    itemsContainer.className = "cat-items";
+
+    matchingItems.forEach(item => {
+      const itemEl = document.createElement("div");
+      itemEl.className = "cat-item" + (item.isSel ? " sel" : "");
+      itemEl.tabIndex = 0;
+      itemEl.setAttribute("role", "button");
+      itemEl.innerHTML = '<span>' + item.n + '</span><small>' + item.sub + '</small>';
+
+      const trigger = () => {
+        item.go();
+        if (innerWidth <= 760 && typeof setSide === "function") {
+          setSide(true);
+        }
+      };
+
+      itemEl.onclick = trigger;
+      itemEl.onkeydown = e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          trigger();
+        }
+      };
+
+      itemsContainer.appendChild(itemEl);
+    });
+
+    group.appendChild(itemsContainer);
+    l.appendChild(group);
+  });
+}
 function select(id){const b=byId[id];if(!b)return;sel=b;cam.follow=b.orbit;cam.tr=b.R*3.4;ring.visible=true;
 focusBody4K(id);
 if(innerWidth<=760){setSide(true);if(lmode!==null)exitL();document.body.classList.add("sheet-panel")}
@@ -1126,9 +1556,9 @@ $("fv").onclick=()=>{favs.has(id)?favs.delete(id):favs.add(id);try{localStorage.
 $("sh").onclick=()=>{shareLink(location.href.split("#")[0]+"#"+id,$("sh"))};
 try{history.replaceState(null,"","#"+id)}catch(e){}crumb();renderList($("q").value.toLowerCase())}
 $("q").oninput=e=>renderList(e.target.value.toLowerCase());
-$("q").onkeydown=e=>{if(e.key=="Enter"){const m=D.find(b=>b.n.toLowerCase().includes(e.target.value.toLowerCase()));if(m)select(m.id)}};
+$("q").onkeydown=e=>{if(e.key==="Enter"){const q=e.target.value.trim().toLowerCase();if(!q)return;const cats=getCatalogData();for(const cat of cats){const m=cat.items.find(it=>it.n.toLowerCase().includes(q)||it.sub.toLowerCase().includes(q));if(m){m.go();if(innerWidth<=760&&typeof setSide==="function")setSide(true);break}}}};
 const setSide=h=>{$("side").classList.toggle("hide",h);$("side").inert=h;$("bs").setAttribute("aria-expanded",String(!h));$("bs").classList.toggle("on",!h);if(!h&&innerWidth<=760){closePanel();if(lmode!==null)exitL();document.body.classList.add("sheet-side")}else if(h){document.body.classList.remove("sheet-side")}};
-$("bs").onclick=()=>setSide(!$("side").classList.contains("hide"));
+$("bs").onclick=()=>{const willHide=!$("side").classList.contains("hide");setSide(willHide);if(!willHide)renderList($("q")?$("q").value:"");};
 if($("side-close"))$("side-close").onclick=()=>{setSide(true);$("bs").focus()};
 let playing=!matchMedia("(prefers-reduced-motion:reduce)").matches,speed=10;$("sp").value="10";$("bp").textContent=playing?"❚❚ Pause":"▶ Play";
 $("bp").onclick=()=>{playing=!playing;$("bp").textContent=playing?"❚❚ Pause":"▶ Play"};$("sp").onchange=e=>speed=+e.target.value;
@@ -1198,7 +1628,7 @@ orbitLines.forEach(l=>l.visible=showOrb&&cam.r<2500);
 DL.forEach(l=>{l.o.getWorldPosition(pv);pv.project(camera);const vis=showLab&&r>l.lo&&r<l.hi&&pv.z<1&&Math.abs(pv.x)<1.05&&Math.abs(pv.y)<1.05;l.d.style.display=vis?"block":"none";if(vis)l.d.style.transform="translate("+((pv.x*.5+.5)*innerWidth+10)+"px,"+((-pv.y*.5+.5)*innerHeight-8)+"px)"});
 const li=LV.findIndex(x=>cam.r<x[0]);if(li!=lastLi){lastLi=li;crumb();vlUp(li<0?6:li)}
 warpFx(dt)}
-document.querySelectorAll("[data-r]").forEach(x=>x.onclick=()=>{sel=null;ring.visible=false;closePanel();const r=+x.dataset.r;cam.follow=r>=5e9?mw:byId.sun.orbit;if(r>=5e9)cam.ph=.9;cam.tr=r;crumb();renderList($("q").value.toLowerCase())});
+document.querySelectorAll("[data-r]").forEach((x,i)=>{x.onclick=e=>{e.stopPropagation();sel=null;selS=null;selD=null;ring.visible=false;closePanel();const r=+x.dataset.r;cam.follow=r>=5e9?mw:byId.sun.orbit;if(r>=5e9)cam.ph=.9;jump={t:performance.now(),a:cam.tr,b:r};cam.tr=r;vlUp(i);crumb();vlClose();renderList($("q")?$("q").value.toLowerCase():"");};});
 
 /* ============ LEARN DATA ============ */
 /* Tour step: ["planetId"] uses that body's desc+fact. Or ["r", cameraDistance, title, text, fact] for deep-space views. */
@@ -1524,10 +1954,8 @@ const myth=MYTH[c.n]||MYTH[c.n.replace(/ö/g,'o')]||(Object.entries(MYTH).find((
 const conId = "con-" + (c.ab||c.n).toLowerCase().replace(/[^a-z0-9]+/g, '-');
 panelOpen('<div id="typ">Constellation · '+(c.z?"Zodiac":"IAU")+'</div><h2>'+c.n+'</h2><div id="tag">'+c.ab+'</div>'+getMediaHtml(conId, { type: 'con', con: c })+'<div id="grid"><div><small>Zodiac</small><b>'+(c.z?"Yes":"No")+'</b></div><div><small>Brightest listed star</small><b>'+(c.bs?c.bs.n:"—")+'</b></div><div><small>Figure</small><b>'+(c.cnt?"Full":(c.fig?"Simplified":"Not loaded"))+'</b></div></div><p>'+myth+'</p><p class="note">Constellations are sky patterns. The lines join real stars, but the stars lie at very different distances. Seen from far away the shape falls apart.</p>',c.n+", constellation");try{history.replaceState(null,"","#con-"+(c.ab||c.n).toLowerCase())}catch(e){}}
 /* Catalog sections + search across stars and constellations */
-const _rl=renderList;renderList=function(f){_rl(f);const l=$("list");f=(f||"").toLowerCase();
-const add=(h,items)=>{if(!items.length)return;const t=document.createElement("h4");t.textContent=h;l.appendChild(t);items.forEach(([a,b,fn])=>{const d=document.createElement("div");d.innerHTML=a+"<small>"+b+"</small>";d.tabIndex=0;d.setAttribute("role","button");d.onclick=fn;d.onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();fn()}};l.appendChild(d)})};
-add("Stars",NAMED.filter(s=>s.n.toLowerCase().includes(f)).slice(0,f?60:25).map(s=>[s.n,s.con||"",()=>selStar(s)]));
-add("Constellations",CON.filter(c=>(c.n+" "+c.ab).toLowerCase().includes(f)).map(c=>[c.n,c.z?"zodiac":c.ab,()=>selCon(c)]))};
+/* Unified accordion handles stars & constellations */
+const _rl=renderList;renderList=function(f){_rl(f);};
 $("q").onkeydown=e=>{if(e.key!="Enter")return;const q=e.target.value.toLowerCase(),b=D.find(b=>b.n.toLowerCase().includes(q));if(b){select(b.id);return}const s=NAMED.find(s=>s.n.toLowerCase().includes(q));if(s){selStar(s);return}const c=CON.find(c=>c.n.toLowerCase().includes(q));if(c)selCon(c)};
 /* Per-frame: fade/boost stars, constellation labels, selection ring */
 const cv3=new THREE.Vector3();
@@ -1953,9 +2381,8 @@ document.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>
 function pickD(x,y){const pxs=innerHeight/(2*Math.tan(camera.fov*DEG/2));let best=null,bd=1e9;for(const d of DSO){if(!d.vis)continue;d.o.getWorldPosition(pq);const dist=pq.distanceTo(camera.position);if(d.k!="exop"&&dist<d.size*.9)continue;pq.project(camera);if(pq.z>1)continue;
 const sx=(pq.x*.5+.5)*innerWidth,sy=(-pq.y*.5+.5)*innerHeight,lim=Math.max(d.size/Math.max(dist,1e-12)*pxs,d.k=="exop"?10:16),dd=Math.hypot(sx-x,sy-y)/lim;if(dd<1&&dd<bd){bd=dd;best=d}}return best}
 const _pk2=pick;pick=function(x,y){const r=_pk2(x,y);if(r&&r[0]!="*")return r;const d=pickD(x,y);if(d){if(r){pq.copy(PKS[+r.slice(1)].p).project(camera);if(Math.hypot((pq.x*.5+.5)*innerWidth-x,(-pq.y*.5+.5)*innerHeight-y)<9)return r}return"#"+d.id}return r};
-const _rl2=renderList;renderList=function(f){_rl2(f);const l=$("list");f=(f||"").toLowerCase();
-[["Nebulae",d=>d.k=="neb"],["Clusters",d=>d.k=="cl"],["Exoplanets",d=>d.k=="exo"||(f&&d.k=="exop")],["Black holes",d=>d.k=="bh"]].forEach(([h,fn])=>{const it=DSO.filter(d=>fn(d)&&d.n.toLowerCase().includes(f));if(!it.length)return;const t=document.createElement("h4");t.textContent=h;l.appendChild(t);
-it.forEach(d=>{const e=document.createElement("div");e.innerHTML=d.n+"<small>"+d.info.t.split(" · ")[0]+"</small>";e.tabIndex=0;e.setAttribute("role","button");const go=()=>selDSO(d);e.onclick=go;e.onkeydown=ev=>{if(ev.key=="Enter"||ev.key==" "){ev.preventDefault();go()}};if(selD===d)e.className="sel";l.appendChild(e)})})};
+/* Unified accordion handles nebulae, clusters, exoplanets, black holes */
+const _rl2=renderList;renderList=function(f){_rl2(f);};
 {const _qk=$("q").onkeydown;$("q").onkeydown=e=>{if(e.key=="Enter"){const q=e.target.value.toLowerCase();if(q&&!D.find(b=>b.n.toLowerCase().includes(q))){const d=DSO.find(d=>d.n.toLowerCase().includes(q));if(d){selDSO(d);return}}}_qk(e)}}
 renderList("");
 
@@ -2011,8 +2438,8 @@ panelOpen('<div id="typ">Galaxy · 2MASS Redshift Survey</div><h2>'+n+'</h2><div
 const _sel4=select;select=function(id){if(typeof id=="string"&&id[0]=="~"){revert4K();selGx(+id.slice(1));return}selZ=null;_sel4(id)};
 const _pk4=pick;pick=function(x,y){const r=_pk4(x,y);if(r)return r;const i=svPick(x,y);return i>=0?"~"+i:r};
 /* Catalog sections */
-const _rl4=renderList;renderList=function(f){_rl4(f);const l=$("list");f=(f||"").toLowerCase();[["Galaxies",d=>d.k=="gal"&&!d.cl],["Galaxy clusters",d=>d.k=="gal"&&d.cl]].forEach(([h,fn])=>{const it=GXL.filter(d=>fn(d)&&d.n.toLowerCase().includes(f));if(!it.length)return;const t=document.createElement("h4");t.textContent=h;l.appendChild(t);
-it.forEach(d=>{const e=document.createElement("div");e.innerHTML=d.n+"<small>"+d.info.t.split(" · ").pop()+"</small>";e.tabIndex=0;e.setAttribute("role","button");const go=()=>selDSO(d);e.onclick=go;e.onkeydown=ev=>{if(ev.key=="Enter"||ev.key==" "){ev.preventDefault();go()}};if(selD===d)e.className="sel";l.appendChild(e)})})};renderList("");
+/* Unified accordion handles galaxies & galaxy clusters */
+const _rl4=renderList;renderList=function(f){_rl4(f);};renderList("");
 /* Labels: cosmic web and CMB edge */
 const webO=new THREE.Object3D(),cmbO=new THREE.Object3D(),CMBR=4.53e10*LY,webD=document.createElement("div");cmbO.position.set(0,CMBR*.7,-CMBR*.7);
 webD.className="lab";document.body.appendChild(webD);DL.push({d:webD,o:webO,lo:3e8,hi:1e13});
