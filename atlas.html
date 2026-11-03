@@ -462,6 +462,8 @@ setTimeout(function(){if(document.getElementById('load')&&!window.__cosmosReady)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 "use strict";
+var REC=[],CON=[],DSO=[],DSOid={},selS=null,selD=null;
+
 const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
 const QT={low:{stars:30000,mw:45000,web:12000,gal:160,pr:1},med:{stars:60000,mw:90000,web:30000,gal:320,pr:1.5},high:{stars:100000,mw:150000,web:50000,gal:520,pr:2}};
 let Qn="";try{Qn=localStorage.getItem("cosmosQ")||""}catch(e){}
@@ -1491,7 +1493,7 @@ function getCatalogData() {
       id: "stars",
       icon: "⭐",
       title: "Stars",
-      items: (typeof REC !== "undefined" && REC ? REC : []).map(s => ({
+      items: (Array.isArray(REC) ? REC : []).map(s => ({
         id: "star-" + s.n,
         n: s.n,
         sub: s.con ? s.con : (s.sp || "Star"),
@@ -1503,7 +1505,7 @@ function getCatalogData() {
       id: "constellations",
       icon: "✨",
       title: "Constellations",
-      items: (typeof CON !== "undefined" && CON ? CON : []).map(c => ({
+      items: (Array.isArray(CON) ? CON : []).map(c => ({
         id: "con-" + c.n,
         n: c.n,
         sub: c.z ? "Zodiac" : (c.ab || "Constellation"),
@@ -1515,7 +1517,7 @@ function getCatalogData() {
       id: "exoplanets",
       icon: "🪐",
       title: "Exoplanets",
-      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "exo" || d.k === "exop") : []).map(d => ({
+      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "exo" || d.k === "exop") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Exoplanet",
@@ -1527,7 +1529,7 @@ function getCatalogData() {
       id: "galaxies",
       icon: "🌌",
       title: "Galaxies",
-      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "gal" && !d.cl) : []).map(d => ({
+      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "gal" && !d.cl) : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.replace("Galaxy · ", "") : "Galaxy",
@@ -1539,7 +1541,7 @@ function getCatalogData() {
       id: "nebulae",
       icon: "☁️",
       title: "Nebulae",
-      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "neb") : []).map(d => ({
+      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "neb") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Nebula",
@@ -1551,7 +1553,7 @@ function getCatalogData() {
       id: "clusters",
       icon: "🌟",
       title: "Star Clusters",
-      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "cl") : []).map(d => ({
+      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "cl") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Cluster",
@@ -1563,7 +1565,7 @@ function getCatalogData() {
       id: "galaxyclusters",
       icon: "🌀",
       title: "Galaxy Clusters",
-      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "gal" && d.cl) : []).map(d => ({
+      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "gal" && d.cl) : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t : "Cluster",
@@ -1575,7 +1577,7 @@ function getCatalogData() {
       id: "blackholes",
       icon: "🕳️",
       title: "Black Holes",
-      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "bh") : []).map(d => ({
+      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "bh") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Black hole",
@@ -2003,13 +2005,13 @@ root.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(ex,ey,ez))}
 const SPD={O:"a very hot blue star",B:"a hot blue-white star",A:"a white star",F:"a yellow-white star",G:"a yellow star like our Sun",K:"an orange star",M:"a cool red star"},TD={O:35000,B:15000,A:9000,F:6800,G:5700,K:4600,M:3300},LCN={I:"supergiant",Ia:"supergiant",Iab:"supergiant",Ib:"supergiant",II:"bright giant",III:"giant",IV:"subgiant",V:"main-sequence star"};
 function tRGB(T){const t=clamp(T,1500,40000)/100,r=t<=66?255:329.7*Math.pow(t-60,-.1332),g=t<=66?99.47*Math.log(t)-161.1:288.1*Math.pow(t-60,-.0755),b=t>=66?255:t<=19?0:138.5*Math.log(t-10)-305;return[clamp(r,0,255)/255,clamp(g,0,255)/255,clamp(b,0,255)/255]}
 const spT=sp=>{const m=/^([OBAFGKM])/.exec(sp||"");return m?TD[m[1]]:5500};
-const SM=[];let selS=null,fillA=.5,starErr=false,showCon=true;const starT=new THREE.Object3D();scene.add(starT);
+const SM=[];selS=null,fillA=.5,starErr=false,showCon=true;const starT=new THREE.Object3D();scene.add(starT);
 function starLayer(pos,col,am){const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(pos,3));g.setAttribute("color",new THREE.BufferAttribute(col,3));g.setAttribute("am",new THREE.BufferAttribute(am,1));
 const m=new THREE.ShaderMaterial({uniforms:{al:{value:1},boost:{value:0},pr:{value:renderer.getPixelRatio()}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
 vertexShader:"attribute float am;attribute vec3 color;varying vec3 c;varying float a;uniform float pr,boost;void main(){c=color;vec4 mv=modelViewMatrix*vec4(position,1.);float pc=max(length(mv.xyz)/206265.,1e-7);float m=am+5.*log(pc/10.)/2.302585-boost;float s=clamp(7.2-m,0.,7.5);gl_PointSize=(1.3+s*.9)*pr;a=clamp(.3+s*.14,0.,1.)*(1.-smoothstep(7.5,10.,m));gl_Position=projectionMatrix*mv;}",
 fragmentShader:"uniform float al;varying vec3 c;varying float a;void main(){float d=length(gl_PointCoord-.5)*2.;if(d>1.)discard;gl_FragColor=vec4(c,a*al*(1.-d*d));}"});
 const p=new THREE.Points(g,m);p.frustumCulled=false;scene.add(p);SM.push(m);return p}
-const REC=STARS.map(q=>({n:q[0],des:q[1],p:eq3(q[2],q[3],q[4]*LY,new THREE.Vector3()),ly:q[4],mag:q[5],sp:q[6],T:q[7],Lm:q[8],M:q[9],R:q[10],con:q[11],am:q[5]-5*Math.log10(q[4]/3.26156/10),cur:1}));
+REC=STARS.map(q=>({n:q[0],des:q[1],p:eq3(q[2],q[3],q[4]*LY,new THREE.Vector3()),ly:q[4],mag:q[5],sp:q[6],T:q[7],Lm:q[8],M:q[9],R:q[10],con:q[11],am:q[5]-5*Math.log10(q[4]/3.26156/10),cur:1}));
 const CUR={};REC.forEach(x=>CUR[x.n.toLowerCase()]=x);
 const matchCur=k=>{for(const c in CUR)if(c==k||(k.length>=5&&c.indexOf(k)==0)||(c.length>=5&&k.indexOf(c)==0))return CUR[c];return null};
 let PKS=REC,NAMED=REC,layer=null;
@@ -2032,7 +2034,7 @@ const tot=+r.headers.get("content-length")||0,rr=r.body&&r.body.getReader?r.body
 if(rr){const dec=new TextDecoder(),parts=[];let got=0;for(;;){const{done,value}=await rr.read();if(done)break;parts.push(dec.decode(value,{stream:true}));got+=value.length;if(tot)bar(clamp(got/tot*90,5,90))}t=parts.join("")}else t=await r.text();
 const n=parseHYG(t);status("Stars: "+n.toLocaleString()+" from the HYG catalogue.");renderList($("q").value.toLowerCase())}catch(e){starErr=true;status("Could not read data/hyg.csv ("+e.message+"). Showing "+REC.length+" curated stars.")}})();
 /* Constellations */
-const CON=CN.map(c=>{c.z=ZOD.includes(c.n);c.fig=FIG[c.n]||null;const st=REC.filter(x=>x.con==c.n).sort((a,b)=>a.mag-b.mag);c.bs=st[0]||null;c.c=CEN88[c.ab]?eq3(CEN88[c.ab][0],CEN88[c.ab][1],1000,new THREE.Vector3()):(c.bs?c.bs.p.clone().normalize().multiplyScalar(1000):null);return c});
+CON=CN.map(c=>{c.z=ZOD.includes(c.n);c.fig=FIG[c.n]||null;const st=REC.filter(x=>x.con==c.n).sort((a,b)=>a.mag-b.mag);c.bs=st[0]||null;c.c=CEN88[c.ab]?eq3(CEN88[c.ab][0],CEN88[c.ab][1],1000,new THREE.Vector3()):(c.bs?c.bs.p.clone().normalize().multiplyScalar(1000):null);return c});
 function stP(n){return CUR[n.toLowerCase()].p}
 const conMats=[0,1].map(z=>new THREE.LineBasicMaterial({color:z?0xffb454:0x5ea0ff,transparent:true,opacity:.6,depthWrite:false}));
 function conLines(){const a=[[],[]];CON.forEach(c=>{if(!c.fig)return;const cen=new THREE.Vector3();c.fig.forEach(([p,q])=>{const A=stP(p),B=stP(q);a[c.z?1:0].push(A.x,A.y,A.z,B.x,B.y,B.z);cen.add(A).add(B)});c.c=cen.divideScalar(c.fig.length*2)});
@@ -2085,7 +2087,7 @@ if(selS&&!sel){ring.visible=true;ring.position.copy(selS.p);ring.scale.setScalar
 {const c=$("credits");$("bcr").onclick=()=>{c.hidden=!c.hidden;if(!c.hidden)populateCredits()};$("ccl").onclick=()=>{c.hidden=true};addEventListener("keydown",e=>{if(e.key=="Escape"&&!c.hidden){c.hidden=true;e.stopPropagation()}},true)}
 
 /* ============ PHASE C: textures, atmospheres, nebulae, clusters, exoplanets, black holes ============ */
-const RSUN=.004650467,RE_AU=6371/AU_KM,QF=Qn=="low"?.4:Qn=="med"?.7:1;let selD=null;
+const RSUN=.004650467,RE_AU=6371/AU_KM,QF=Qn=="low"?.4:Qn=="med"?.7:1;selD=null;
 const rng=s=>()=>{s|=0;s=s+1831565813|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const H3=(x,y,z)=>{const h=Math.sin(x*127.1+y*311.7+z*74.7)*43758.5453;return h-Math.floor(h)};
 function n3(x,y,z){const xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),xf=x-xi,yf=y-yi,zf=z-zi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=zf*zf*(3-2*zf),L=(a,b,t)=>a+(b-a)*t;
@@ -2291,7 +2293,7 @@ fragmentShader:"uniform vec3 uB,uSun;uniform float uD,uK,uG,uRp,uS;varying vec3 
 const m=new THREE.Mesh(new THREE.SphereGeometry(b.r*p.s,64,40),mat);m.renderOrder=2;b.tilt.add(m);atms.push({b,m,mat,s:p.s})}
 
 /* ---------- 3. DEEP-SKY OBJECT ENGINE ---------- */
-const DSO=[],DSOid={},NU={pxs:{value:800},pr:{value:renderer.getPixelRatio()}},COLK={neb:"#ff9ec4",cl:"#ffd9a0",exo:"#7dffc0",exop:"#b8ffd9",bh:"#c9a0ff"},MKC={neb:[1,.55,.75],cl:[1,.85,.55],exo:[.45,1,.75],bh:[.8,.55,1]};
+DSO=[];DSOid={},NU={pxs:{value:800},pr:{value:renderer.getPixelRatio()}},COLK={neb:"#ff9ec4",cl:"#ffd9a0",exo:"#7dffc0",exop:"#b8ffd9",bh:"#c9a0ff"},MKC={neb:[1,.55,.75],cl:[1,.85,.55],exo:[.45,1,.75],bh:[.8,.55,1]};
 const addD=d=>{DSO.push(d);DSOid[d.id]=d;d.vis=false;const l=document.createElement("div");l.className="lab";l.textContent=d.n;l.style.color=COLK[d.k];l.style.display="none";document.body.appendChild(l);d.lab=l;return d};
 const NV="attribute float size;attribute vec3 color;attribute float aa;varying vec3 c;varying float a;uniform float pxs,pr,al;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);float d=max(-mv.z,1e-9);float ps=size*pxs/d*pr;float cp=min(ps,240.*pr);c=color;a=aa*al*min(1.,ps*ps)*min(1.,cp/max(ps,1e-6));gl_PointSize=max(cp,1.);gl_Position=projectionMatrix*mv;}",
 NF="varying vec3 c;varying float a;void main(){float d=length(gl_PointCoord-.5)*2.;if(d>1.)discard;float f=1.-d;gl_FragColor=vec4(c,a*f*f);}",
@@ -2894,15 +2896,18 @@ requestAnimationFrame(t=>{last=t;frame(t)});
 
   if (wantFs()) {
     const tryResume = () => {
-      if (wantFs() && !isFs()) enterFs();
+      if (wantFs() && !isFs()) {
+        enterFs();
+      }
+      window.removeEventListener('pointerdown', tryResume);
       window.removeEventListener('click', tryResume);
       window.removeEventListener('keydown', tryResume);
       window.removeEventListener('touchstart', tryResume);
     };
+    window.addEventListener('pointerdown', tryResume, { once: true });
     window.addEventListener('click', tryResume, { once: true });
     window.addEventListener('keydown', tryResume, { once: true });
     window.addEventListener('touchstart', tryResume, { once: true });
-    try { enterFs(); } catch (e) {}
   }
 
   window.addEventListener('keydown', (e) => {
