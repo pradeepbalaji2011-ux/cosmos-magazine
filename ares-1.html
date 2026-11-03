@@ -80,10 +80,99 @@
   }
 }
 
+
+#aresFsBtn {
+  position: fixed !important;
+  top: 14px !important;
+  right: 16px !important;
+  z-index: 999999 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  background: rgba(24, 20, 19, 0.94) !important;
+  border: 1px solid rgba(242, 166, 90, 0.5) !important;
+  border-radius: 999px !important;
+  color: #f2a65a !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+#aresFsBtn:hover {
+  background: rgba(40, 30, 26, 0.98) !important;
+  border-color: #f2a65a !important;
+  color: #fff !important;
+  box-shadow: 0 6px 28px rgba(242, 166, 90, 0.35) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Universal Fullscreen UI Styles */
+.fullscreen-esc-pill {
+  position: fixed !important;
+  top: 14px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 9999999 !important;
+  display: none !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: rgba(24, 20, 19, 0.94) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(242, 166, 90, 0.55) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75), 0 0 20px rgba(242, 166, 90, 0.25) !important;
+  color: #f3e9d8 !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  padding: 6px 16px !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  animation: fsFadeInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.fullscreen-esc-pill.visible {
+  display: inline-flex !important;
+}
+.fullscreen-esc-pill:hover {
+  background: rgba(40, 30, 26, 0.98) !important;
+  border-color: #f2a65a !important;
+  transform: translateX(-50%) translateY(2px) !important;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(242, 166, 90, 0.4) !important;
+}
+.esc-badge {
+  background: rgba(242, 166, 90, 0.2) !important;
+  color: #f2a65a !important;
+  border: 1px solid rgba(242, 166, 90, 0.5) !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+@keyframes fsFadeInDown {
+  from { opacity: 0; transform: translate(-50%, -12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
 </head>
 <body>
+<button id="aresFsBtn" aria-label="Toggle Fullscreen" title="Toggle Fullscreen (ESC)">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+</button>
+<button id="fullscreenEscPill" class="fullscreen-esc-pill" aria-label="Exit Fullscreen (ESC)" title="Click or press ESC to exit fullscreen">
+  <span class="esc-badge">ESC</span>
+  <span>Exit Fullscreen</span>
+</button>
+
 
 <a href="index.html" id="backCosmosBtn" aria-label="Back to Cosmos" onclick="window.location.href='index.html'; return false;">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -548,5 +637,101 @@ init();
 })();
 </script>
 
+
+<script>
+(function initAresFullscreen() {
+  function isFs() {
+    return Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+  function setFsPref(on) {
+    try {
+      if (on) sessionStorage.setItem('cosmos_fullscreen', '1');
+      else sessionStorage.removeItem('cosmos_fullscreen');
+    } catch (e) {}
+  }
+  function wantFs() {
+    try { return sessionStorage.getItem('cosmos_fullscreen') === '1'; } catch (e) { return false; }
+  }
+
+  function enterFs() {
+    const el = document.documentElement;
+    setFsPref(true);
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    }
+  }
+
+  function exitFs() {
+    setFsPref(false);
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+    updateUi();
+  }
+
+  function toggleFs() {
+    if (isFs()) exitFs();
+    else enterFs();
+  }
+
+  const pill = document.getElementById('fullscreenEscPill');
+  if (pill) {
+    pill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      exitFs();
+    }, true);
+  }
+
+  const btn = document.getElementById('aresFsBtn');
+  if (btn) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFs();
+    }, true);
+  }
+
+  function updateUi() {
+    const active = isFs();
+    if (pill) {
+      if (active) pill.classList.add('visible');
+      else pill.classList.remove('visible');
+    }
+    if (btn) {
+      btn.setAttribute('aria-pressed', String(active));
+      btn.innerHTML = active
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>';
+    }
+  }
+
+  document.addEventListener('fullscreenchange', updateUi);
+  document.addEventListener('webkitfullscreenchange', updateUi);
+
+  if (wantFs()) {
+    const tryResume = () => {
+      if (wantFs() && !isFs()) enterFs();
+      window.removeEventListener('click', tryResume);
+      window.removeEventListener('keydown', tryResume);
+      window.removeEventListener('touchstart', tryResume);
+    };
+    window.addEventListener('click', tryResume, { once: true });
+    window.addEventListener('keydown', tryResume, { once: true });
+    window.addEventListener('touchstart', tryResume, { once: true });
+    try { enterFs(); } catch (e) {}
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isFs()) {
+      exitFs();
+    }
+  });
+
+  updateUi();
+})();
+</script>
 </body>
 </html>
