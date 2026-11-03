@@ -22,13 +22,76 @@
 @media(max-width:1050px){#top{grid-template-columns:180px 1fr}.mission{display:none}#objective{top:100px}.resources{min-width:0}.res{padding:3px 6px}.res strong{font-size:18px}#info{top:360px}#events{width:210px}.buildCard{flex-basis:82px}}
 @media(max-width:700px){#top{left:8px;right:8px;top:8px;grid-template-columns:1fr;gap:6px}.brand{min-height:48px;padding:8px 11px}.brandmark{width:28px;height:28px}.brandmark:before{width:17px;left:5px;top:13px}.brandmark:after{height:17px;left:13px;top:5px}.brand h1{font-size:20px}.brand small{margin-top:4px;font-size:8px}.brand .solTag{margin-left:auto;font-size:9px;color:var(--muted)}.resources{min-height:53px;padding:6px 2px}.res{padding:2px 5px}.res label{font-size:7px}.res strong{font-size:16px;margin-top:2px}.res em{font-size:7px}#tools{top:115px;right:8px;width:174px;grid-template-columns:repeat(4,1fr);padding:5px;gap:3px;max-height:46px;overflow:hidden;transition:max-height .2s}#tools.expanded{max-height:260px}.tool{min-height:34px;font-size:8px}#toolsToggle{display:block!important;grid-column:1/-1;min-height:30px}#timeWrap{display:none}#tools.expanded #timeWrap{display:grid}#objective{left:8px;top:115px;width:155px;padding:9px 10px}#objective h2{font-size:14px;margin:4px 0}#objective p{font-size:8px}.netstatus{font-size:8px;margin-top:6px}#info{right:8px;top:auto;bottom:125px;width:min(250px,calc(100vw - 16px));max-height:45vh;overflow:auto}#buildArea{width:calc(100vw - 16px);bottom:max(8px,env(safe-area-inset-bottom))}#buildHint{width:100%;font-size:8px;padding:6px 8px;margin-bottom:4px;min-height:30px}#buildHint .keys{display:none}#buildMenu{padding:5px;gap:4px}.buildCard{flex-basis:70px;min-height:62px;padding:6px}.buildCard .ico{font-size:15px;height:19px}.buildCard .name{font-size:8px;min-height:20px}.buildCard .cost{font-size:7px;margin-top:2px}#events{left:8px;bottom:119px;width:180px}.event{font-size:8px;padding:5px 7px}#events .event:nth-child(n+3){display:none}#toast{top:174px;font-size:9px}.modal{padding:22px 20px}.modal p,.modal li{font-size:13px}#walkHint{bottom:115px;font-size:8px}body.walking #mobileMove{display:grid}.desktopOnly{display:none!important}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#backCosmosBtn {
+  position: fixed !important;
+  top: 14px !important;
+  left: 16px !important;
+  z-index: 999999 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  height: 44px !important;
+  padding: 0 18px !important;
+  background: rgba(24, 20, 19, 0.94) !important;
+  border: 1px solid rgba(242, 166, 90, 0.5) !important;
+  border-radius: 999px !important;
+  color: #f2a65a !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-sizing: border-box !important;
+}
+#backCosmosBtn:hover {
+  background: rgba(242, 166, 90, 0.2) !important;
+  border-color: #f2a65a !important;
+  box-shadow: 0 0 16px rgba(242, 166, 90, 0.35) !important;
+  transform: translateY(-1px) !important;
+  color: #fff !important;
+}
+@media (min-width: 1051px) {
+  #top {
+    left: 200px !important;
+  }
+}
+@media (max-width: 1050px) {
+  #backCosmosBtn {
+    height: 36px !important;
+    padding: 0 12px !important;
+    font-size: 10px !important;
+  }
+  #top {
+    left: 180px !important;
+  }
+}
+@media (max-width: 768px) {
+  #top {
+    left: 16px !important;
+    top: 56px !important;
+  }
+}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
 </head>
 <body>
+
+<a href="index.html" id="backCosmosBtn" aria-label="Back to Cosmos" onclick="window.location.href='index.html'; return false;">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <span>BACK TO COSMOS</span>
+</a>
+
 <canvas id="scene" aria-label="Interactive 3D Mars base"></canvas>
 <header id="top" class="ui">
-  <a href="index.html" class="glass" style="display:flex;align-items:center;gap:6px;padding:7px 14px;color:#f2a65a;text-decoration:none;font-weight:700;font-size:11px;letter-spacing:1.5px;border-radius:8px;border:1px solid rgba(242,166,90,0.4);background:rgba(24,20,19,0.9);backdrop-filter:blur(10px);transition:all 0.2s;text-transform:uppercase;box-shadow:0 2px 10px rgba(0,0,0,0.4)" onmouseover="this.style.borderColor='#f2a65a';this.style.boxShadow='0 0 12px rgba(242,166,90,0.4)'" onmouseout="this.style.borderColor='rgba(242,166,90,0.4)';this.style.boxShadow='0 2px 10px rgba(0,0,0,0.4)'">← Cosmos</a>
   <section class="brand glass"><span class="brandmark"></span><div><h1>ARES-1</h1><small>UTOPIA PLANITIA · MARS</small></div><span class="solTag" id="solLabel" style="margin-left:auto;font-size:10px;color:var(--muted)">SOL 001</span></section>
   <section class="resources glass" aria-label="Base resources">
     <div class="res" data-res="power"><label>POWER</label><strong id="powerVal">120</strong><em id="powerRate">+0 / SOL</em></div>
@@ -466,5 +529,24 @@ window.__seek=t=>{state.simTime=Math.max(0,t);state.phase=(.32+t/DAY_SECONDS)%1;
 window.__ARES__={state,buildings:()=>buildings,metrics:()=>({calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,agents:agents.length,rovers:rovers.length,drones:drones.length,rocket:rocket?.state||'none',walk:walkMode,walkPosition:{x:walkPos.x,y:walkPos.y,z:walkPos.z},frameMS:frameEMA,renderer:renderer.getContext().getParameter(renderer.getContext().RENDERER)}),place:(type,x,z)=>{const v=validPlacement(type,x,z,0);if(v.ok){pushUndo();addBuilding(type,x,z,0);return true}return false},event:triggerRandomEvent,reset:resetGame,screen:(x,z)=>{const p=V3(x,terrainHeight(x,z),z).project(camera);return{x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2}},win:()=>{state.pop=50;endGame(true)},lose:()=>{state.pop=0;endGame(false)}};
 init();
 </script>
+
+<script>
+(function() {
+  var btn = document.getElementById('backCosmosBtn');
+  if (btn) {
+    btn.onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = 'index.html';
+    };
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = 'index.html';
+    }, true);
+  }
+})();
+</script>
+
 </body>
 </html>
