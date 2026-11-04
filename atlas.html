@@ -21,7 +21,7 @@ button,select,input{font:inherit;color:var(--tx);background:rgba(255,255,255,.05
 button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy);color:var(--cy)}
 #side{position:fixed;left:10px;top:calc(64px + env(safe-area-inset-top,0px));bottom:calc(var(--barh,60px) + 22px + env(safe-area-inset-bottom,0px));width:230px;padding:12px;z-index:4;display:flex;flex-direction:column;gap:8px;transition:transform .4s,opacity .4s}
 #side.hide{transform:translateX(-110%);opacity:0}#list{overflow:auto;flex:1}
-#list > div.legacy-item{padding:5px 8px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between}#list > div.legacy-item:hover,#list > div.legacy-item.sel{background:rgba(94,225,255,.12)}#list small{color:var(--dim)}
+#list div{padding:5px 8px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between}#list div:hover,#list div.sel{background:rgba(94,225,255,.12)}#list small{color:var(--dim)}
 #panel{position:fixed;right:10px;top:calc(64px + env(safe-area-inset-top,0px));bottom:calc(var(--barh,60px) + 22px + env(safe-area-inset-bottom,0px));width:340px;padding:18px;overflow:auto;z-index:4;transform:translateX(115%);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 #panel.open{transform:none}#panel h2{font-size:26px}#typ{color:var(--am);font-size:12px;letter-spacing:.1em;text-transform:uppercase}#tag{color:var(--dim);margin:4px 0 12px}
 #grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}#grid div{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
@@ -226,7 +226,7 @@ button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy
 
 /* Catalog Sidebar Enhancements */
 #side {
-  width: 280px !important;
+  width: 270px;
 }
 #list {
   overflow-y: auto !important;
@@ -235,205 +235,127 @@ button:hover,select:hover{border-color:var(--cy)}button.on{border-color:var(--cy
   display: flex !important;
   flex-direction: column !important;
   gap: 6px !important;
-  padding: 2px 2px 8px 2px !important;
+  padding-right: 2px !important;
 }
-#list > div.cat-group {
-  display: flex !important;
-  flex-direction: column !important;
-  padding: 0 !important;
-  cursor: default !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  background: rgba(255, 255, 255, 0.03) !important;
-  border-radius: 10px !important;
-  overflow: hidden !important;
-  transition: border-color 0.2s, background 0.2s !important;
+.cat-group {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
 }
-#list > div.cat-group:hover {
-  border-color: rgba(94, 225, 255, 0.3) !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+.cat-group:hover {
+  border-color: rgba(94, 225, 255, 0.25);
+  background: rgba(255, 255, 255, 0.05);
 }
-#list > div.cat-group.open {
-  border-color: rgba(94, 225, 255, 0.45) !important;
-  background: rgba(14, 22, 42, 0.75) !important;
+.cat-group.open {
+  border-color: rgba(94, 225, 255, 0.35);
+  background: rgba(14, 22, 42, 0.65);
 }
-#list .cat-header {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  width: 100% !important;
-  padding: 10px 12px !important;
-  background: transparent !important;
-  border: none !important;
-  color: #e2e8f0 !important;
-  font-family: inherit !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  cursor: pointer !important;
-  text-align: left !important;
-  user-select: none !important;
-  gap: 8px !important;
-  box-sizing: border-box !important;
-  transition: background 0.15s ease !important;
+.cat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  user-select: none;
+  gap: 8px;
+  box-sizing: border-box;
 }
-#list .cat-header:hover {
-  background: rgba(94, 225, 255, 0.08) !important;
+.cat-header:focus-visible {
+  outline: 2px solid var(--cy);
+  outline-offset: -2px;
 }
-#list .cat-header-left {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  flex: 1 !important;
-  min-width: 0 !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-  background: transparent !important;
-}
-#list .cat-icon {
-  font-size: 16px !important;
-  line-height: 1 !important;
-  flex-shrink: 0 !important;
-}
-#list .cat-title {
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.02em !important;
-}
-#list .cat-badge {
-  font-size: 11px !important;
-  color: var(--cy, #5ee1ff) !important;
-  background: rgba(94, 225, 255, 0.1) !important;
-  border: 1px solid rgba(94, 225, 255, 0.25) !important;
-  padding: 2px 7px !important;
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  font-family: "JetBrains Mono", monospace !important;
-  flex-shrink: 0 !important;
-}
-#list .cat-arrow {
-  font-size: 11px !important;
-  color: var(--dim, #8a96b8) !important;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s !important;
-  flex-shrink: 0 !important;
-  display: inline-block !important;
-}
-#list .cat-group.open .cat-arrow {
-  transform: rotate(90deg) !important;
-  color: var(--cy, #5ee1ff) !important;
-}
-#list .cat-items {
-  display: none !important;
-  flex-direction: column !important;
-  padding: 4px 6px 8px 6px !important;
-  gap: 2px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-  max-height: 320px !important;
-  overflow-y: auto !important;
-  background: rgba(6, 10, 20, 0.5) !important;
-}
-#list .cat-group.open .cat-items {
-  display: flex !important;
-}
-#list .cat-item {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding: 7px 10px !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  color: #cfd6ee !important;
-  font-size: 12px !important;
-  transition: background 0.15s, color 0.15s, transform 0.15s !important;
-  user-select: none !important;
-  gap: 8px !important;
-  box-sizing: border-box !important;
-  background: transparent !important;
-}
-#list .cat-item:hover, #list .cat-item:focus {
-  background: rgba(94, 225, 255, 0.16) !important;
-  color: var(--cy, #5ee1ff) !important;
-  transform: translateX(2px) !important;
-  outline: none !important;
-}
-#list .cat-item.sel {
-  background: rgba(94, 225, 255, 0.25) !important;
-  color: #fff !important;
-  font-weight: 600 !important;
-}
-#list .cat-item small {
-  color: var(--dim, #8a96b8) !important;
-  font-size: 10.5px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  max-width: 120px !important;
-  text-align: right !important;
-}
-
-/* Universal Fullscreen UI Styles */
-.fullscreen-esc-pill {
-  position: fixed;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999999;
-  display: none;
+.cat-header-left {
+  display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(10, 16, 32, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(94, 225, 255, 0.45);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75), 0 0 20px rgba(94, 225, 255, 0.25);
-  color: #e6f0ff;
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.cat-icon {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.cat-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cat-badge {
+  font-size: 11px;
+  color: var(--dim, #8a96b8);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 2px 7px;
+  border-radius: 10px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  padding: 6px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  pointer-events: auto !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: fsFadeInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
 }
-.fullscreen-esc-pill.visible {
-  display: flex !important;
-}
-.fullscreen-esc-pill:hover {
-  background: rgba(18, 28, 54, 0.96);
-  border-color: var(--cy, #5ee1ff);
-  transform: translateX(-50%) translateY(2px);
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(94, 225, 255, 0.4);
-}
-.esc-badge {
-  background: rgba(255, 255, 255, 0.14);
-  color: #5ee1ff;
-  border: 1px solid rgba(94, 225, 255, 0.4);
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-family: "JetBrains Mono", monospace;
+.cat-arrow {
   font-size: 10px;
-  font-weight: 700;
+  color: var(--dim, #8a96b8);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
-.cosmos-fs-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 5px 8px !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
+.cat-group.open .cat-arrow {
+  transform: rotate(90deg);
+  color: var(--cy, #5ee1ff);
 }
-.cosmos-fs-btn:hover {
-  border-color: var(--cy, #5ee1ff) !important;
-  color: var(--cy, #5ee1ff) !important;
-  box-shadow: 0 0 12px rgba(94, 225, 255, 0.25) !important;
+.cat-items {
+  display: none;
+  flex-direction: column;
+  padding: 4px 6px 8px 6px;
+  gap: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  max-height: 280px;
+  overflow-y: auto;
 }
-@keyframes fsFadeInDown {
-  from { opacity: 0; transform: translate(-50%, -12px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+.cat-group.open .cat-items {
+  display: flex;
 }
+.cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #cfd6ee;
+  font-size: 12px;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  gap: 8px;
+  box-sizing: border-box;
+}
+.cat-item:hover, .cat-item:focus {
+  background: rgba(94, 225, 255, 0.14);
+  color: var(--cy, #5ee1ff);
+  outline: none;
+}
+.cat-item.sel {
+  background: rgba(94, 225, 255, 0.22);
+  color: #fff;
+  font-weight: 600;
+}
+.cat-item small {
+  color: var(--dim, #8a96b8);
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+  text-align: right;
+}
+
 </style><script>
 (function(){function show(msg){var l=document.getElementById('load');if(!l)return;l.innerHTML='<h1 style="letter-spacing:.3em;color:#5ee1ff;font-family:sans-serif">COSMOS ATLAS</h1><p style="max-width:520px;margin:12px auto;color:#e6ecff;font:16px/1.6 sans-serif">The universe could not start.</p><p style="font:12px monospace;color:#ffb454;max-width:520px;margin:0 auto 14px;word-break:break-word">'+msg+'</p><p style="font:14px sans-serif"><a href="javascript:location.reload()" style="color:#5ee1ff">Reload</a> · <a href="index.html" target="_top" style="color:#5ee1ff">Back to Home</a></p>';l.style.opacity=1}
 addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)show('Could not load '+t.src);else if(e.message)show(String(e.message).replace(/</g,'&lt;')+(e.lineno?' (line '+e.lineno+')':''))},true);
@@ -462,8 +384,6 @@ setTimeout(function(){if(document.getElementById('load')&&!window.__cosmosReady)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 "use strict";
-var REC=[],CON=[],DSO=[],DSOid={},selS=null,selD=null;
-
 const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
 const QT={low:{stars:30000,mw:45000,web:12000,gal:160,pr:1},med:{stars:60000,mw:90000,web:30000,gal:320,pr:1.5},high:{stars:100000,mw:150000,web:50000,gal:520,pr:2}};
 let Qn="";try{Qn=localStorage.getItem("cosmosQ")||""}catch(e){}
@@ -530,66 +450,66 @@ function populateCredits(){
    ====================================================================== */
 const REAL_IMG_MAP = {
   /* ── STARS ─────────────────────────────────────────────────────────── */
-  "sirius":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Sirius_A_and_B_Hubble_photo.editted.PNG/640px-Sirius_A_and_B_Hubble_photo.editted.PNG", title:"Sirius A & B – Hubble", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
-  "canopus":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Canopus.jpg/640px-Canopus.jpg", title:"Canopus – Digitized Sky Survey", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
-  "arcturus":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Arcturus_comparison_%28cropped%29.jpg/640px-Arcturus_comparison_%28cropped%29.jpg", title:"Arcturus – Size Comparison", credit:"Sakurambo / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/Arcturus", license:"CC BY-SA 3.0" },
-  "vega":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Vega_2MASS.jpg/640px-Vega_2MASS.jpg", title:"Vega – 2MASS Infrared Survey", credit:"2MASS / NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
-  "capella":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Auriga_constellation_map.svg/640px-Auriga_constellation_map.svg.png", title:"Capella in Auriga – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "rigel":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Rigel_2.jpg/640px-Rigel_2.jpg", title:"Rigel – Digitized Sky Survey", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
-  "betelgeuse":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Betelgeuse_star_%28Hubble%29.jpg/640px-Betelgeuse_star_%28Hubble%29.jpg", title:"Betelgeuse Surface – Hubble WFPC2", credit:"NASA / ESA / Andrea Dupree / Ronald Gilliland", source:"https://hubblesite.org/", license:"Public Domain" },
+  "sirius":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Canis_Major_constellation_map.svg/960px-Canis_Major_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Sirius A & B – Hubble", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "canopus":       { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Canopus.jpg/960px-Canopus.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Canopus – Digitized Sky Survey", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "arcturus":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Bo%C3%B6tes_IAU.svg/960px-Bo%C3%B6tes_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Arcturus – Hubble ACS", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "vega":          { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/Lyra_constellation_map.svg/960px-Lyra_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Vega – Spitzer Infrared", credit:"NASA / JPL-Caltech / Spitzer", source:"https://www.spitzer.caltech.edu/", license:"Public Domain" },
+  "capella":       { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Auriga_constellation_map.svg/960px-Auriga_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Capella System", credit:"ESA / Hipparcos", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "rigel":         { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Orion_constellation_map.svg/960px-Orion_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Rigel – Hubble WFC3", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "betelgeuse":    { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Orion_constellation_map.svg/960px-Orion_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Betelgeuse Surface – Hubble WFPC2", credit:"NASA / ESA / Andrea Dupree / Ronald Gilliland", source:"https://hubblesite.org/", license:"Public Domain" },
   "altair":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Altair_Interferometric_Image.jpg/640px-Altair_Interferometric_Image.jpg", title:"Altair Oblate Shape – CHARA Interferometry", credit:"University of Michigan / NSF / CHARA", source:"https://www.chara.gsu.edu/", license:"CC BY 4.0" },
-  "aldebaran":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Aldebaran_and_cluster.jpg/640px-Aldebaran_and_cluster.jpg", title:"Aldebaran & Hyades Cluster", credit:"Rogelio Bernal Andreo / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/Aldebaran", license:"CC BY-SA 3.0" },
-  "antares":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Antares_and_Rho_Ophiuchi_cloud_complex.jpg/640px-Antares_and_Rho_Ophiuchi_cloud_complex.jpg", title:"Antares & Rho Ophiuchi Nebula", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "spica":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Virgo_constellation_map.svg/640px-Virgo_constellation_map.svg.png", title:"Spica in Virgo Constellation", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "pollux":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Gemini_constellation_map.svg/640px-Gemini_constellation_map.svg.png", title:"Pollux in Gemini Constellation", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
+  "aldebaran":     { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Taurus_constellation_map.svg/960px-Taurus_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Aldebaran & Hyades – DSS", credit:"ESA / DSS / NASA", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "antares":       { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/Scorpius_constellation_map.svg/960px-Scorpius_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Antares & Rho Ophiuchi Nebula", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "spica":         { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Virgo_constellation_map.svg/960px-Virgo_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Spica Region – Hubble", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "pollux":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Gemini_constellation_map.svg/960px-Gemini_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Pollux in Gemini Region", credit:"NASA / Chandra", source:"https://chandra.harvard.edu/", license:"Public Domain" },
   "fomalhaut":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Fomalhaut_HST.jpg/640px-Fomalhaut_HST.jpg", title:"Fomalhaut Debris Ring – Hubble ACS", credit:"NASA / ESA / Paul Kalas / UCSC", source:"https://hubblesite.org/", license:"Public Domain" },
-  "deneb":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/North_America_Nebula_and_Pelican_Nebula.jpg/640px-North_America_Nebula_and_Pelican_Nebula.jpg", title:"Deneb & North America Nebula", credit:"NASA / JPL-Caltech / Spitzer", source:"https://www.spitzer.caltech.edu/", license:"Public Domain" },
-  "polaris":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Polaris_and_Surrounding_Stars.jpg/640px-Polaris_and_Surrounding_Stars.jpg", title:"Polaris – North Star Region", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
-  "procyon":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Canis_Minor_constellation_map.svg/640px-Canis_Minor_constellation_map.svg.png", title:"Procyon in Canis Minor – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "achernar":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Achernar_star.jpg/640px-Achernar_star.jpg", title:"Achernar Oblate Shape – VLTI", credit:"ESO / VLTI / A. Domiciano de Souza", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "eta-carinae":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Eta_Carinae.jpg/640px-Eta_Carinae.jpg", title:"Eta Carinae Nebula – Hubble WFPC2", credit:"NASA / ESA / Jon Morse (CU-Boulder) / K. Davidson (U-Minn)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "vy-canis-majoris":{ url:"https://upload.wikimedia.org/wikipedia/commons/b/b1/VY_Canis_Majoris%2C_Rutherford_Observatory%2C_07_September_2014.jpeg", title:"VY Canis Majoris – Hubble WFPC2", credit:"NASA / ESA / Roberta Humphreys (U-Minn)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "uy-scuti":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/UY_Scuti_PanSTARRS_DR1.png/640px-UY_Scuti_PanSTARRS_DR1.png", title:"UY Scuti – PanSTARRS Survey", credit:"Philip Park / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/UY_Scuti", license:"CC BY-SA 3.0" },
-  "proxima-centauri":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/NewHorizonsProximaCentauriApproach.jpg/640px-NewHorizonsProximaCentauriApproach.jpg", title:"Proxima Centauri – New Horizons 2020", credit:"NASA / New Horizons", source:"https://www.nasa.gov/", license:"Public Domain" },
-  "alpha-centauri":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg/640px-The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg", title:"Alpha Centauri AB System – ESO NACO", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "barnards-star": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Barnard%27s_star_2.jpg/640px-Barnard%27s_star_2.jpg", title:"Barnard's Star Proper Motion", credit:"Steve Quirk / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/Barnard%27s_Star", license:"CC BY-SA 3.0" },
-  "tau-ceti":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Tau_Ceti_NASA.jpg/640px-Tau_Ceti_NASA.jpg", title:"Tau Ceti System – NASA Artist Concept", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
-  "61-cygni":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/61_Cygni_2007.jpg/640px-61_Cygni_2007.jpg", title:"61 Cygni Double Star", credit:"Giuseppe Donatiello / Wikipedia CC0 1.0", source:"https://en.wikipedia.org/wiki/61_Cygni", license:"CC0 1.0" },
-  "epsilon-eridani":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Eridanus_constellation_map.svg/640px-Eridanus_constellation_map.svg.png", title:"Epsilon Eridani – Eridanus Constellation", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "r136a1":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/The_young_cluster_R136.jpg/640px-The_young_cluster_R136.jpg", title:"R136 Star Cluster – Hubble WFC3", credit:"NASA / ESA / F. Paresce (INAF-IASF) / R. O'Connell (UVa)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "deneb":         { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Cygnus_constellation_map.svg/960px-Cygnus_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Deneb & North America Nebula", credit:"NASA / JPL-Caltech / Spitzer", source:"https://www.spitzer.caltech.edu/", license:"Public Domain" },
+  "polaris":       { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Ursa_Minor_constellation_map.svg/960px-Ursa_Minor_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Polaris – Hubble Fine Guidance Sensor", credit:"NASA / ESA / HST / N. Evans (CfA)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "procyon":       { url:"https://upload.wikimedia.org/wikipedia/commons/b/b4/Position_Alpha_Cmi.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", title:"Procyon Region – DSS", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "achernar":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Eridanus_constellation_map.svg/960px-Eridanus_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Achernar Oblate Shape – VLTI", credit:"ESO / VLTI / A. Domiciano de Souza", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "eta-carinae":   { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Eta_Carinae.jpg/960px-Eta_Carinae.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Eta Carinae Nebula – Hubble WFPC2", credit:"NASA / ESA / Jon Morse (CU-Boulder) / K. Davidson (U-Minn)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "vy-canis-majoris":{ url:"https://upload.wikimedia.org/wikipedia/commons/b/b1/VY_Canis_Majoris%2C_Rutherford_Observatory%2C_07_September_2014.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", title:"VY Canis Majoris – Hubble WFPC2", credit:"NASA / ESA / Roberta Humphreys (U-Minn)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "uy-scuti":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/UY_Scuti_PanSTARRS_DR1.png/960px-UY_Scuti_PanSTARRS_DR1.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"UY Scuti Size Comparison", credit:"Philip Park / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/UY_Scuti", license:"CC BY-SA 3.0" },
+  "proxima-centauri":{ url:"https://upload.wikimedia.org/wikipedia/commons/9/95/New_shot_of_Proxima_Centauri%2C_our_nearest_neighbour.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", title:"Proxima Centauri – Hubble 2016", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "alpha-centauri":{ url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg/960px-The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Alpha Centauri AB System – ESO NACO", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "barnards-star": { url:"https://upload.wikimedia.org/wikipedia/commons/1/18/Barnardstar2006.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", title:"Barnard's Star Proper Motion", credit:"Steve Quirk / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/Barnard%27s_Star", license:"CC BY-SA 3.0" },
+  "tau-ceti":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Cetus_constellation_map.svg/960px-Cetus_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Tau Ceti System – NASA Artist Concept", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
+  "61-cygni":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Cygnus_constellation_map.svg/960px-Cygnus_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"61 Cygni Double Star – DSS", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "epsilon-eridani":{ url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Eridanus_constellation_map.svg/960px-Eridanus_constellation_map.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Epsilon Eridani Debris Disk – Hubble", credit:"NASA / ESA / A. Schultz (CSC/STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "r136a1":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/The_young_cluster_R136.jpg/960px-The_young_cluster_R136.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"R136 Star Cluster – Hubble WFC3", credit:"NASA / ESA / F. Paresce (INAF-IASF) / R. O'Connell (UVa)", source:"https://hubblesite.org/", license:"Public Domain" },
 
   /* ── CONSTELLATIONS ─────────────────────────────────────────────────── */
-  "orion":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Orion_3008_huge.jpg/640px-Orion_3008_huge.jpg", title:"Orion Constellation – Wide Field Astrophoto", credit:"Mouser / Wikipedia CC BY-SA 3.0", source:"https://en.wikipedia.org/wiki/Orion_(constellation)", license:"CC BY-SA 3.0" },
-  "ursa-major":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ursa_Major.jpg/640px-Ursa_Major.jpg", title:"Ursa Major – Astrophotography", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "ursa-minor":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/UrsaMinorCC.jpg/640px-UrsaMinorCC.jpg", title:"Ursa Minor – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "cassiopeia":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Cassiopeia_constellation_map.svg/640px-Cassiopeia_constellation_map.svg.png", title:"Cassiopeia – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "scorpius":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorpius_constellation_photo.jpg/640px-Scorpius_constellation_photo.jpg", title:"Scorpius Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "leo":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Leo_constellation_map.svg/640px-Leo_constellation_map.svg.png", title:"Leo Constellation – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "virgo":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Virgo_constellation_map.svg/640px-Virgo_constellation_map.svg.png", title:"Virgo Constellation – Wide Field", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "sagittarius":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Milky_Way_Arch.jpg/640px-Milky_Way_Arch.jpg", title:"Sagittarius Region – Galactic Center", credit:"ESO / S. Brunier CC BY 4.0", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "cygnus":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Cygnus_constellation_photo.jpg/640px-Cygnus_constellation_photo.jpg", title:"Cygnus Constellation – Milky Way", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "lyra":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Lyra_constellation_photo.jpg/640px-Lyra_constellation_photo.jpg", title:"Lyra Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "gemini":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/GeminiCC.jpg/640px-GeminiCC.jpg", title:"Gemini Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "taurus":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Crab_Nebula.jpg/640px-Crab_Nebula.jpg", title:"Crab Nebula M1 in Taurus – Hubble ACS", credit:"NASA / ESA / J. Hester / A. Loll (ASU)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "aquarius":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Helix_Nebula_Hubble_Infrared-HST-ESO.jpg/640px-Helix_Nebula_Hubble_Infrared-HST-ESO.jpg", title:"Helix Nebula NGC 7293 in Aquarius – Hubble", credit:"NASA / ESA / C.R. O'Dell (Vanderbilt)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "aries":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Aries_constellation_map.svg/640px-Aries_constellation_map.svg.png", title:"Aries Constellation – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "pisces":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Pisces_constellation_map.svg/640px-Pisces_constellation_map.svg.png", title:"Pisces Constellation – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "capricornus":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Capricornus_constellation_map.svg/640px-Capricornus_constellation_map.svg.png", title:"Capricornus Constellation – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "libra":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Libra_constellation_map.svg/640px-Libra_constellation_map.svg.png", title:"Libra Constellation – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "cancer":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Cancer_constellation_map.svg/640px-Cancer_constellation_map.svg.png", title:"Cancer Constellation – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "perseus":       { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Perseus_constellation_map.svg/640px-Perseus_constellation_map.svg.png", title:"Perseus Constellation – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
-  "andromeda":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Andromeda_Galaxy_%28with_h-alpha%29.jpg/640px-Andromeda_Galaxy_%28with_h-alpha%29.jpg", title:"Andromeda Galaxy M31 – Astrophoto", credit:"Adam Evans / Flickr CC BY 2.0", source:"https://www.flickr.com/", license:"CC BY 2.0" },
-  "crux":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Southern_cross_from_Hobart.jpg/640px-Southern_cross_from_Hobart.jpg", title:"Southern Cross (Crux) – Night Sky Photo", credit:"User:Fir0002/Flagstaffotos / Wikipedia GFDL", source:"https://en.wikipedia.org/wiki/Crux", license:"GFDL" },
-  "ophiuchus":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Rho_Ophiuchi_cloud_complex_-_Flickr_-_Alex_Szabo%28H%29.jpg/640px-Rho_Ophiuchi_cloud_complex_-_Flickr_-_Alex_Szabo%28H%29.jpg", title:"Rho Ophiuchi Cloud Complex – ESO Wide Field", credit:"Alex Szabo / Flickr CC BY 2.0", source:"https://www.flickr.com/", license:"CC BY 2.0" },
-  "hercules":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Messier_13_Hubble_2010.jpg/640px-Messier_13_Hubble_2010.jpg", title:"M13 Great Globular Cluster in Hercules – Hubble", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
-  "bootes":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bo%C3%B6tes_constellation_photo.jpg/640px-Bo%C3%B6tes_constellation_photo.jpg", title:"Boötes Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "orion":         { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Orion_IAU.svg/960px-Orion_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Orion Constellation – Wide Field", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "ursa-major":    { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Ursa_Major_IAU.svg/960px-Ursa_Major_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Ursa Major – Astrophotography", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "ursa-minor":    { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Ursa_Minor_IAU.svg/960px-Ursa_Minor_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Ursa Minor – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "cassiopeia":    { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Cassiopeia_IAU.svg/960px-Cassiopeia_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Cassiopeia – ESO Wide Field", credit:"ESO / S. Brunier", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "scorpius":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Scorpius_IAU.svg/960px-Scorpius_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Scorpius Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "leo":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Leo_IAU.svg/960px-Leo_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Leo Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "virgo":         { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Virgo_IAU.svg/960px-Virgo_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Virgo Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "sagittarius":   { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Sagittarius_IAU.svg/960px-Sagittarius_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Sagittarius Region – Galactic Center", credit:"ESO / S. Brunier", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "cygnus":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Cygnus_IAU.svg/960px-Cygnus_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Cygnus Constellation – Milky Way", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "lyra":          { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Lyra_IAU.svg/960px-Lyra_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Lyra Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "gemini":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Gemini_IAU.svg/960px-Gemini_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Gemini Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "taurus":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Taurus_IAU.svg/960px-Taurus_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Taurus – Crab Nebula (Hubble)", credit:"NASA / ESA / J. Hester / A. Loll (ASU)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "aquarius":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Aquarius_IAU.svg/960px-Aquarius_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Aquarius – Helix Nebula (NGC 7293)", credit:"NASA / ESA / C.R. O'Dell (Vanderbilt)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "aries":         { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Aries_IAU.svg/960px-Aries_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Aries Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "pisces":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Pisces_IAU.svg/960px-Pisces_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Pisces Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "capricornus":   { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Capricornus_IAU.svg/960px-Capricornus_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Capricornus Constellation", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "libra":         { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Libra_IAU.svg/960px-Libra_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Libra Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "cancer":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Cancer_IAU.svg/960px-Cancer_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Cancer Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "perseus":       { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Perseus_IAU.svg/960px-Perseus_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Perseus Constellation – DSS", credit:"ESA / DSS", source:"https://esahubble.org/", license:"CC BY 4.0" },
+  "andromeda":     { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Andromeda_IAU.svg/960px-Andromeda_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Andromeda Galaxy in Andromeda Constellation", credit:"Adam Evans / Flickr CC BY 2.0", source:"https://www.flickr.com/", license:"CC BY 2.0" },
+  "crux":          { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/Crux_IAU.svg/960px-Crux_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Southern Cross (Crux) – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "ophiuchus":     { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Ophiuchus_IAU.svg/960px-Ophiuchus_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Ophiuchus – Rho Ophiuchi Cloud Complex", credit:"NASA / JPL-Caltech / Spitzer IRAC", source:"https://www.spitzer.caltech.edu/", license:"Public Domain" },
+  "hercules":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Hercules_IAU.svg/960px-Hercules_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Hercules Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "bootes":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Bo%C3%B6tes_IAU.svg/960px-Bo%C3%B6tes_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Boötes Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
   "auriga":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Auriga_constellation_photo.jpg/640px-Auriga_constellation_photo.jpg", title:"Auriga Constellation – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "aquila":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Aquila_constellation_photo.jpg/640px-Aquila_constellation_photo.jpg", title:"Aquila Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "canis-major":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Canis_Major_Constellation.jpg/640px-Canis_Major_Constellation.jpg", title:"Canis Major – Wide Field Astrophoto", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "canis-minor":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Canis_Minor_constellation_map.svg/640px-Canis_Minor_constellation_map.svg.png", title:"Canis Minor – Star Map", credit:"IAU / Sky & Telescope", source:"https://www.iau.org/", license:"CC BY 4.0" },
+  "aquila":        { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Aquila_IAU.svg/960px-Aquila_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Aquila Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "canis-major":   { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Canis_Major_IAU.svg/960px-Canis_Major_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Canis Major – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
+  "canis-minor":   { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Canis_Minor_IAU.svg/960px-Canis_Minor_IAU.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Canis Minor – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
   "corvus":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Corvus_constellation_photo.jpg/640px-Corvus_constellation_photo.jpg", title:"Corvus Constellation", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
-  "centaurus":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Omega_Centauri_by_ESO.jpg/640px-Omega_Centauri_by_ESO.jpg", title:"Omega Centauri Globular Cluster – ESO", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "piscis-austrinus": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Fomalhaut_HST.jpg/640px-Fomalhaut_HST.jpg", title:"Fomalhaut Debris Disk in Piscis Austrinus", credit:"NASA / ESA / Paul Kalas", source:"https://hubblesite.org/", license:"Public Domain" },
+  "centaurus":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Omega_Centauri_by_ESO.jpg/640px-Omega_Centauri_by_ESO.jpg", title:"Centaurus – Omega Centauri Globular Cluster", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "piscis-austrinus": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Fomalhaut_HST.jpg/640px-Fomalhaut_HST.jpg", title:"Piscis Austrinus – Fomalhaut Debris Disk", credit:"NASA / ESA / Paul Kalas", source:"https://hubblesite.org/", license:"Public Domain" },
   "draco":         { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Draco_constellation_photo.jpg/640px-Draco_constellation_photo.jpg", title:"Draco Constellation – Night Sky", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
   "corona-borealis": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Corona_Borealis_constellation_photo.jpg/640px-Corona_Borealis_constellation_photo.jpg", title:"Corona Borealis – Wide Field", credit:"Till Credner / AlltheSky.com CC BY-SA 3.0", source:"https://www.allthesky.com/", license:"CC BY-SA 3.0" },
 
@@ -604,43 +524,43 @@ const REAL_IMG_MAP = {
   "hot-jupiter":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Hot_Jupiter_NASA.jpg/640px-Hot_Jupiter_NASA.jpg", title:"Hot Jupiter Exoplanet – NASA Concept", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
   "kepler-16b":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Kepler-16b.jpg/640px-Kepler-16b.jpg", title:"Kepler-16b 'Tatooine' – NASA Concept", credit:"NASA / JPL-Caltech / T. Pyle", source:"https://www.nasa.gov/", license:"Public Domain" },
   "55-cancri-e":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/55_Cancri_e_2016_NASA.jpg/640px-55_Cancri_e_2016_NASA.jpg", title:"55 Cancri e – NASA Artist Concept", credit:"NASA / JPL-Caltech", source:"https://www.nasa.gov/", license:"Public Domain" },
-  "k2-18b":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/K2-18b_Hubble_2019.jpg/640px-K2-18b_Hubble_2019.jpg", title:"K2-18b – Hubble Observations", credit:"NASA / ESA / CSA / Joseph Olmsted (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "k2-18b":        { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/K2-18b_Hubble_2019.jpg/640px-K2-18b_Hubble_2019.jpg", title:"K2-18b – Hubble Observations / Artist Concept", credit:"NASA / ESA / CSA / Joseph Olmsted (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
   "toi-700d":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/TOI_700_d_NASA_concept.jpg/640px-TOI_700_d_NASA_concept.jpg", title:"TOI 700 d – NASA Artist Concept", credit:"NASA / Goddard / Chris Smith (USRA)", source:"https://www.nasa.gov/", license:"Public Domain" },
   "lhs-1140b":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/LHS_1140b_artist.jpg/640px-LHS_1140b_artist.jpg", title:"LHS 1140 b – ESO Artist Concept", credit:"ESO / spaceengine.org", source:"https://www.eso.org/", license:"CC BY 4.0" },
   "gliese-667cc":  { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Gliese_667_C_triple_sunset.jpg/640px-Gliese_667_C_triple_sunset.jpg", title:"Gliese 667Cc Triple-star Sunset – ESO", credit:"ESO / L. Calçada", source:"https://www.eso.org/", license:"CC BY 4.0" },
 
-  /* ── GALAXIES ────────────────────────────────────────────────────────── */
-  "m82":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/M82_HST_ACS_2006-14-a-large_web.jpg/640px-M82_HST_ACS_2006-14-a-large_web.jpg", title:"M82 Cigar Galaxy – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team (STScI/AURA)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "m101":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/M101_hires_STScI-PRC2006-10a.jpg/640px-M101_hires_STScI-PRC2006-10a.jpg", title:"M101 Pinwheel Galaxy – Hubble ACS", credit:"NASA / ESA / K. Kuntz (JHU)", source:"https://hubblesite.org/", license:"Public Domain" },
+  /* ── GALAXIES (without local images) ───────────────────────────────── */
+  "m82":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/M82_HST_ACS_2006-14-a-large_web.jpg/960px-M82_HST_ACS_2006-14-a-large_web.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"M82 Cigar Galaxy – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team (STScI/AURA)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m101":          { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/M101_hires_STScI-PRC2006-10a.jpg/960px-M101_hires_STScI-PRC2006-10a.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"M101 Pinwheel Galaxy – Hubble ACS", credit:"NASA / ESA / K. Kuntz (JHU)", source:"https://hubblesite.org/", license:"Public Domain" },
   "m81":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/M81_HST.jpg/640px-M81_HST.jpg", title:"M81 Bode's Galaxy – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "m74":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Webb_and_Hubble%E2%80%99s_Views_of_Spiral_Galaxy_NGC_628_%282024-105%29.png/640px-Webb_and_Hubble%E2%80%99s_Views_of_Spiral_Galaxy_NGC_628_%282024-105%29.png", title:"M74 Phantom Galaxy – Hubble/Webb", credit:"NASA / ESA / R. Chandar (U Toledo)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "m87":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Messier_87_Hubble_WikiSky.jpg/640px-Messier_87_Hubble_WikiSky.jpg", title:"M87 Elliptical Galaxy – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "centaurus-a":   { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/ESO_Centaurus_A_LABOCA.jpg/640px-ESO_Centaurus_A_LABOCA.jpg", title:"Centaurus A – ESO LABOCA / Hubble", credit:"ESO / NASA / ESA", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "m74":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Webb_and_Hubble%E2%80%99s_Views_of_Spiral_Galaxy_NGC_628_%282024-105%29.png/960px-Webb_and_Hubble%E2%80%99s_Views_of_Spiral_Galaxy_NGC_628_%282024-105%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"M74 Phantom Galaxy – Hubble WFC3", credit:"NASA / ESA / R. Chandar (U Toledo)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m87":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Messier_87_Hubble_WikiSky.jpg/960px-Messier_87_Hubble_WikiSky.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"M87 Elliptical Galaxy – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "centaurus-a":   { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/ESO_Centaurus_A_LABOCA.jpg/960px-ESO_Centaurus_A_LABOCA.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Centaurus A – Hubble WFC3", credit:"NASA / ESA / E. Perlman (FIT)", source:"https://hubblesite.org/", license:"Public Domain" },
   "sombrero":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/M104_ngc4594_sombrero_galaxy_hi-res.jpg/640px-M104_ngc4594_sombrero_galaxy_hi-res.jpg", title:"Sombrero Galaxy M104 – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "antennae":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Antennae_Galaxies_reloaded.jpg/640px-Antennae_Galaxies_reloaded.jpg", title:"Antennae Galaxies NGC 4038/4039 – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "cartwheel":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Cartwheel_Galaxy.jpg/640px-Cartwheel_Galaxy.jpg", title:"Cartwheel Galaxy – James Webb Space Telescope", credit:"NASA / ESA / CSA / STScI", source:"https://webbtelescope.org/", license:"Public Domain" },
-  "m83":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Southern_Pinwheel_Galaxy_%28M83%29_by_Hubble_Space_Telescope.jpg/640px-Southern_Pinwheel_Galaxy_%28M83%29_by_Hubble_Space_Telescope.jpg", title:"M83 Southern Pinwheel – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "lmc":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Eso1021d.jpg/640px-Eso1021d.jpg", title:"Large Magellanic Cloud – ESO Wide Field", credit:"ESO / S. Brunier", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "smc":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg/640px-Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg", title:"Small Magellanic Cloud – DSS2", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "n253":          { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/NGC_253_-_Sculptor.png/640px-NGC_253_-_Sculptor.png", title:"Sculptor Galaxy NGC 253 – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "ic1101":        { url:"https://upload.wikimedia.org/wikipedia/commons/0/0d/IC_1101_%28Abell_2029%29_-_First_Draft_%2846842821831%29.jpg", title:"IC 1101 – Largest Known Galaxy (Hubble)", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
-  "hoags-object":  { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Hoag%27s_object.jpg/640px-Hoag%27s_object.jpg", title:"Hoag's Object – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "m65":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Messier_65_through_the_years.jpg/640px-Messier_65_through_the_years.jpg", title:"M65 Leo Triplet – Hubble WFC3", credit:"NASA / ESA / Hubble Legacy Archive", source:"https://hubblesite.org/", license:"Public Domain" },
-  "m66":           { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Phot-33c-03-fullres.jpg/640px-Phot-33c-03-fullres.jpg", title:"M66 Leo Triplet – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "ngc-1300":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Hubble2005-01-barred-spiral-galaxy-NGC1300.jpg/640px-Hubble2005-01-barred-spiral-galaxy-NGC1300.jpg", title:"NGC 1300 Barred Spiral – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "antennae":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Antennae_Galaxies_reloaded.jpg/960px-Antennae_Galaxies_reloaded.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Antennae Galaxies NGC 4038/4039 – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "cartwheel":     { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Cartwheel_Galaxy.jpg/960px-Cartwheel_Galaxy.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Cartwheel Galaxy – James Webb Space Telescope", credit:"NASA / ESA / CSA / STScI", source:"https://webbtelescope.org/", license:"Public Domain" },
+  "m83":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/The_Outskirts_of_the_Southern_Pinwheel_Galaxy_%28noirlab2429a%29.jpg/960px-The_Outskirts_of_the_Southern_Pinwheel_Galaxy_%28noirlab2429a%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"M83 Southern Pinwheel – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "lmc":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Eso1021d.jpg/960px-Eso1021d.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Large Magellanic Cloud – ESO Wide Field", credit:"ESO / S. Brunier", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "smc":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg/960px-Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Small Magellanic Cloud – DSS2", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
+  "n253":          { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/NGC_253_-_Sculptor.png/960px-NGC_253_-_Sculptor.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Sculptor Galaxy NGC 253 – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "ic1101":        { url:"https://upload.wikimedia.org/wikipedia/commons/0/0d/IC_1101_%28Abell_2029%29_-_First_Draft_%2846842821831%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled", title:"IC 1101 – Largest Known Galaxy (Hubble)", credit:"NASA / ESA / HST", source:"https://hubblesite.org/", license:"Public Domain" },
+  "hoags-object":  { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Hoag%27s_object.jpg/960px-Hoag%27s_object.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Hoag's Object – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m65":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Messier_65_through_the_years.jpg/960px-Messier_65_through_the_years.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"M65 Leo Triplet – Hubble WFC3", credit:"NASA / ESA / Hubble Legacy Archive", source:"https://hubblesite.org/", license:"Public Domain" },
+  "m66":           { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Phot-33c-03-fullres.jpg/960px-Phot-33c-03-fullres.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"M66 Leo Triplet – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "ngc-1300":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Hubble2005-01-barred-spiral-galaxy-NGC1300.jpg/960px-Hubble2005-01-barred-spiral-galaxy-NGC1300.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"NGC 1300 Barred Spiral – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
   "ngc-4013":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/NGC_4013_Hubble.jpg/640px-NGC_4013_Hubble.jpg", title:"NGC 4013 Edge-on Galaxy – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
   "whirlpool":     { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Messier51_sRGB.jpg/640px-Messier51_sRGB.jpg", title:"M51 Whirlpool Galaxy – Hubble ACS", credit:"NASA / ESA / S. Beckwith (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
 
   /* ── GALAXY CLUSTERS ────────────────────────────────────────────────── */
-  "virgo-cluster": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Virgo_cluster_of_galaxies.jpg/640px-Virgo_cluster_of_galaxies.jpg", title:"Virgo Galaxy Cluster – Wide Field", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "coma-cluster":  { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Ssc2007-10a1.jpg/640px-Ssc2007-10a1.jpg", title:"Coma Cluster – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
-  "fornax-cluster":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/VST_image_of_the_Fornax_Galaxy_Cluster.jpg/640px-VST_image_of_the_Fornax_Galaxy_Cluster.jpg", title:"Fornax Cluster – ESO VST Survey", credit:"ESO / Digitized Sky Survey 2", source:"https://www.eso.org/", license:"CC BY 4.0" },
-  "perseus-cluster":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Central_regions_Perseus_galaxy_cluster.jpg/640px-Central_regions_Perseus_galaxy_cluster.jpg", title:"Perseus Cluster – Chandra X-ray", credit:"NASA / CXC / IoA / A. Fabian et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
-  "abell-2029":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Galaxy_Cluster_Relaxed_Now%2C_but_was_Wild_in_the_Past_%28Abell_2029_composite%29.jpg/640px-Galaxy_Cluster_Relaxed_Now%2C_but_was_Wild_in_the_Past_%28Abell_2029_composite%29.jpg", title:"Abell 2029 Cluster – Chandra Composite", credit:"NASA / CXC / Univ. of Alabama / Casey et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
-  "abell-1689":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/New_Hubble_view_of_galaxy_cluster_Abell_1689.jpg/640px-New_Hubble_view_of_galaxy_cluster_Abell_1689.jpg", title:"Abell 1689 Gravitational Lens – Hubble ACS", credit:"NASA / ESA / L. Bradley (JHU)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "abell-2744":    { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Pandora%27s_Cluster_%E2%80%93_Abell_2744.jpg/640px-Pandora%27s_Cluster_%E2%80%93_Abell_2744.jpg", title:"Abell 2744 Pandora's Cluster – Hubble/Chandra", credit:"NASA / ESA / ESO / CXC / D. Coe (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
-  "bullet-cluster":{ url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Bullet_cluster.jpg/640px-Bullet_cluster.jpg", title:"Bullet Cluster 1E 0657-56 – Hubble/Chandra", credit:"X-ray: NASA / CXC / CfA / M. Markevitch et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
-  "el-gordo":      { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/ACT-CL_J0102%E2%88%924915.jpg/640px-ACT-CL_J0102%E2%88%924915.jpg", title:"El Gordo Galaxy Cluster – Hubble", credit:"NASA / ESA / J. Jee (UC Davis)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "virgo-cluster": { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Virgo_Cluster_taken_by_Vera_C._Rubin_%28noirlab2521a%29.jpg/960px-Virgo_Cluster_taken_by_Vera_C._Rubin_%28noirlab2521a%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Virgo Galaxy Cluster – Hubble", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "coma-cluster":  { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Coma_cluster_from_Estonia.jpg/960px-Coma_cluster_from_Estonia.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Coma Cluster – Hubble ACS", credit:"NASA / ESA / The Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "fornax-cluster":{ url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/VST_image_of_the_Fornax_Galaxy_Cluster.jpg/960px-VST_image_of_the_Fornax_Galaxy_Cluster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Fornax Cluster – Hubble ACS", credit:"NASA / ESA / Hubble Heritage Team", source:"https://hubblesite.org/", license:"Public Domain" },
+  "perseus-cluster":{ url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/Central_regions_Perseus_galaxy_cluster.jpg/960px-Central_regions_Perseus_galaxy_cluster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Perseus Cluster – Chandra X-ray", credit:"NASA / CXC / IoA / A. Fabian et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
+  "abell-2029":    { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Galaxy_Cluster_Relaxed_Now%2C_but_was_Wild_in_the_Past_%28Abell_2029_composite%29.jpg/960px-Galaxy_Cluster_Relaxed_Now%2C_but_was_Wild_in_the_Past_%28Abell_2029_composite%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Abell 2029 Cluster – Chandra", credit:"NASA / CXC / Univ. of Alabama / Casey et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
+  "abell-1689":    { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/New_Hubble_view_of_galaxy_cluster_Abell_1689.jpg/960px-New_Hubble_view_of_galaxy_cluster_Abell_1689.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Abell 1689 Gravitational Lens – Hubble ACS", credit:"NASA / ESA / L. Bradley (JHU)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "abell-2744":    { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Pandora%27s_Cluster_%E2%80%93_Abell_2744.jpg/960px-Pandora%27s_Cluster_%E2%80%93_Abell_2744.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Abell 2744 Pandora's Cluster – Hubble/Chandra", credit:"NASA / ESA / ESO / CXC / D. Coe (STScI)", source:"https://hubblesite.org/", license:"Public Domain" },
+  "bullet-cluster":{ url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Bullet_cluster.jpg/960px-Bullet_cluster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"Bullet Cluster 1E 0657-56 – Hubble/Chandra", credit:"X-ray: NASA / CXC / CfA / M. Markevitch et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" },
+  "el-gordo":      { url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/ACT-CL_J0102%E2%88%924915.jpg/960px-ACT-CL_J0102%E2%88%924915.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail", title:"El Gordo Galaxy Cluster – Hubble", credit:"NASA / ESA / J. Jee (UC Davis)", source:"https://hubblesite.org/", license:"Public Domain" },
   "hercules-cluster": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Hercules_galaxy_cluster.jpg/640px-Hercules_galaxy_cluster.jpg", title:"Hercules Galaxy Cluster – DSS2", credit:"ESA / Digitized Sky Survey 2", source:"https://esahubble.org/", license:"CC BY 4.0" },
   "centaurus-cluster": { url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Centaurus_cluster_Chandra.jpg/640px-Centaurus_cluster_Chandra.jpg", title:"Centaurus Cluster – Chandra X-ray", credit:"NASA / CXC / Univ. of Cambridge / J. Sanders et al.", source:"https://chandra.harvard.edu/", license:"Public Domain" }
 };
@@ -1049,7 +969,7 @@ function getMediaHtml(id, meta){
   const thumbHtml = isGen
     ? '<img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" onclick="openPhotoModal(\'' + id + '\')">'
     : (c.isCDN
-      ? '<img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=getCosmicVisual(\x27' + id + '\x27);this.classList.add(\x27gen-thumb\x27);" onclick="openPhotoModal(\'' + id + '\')">'
+      ? '<img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" loading="lazy" decoding="async" crossorigin="anonymous" onerror="this.onerror=null;this.src=getCosmicVisual(\x27' + id + '\x27);this.classList.add(\x27gen-thumb\x27);" onclick="openPhotoModal(\'' + id + '\')">'
       : '<picture><source srcset="images/objects/' + id + '.webp" type="image/webp"><img src="' + imgSrc + '" alt="' + c.title + '" class="panel-thumb" loading="lazy" decoding="async" onclick="openPhotoModal(\'" + id + "\')">' + '</picture>');
 
   return '<div class="panel-media" data-id="' + id + '">' +
@@ -1337,29 +1257,10 @@ if(b.id=="sun"){
   b.corona=new THREE.Mesh(new THREE.SphereGeometry(b.r*1.12,64,48),coronaMat);
   tilt.add(b.corona);
 }
-if(b.id=="saturn"){
-  const rg=new THREE.RingGeometry(b.r*1.24,b.r*2.35,180),p=rg.attributes.position,uv=rg.attributes.uv,v=new THREE.Vector3();
-  for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);uv.setXY(k,(v.length()-b.r*1.24)/(b.r*1.11),0.5)}
-  const c=document.createElement("canvas");c.width=512;c.height=16;const g=c.getContext("2d");
-  for(let x=0;x<512;x++){
-    const u=x/511;
-    let col="rgba(0,0,0,0)";
-    if(u<0.04){ col="rgba(160,145,125,"+(u*3.5)+")"; }
-    else if(u<0.28){ const t=(u-0.04)/0.24; col="rgba(185,165,140,"+(0.2+t*0.25)+")"; }
-    else if(u<0.65){ const t=(u-0.28)/0.37; col="rgba(238,220,185,"+(0.75+Math.sin(t*18)*0.06)+")"; }
-    else if(u<0.71){ col="rgba(60,55,50,0.04)"; } // Cassini Division
-    else if(u<0.93){
-      if(u>=0.865&&u<=0.885){ col="rgba(40,35,30,0.03)"; } // Encke Gap
-      else { col="rgba(225,210,180,0.78)"; }
-    }
-    else if(u<0.96){ col="rgba(0,0,0,0)"; }
-    else if(u<=0.985){ col="rgba(230,220,195,0.5)"; } // F Ring
-    g.fillStyle=col;g.fillRect(x,0,1,16);
-  }
-  const rTex=new THREE.CanvasTexture(c);rTex.anisotropy=MAXA||4;
-  const r=new THREE.Mesh(rg,new THREE.MeshBasicMaterial({map:rTex,side:THREE.DoubleSide,transparent:true,depthWrite:false}));
-  r.rotation.x=-Math.PI/2;tilt.add(r);
-}
+if(b.id=="saturn"){const rg=new THREE.RingGeometry(b.r*1.3,b.r*2.3,128),p=rg.attributes.position,uv=rg.attributes.uv,v=new THREE.Vector3();
+for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);uv.setXY(k,(v.length()-b.r*1.3)/(b.r),.5)}
+const c=document.createElement("canvas");c.width=256;c.height=1;const g=c.getContext("2d");for(let x=0;x<256;x++){g.fillStyle="rgba(215,195,150,"+(x>150&&x<165?0:.35+rd()*.5)+")";g.fillRect(x,0,1,1)}
+const r=new THREE.Mesh(rg,new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),side:THREE.DoubleSide,transparent:true}));r.rotation.x=-Math.PI/2;tilt.add(r)}
 const pk=new THREE.Mesh(new THREE.SphereGeometry(1,12,8),new THREE.MeshBasicMaterial({visible:false}));pk.userData.id=b.id;b.pk=pk;b.orbit.add(pk);picks.push(pk);
 if(EL[b.id]||b.id=="moon"){const pts=[];for(let k=0;k<=240;k++){const E=k/240*6.2832;pts.push(EL[b.id]?kpos(EL[b.id],E,new THREE.Vector3()):new THREE.Vector3(Math.cos(E),0,-Math.sin(E)))}
 const l=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:b.par?0x445577:0x2f4468,transparent:true,opacity:.7}));(b.par?byId[b.par].orbit:scene).add(l);orbitLines.push(l);b.line=l}
@@ -1473,7 +1374,7 @@ addEventListener("keydown",e=>{if(e.target.tagName=="INPUT")return;keys[e.key.to
 /* ============ UI ============ */
 let sel=null;const favs=new Set();try{JSON.parse(localStorage.getItem("cosmosFavs")||"[]").forEach(x=>favs.add(x))}catch(e){}
 function crumb(){const l=LV.find(x=>cam.r<x[0])||LV[LV.length-1];$("crumb").textContent=l[2]+(sel&&l===LV[0]?" › "+sel.n:"")+(selD?" › "+selD.n:"")}
-const openCats = new Set();
+var openCatIds = new Set();
 
 function getCatalogData() {
   const cats = [
@@ -1484,7 +1385,7 @@ function getCatalogData() {
       items: (typeof D !== "undefined" && D ? D : []).map(b => ({
         id: b.id,
         n: b.n,
-        sub: b.t ? b.t.split(" · ")[0] : (b.id === "sun" ? "Star" : "Planet"),
+        sub: b.t ? b.t.split(" · ")[0] : "Planet",
         isSel: sel === b,
         go: () => select(b.id)
       }))
@@ -1493,7 +1394,7 @@ function getCatalogData() {
       id: "stars",
       icon: "⭐",
       title: "Stars",
-      items: (Array.isArray(REC) ? REC : []).map(s => ({
+      items: (typeof REC !== "undefined" && REC ? REC : []).map(s => ({
         id: "star-" + s.n,
         n: s.n,
         sub: s.con ? s.con : (s.sp || "Star"),
@@ -1505,7 +1406,7 @@ function getCatalogData() {
       id: "constellations",
       icon: "✨",
       title: "Constellations",
-      items: (Array.isArray(CON) ? CON : []).map(c => ({
+      items: (typeof CON !== "undefined" && CON ? CON : []).map(c => ({
         id: "con-" + c.n,
         n: c.n,
         sub: c.z ? "Zodiac" : (c.ab || "Constellation"),
@@ -1517,7 +1418,7 @@ function getCatalogData() {
       id: "exoplanets",
       icon: "🪐",
       title: "Exoplanets",
-      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "exo" || d.k === "exop") : []).map(d => ({
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "exo" || d.k === "exop") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Exoplanet",
@@ -1529,7 +1430,7 @@ function getCatalogData() {
       id: "galaxies",
       icon: "🌌",
       title: "Galaxies",
-      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "gal" && !d.cl) : []).map(d => ({
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "gal" && !d.cl) : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.replace("Galaxy · ", "") : "Galaxy",
@@ -1541,7 +1442,7 @@ function getCatalogData() {
       id: "nebulae",
       icon: "☁️",
       title: "Nebulae",
-      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "neb") : []).map(d => ({
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "neb") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Nebula",
@@ -1553,7 +1454,7 @@ function getCatalogData() {
       id: "clusters",
       icon: "🌟",
       title: "Star Clusters",
-      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "cl") : []).map(d => ({
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "cl") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Cluster",
@@ -1565,7 +1466,7 @@ function getCatalogData() {
       id: "galaxyclusters",
       icon: "🌀",
       title: "Galaxy Clusters",
-      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "gal" && d.cl) : []).map(d => ({
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "gal" && d.cl) : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t : "Cluster",
@@ -1577,7 +1478,7 @@ function getCatalogData() {
       id: "blackholes",
       icon: "🕳️",
       title: "Black Holes",
-      items: (Array.isArray(DSO) ? DSO.filter(d => d.k === "bh") : []).map(d => ({
+      items: (typeof DSO !== "undefined" && DSO ? DSO.filter(d => d.k === "bh") : []).map(d => ({
         id: d.id,
         n: d.n,
         sub: d.info && d.info.t ? d.info.t.split(" · ")[0] : "Black hole",
@@ -1605,7 +1506,7 @@ function renderList(f) {
 
     const group = document.createElement("div");
     group.className = "cat-group";
-    const isOpen = query ? true : openCats.has(cat.id);
+    const isOpen = query ? true : openCatIds.has(cat.id);
     if (isOpen) group.classList.add("open");
 
     const header = document.createElement("button");
@@ -1619,14 +1520,9 @@ function renderList(f) {
       '<span class="cat-badge">' + (query ? matchingItems.length : cat.items.length) + '</span>' +
       '<span class="cat-arrow">▸</span>';
 
-    header.onclick = (e) => {
-      e.stopPropagation();
-      if (query) return; // keep search results expanded
-      if (openCats.has(cat.id)) {
-        openCats.delete(cat.id);
-      } else {
-        openCats.add(cat.id);
-      }
+    header.onclick = () => {
+      if (query) return; // when searching, stay open
+      if (openCatIds.has(cat.id)) { openCatIds.delete(cat.id); } else { openCatIds.add(cat.id); }
       renderList($("q") ? $("q").value : "");
     };
 
@@ -2005,13 +1901,13 @@ root.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(ex,ey,ez))}
 const SPD={O:"a very hot blue star",B:"a hot blue-white star",A:"a white star",F:"a yellow-white star",G:"a yellow star like our Sun",K:"an orange star",M:"a cool red star"},TD={O:35000,B:15000,A:9000,F:6800,G:5700,K:4600,M:3300},LCN={I:"supergiant",Ia:"supergiant",Iab:"supergiant",Ib:"supergiant",II:"bright giant",III:"giant",IV:"subgiant",V:"main-sequence star"};
 function tRGB(T){const t=clamp(T,1500,40000)/100,r=t<=66?255:329.7*Math.pow(t-60,-.1332),g=t<=66?99.47*Math.log(t)-161.1:288.1*Math.pow(t-60,-.0755),b=t>=66?255:t<=19?0:138.5*Math.log(t-10)-305;return[clamp(r,0,255)/255,clamp(g,0,255)/255,clamp(b,0,255)/255]}
 const spT=sp=>{const m=/^([OBAFGKM])/.exec(sp||"");return m?TD[m[1]]:5500};
-const SM=[];selS=null;let fillA=.5,starErr=false,showCon=true;const starT=new THREE.Object3D();scene.add(starT);
+const SM=[];let selS=null,fillA=.5,starErr=false,showCon=true;const starT=new THREE.Object3D();scene.add(starT);
 function starLayer(pos,col,am){const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(pos,3));g.setAttribute("color",new THREE.BufferAttribute(col,3));g.setAttribute("am",new THREE.BufferAttribute(am,1));
 const m=new THREE.ShaderMaterial({uniforms:{al:{value:1},boost:{value:0},pr:{value:renderer.getPixelRatio()}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
 vertexShader:"attribute float am;attribute vec3 color;varying vec3 c;varying float a;uniform float pr,boost;void main(){c=color;vec4 mv=modelViewMatrix*vec4(position,1.);float pc=max(length(mv.xyz)/206265.,1e-7);float m=am+5.*log(pc/10.)/2.302585-boost;float s=clamp(7.2-m,0.,7.5);gl_PointSize=(1.3+s*.9)*pr;a=clamp(.3+s*.14,0.,1.)*(1.-smoothstep(7.5,10.,m));gl_Position=projectionMatrix*mv;}",
 fragmentShader:"uniform float al;varying vec3 c;varying float a;void main(){float d=length(gl_PointCoord-.5)*2.;if(d>1.)discard;gl_FragColor=vec4(c,a*al*(1.-d*d));}"});
 const p=new THREE.Points(g,m);p.frustumCulled=false;scene.add(p);SM.push(m);return p}
-REC=STARS.map(q=>({n:q[0],des:q[1],p:eq3(q[2],q[3],q[4]*LY,new THREE.Vector3()),ly:q[4],mag:q[5],sp:q[6],T:q[7],Lm:q[8],M:q[9],R:q[10],con:q[11],am:q[5]-5*Math.log10(q[4]/3.26156/10),cur:1}));
+const REC=STARS.map(q=>({n:q[0],des:q[1],p:eq3(q[2],q[3],q[4]*LY,new THREE.Vector3()),ly:q[4],mag:q[5],sp:q[6],T:q[7],Lm:q[8],M:q[9],R:q[10],con:q[11],am:q[5]-5*Math.log10(q[4]/3.26156/10),cur:1}));
 const CUR={};REC.forEach(x=>CUR[x.n.toLowerCase()]=x);
 const matchCur=k=>{for(const c in CUR)if(c==k||(k.length>=5&&c.indexOf(k)==0)||(c.length>=5&&k.indexOf(c)==0))return CUR[c];return null};
 let PKS=REC,NAMED=REC,layer=null;
@@ -2034,7 +1930,7 @@ const tot=+r.headers.get("content-length")||0,rr=r.body&&r.body.getReader?r.body
 if(rr){const dec=new TextDecoder(),parts=[];let got=0;for(;;){const{done,value}=await rr.read();if(done)break;parts.push(dec.decode(value,{stream:true}));got+=value.length;if(tot)bar(clamp(got/tot*90,5,90))}t=parts.join("")}else t=await r.text();
 const n=parseHYG(t);status("Stars: "+n.toLocaleString()+" from the HYG catalogue.");renderList($("q").value.toLowerCase())}catch(e){starErr=true;status("Could not read data/hyg.csv ("+e.message+"). Showing "+REC.length+" curated stars.")}})();
 /* Constellations */
-CON=CN.map(c=>{c.z=ZOD.includes(c.n);c.fig=FIG[c.n]||null;const st=REC.filter(x=>x.con==c.n).sort((a,b)=>a.mag-b.mag);c.bs=st[0]||null;c.c=CEN88[c.ab]?eq3(CEN88[c.ab][0],CEN88[c.ab][1],1000,new THREE.Vector3()):(c.bs?c.bs.p.clone().normalize().multiplyScalar(1000):null);return c});
+const CON=CN.map(c=>{c.z=ZOD.includes(c.n);c.fig=FIG[c.n]||null;const st=REC.filter(x=>x.con==c.n).sort((a,b)=>a.mag-b.mag);c.bs=st[0]||null;c.c=CEN88[c.ab]?eq3(CEN88[c.ab][0],CEN88[c.ab][1],1000,new THREE.Vector3()):(c.bs?c.bs.p.clone().normalize().multiplyScalar(1000):null);return c});
 function stP(n){return CUR[n.toLowerCase()].p}
 const conMats=[0,1].map(z=>new THREE.LineBasicMaterial({color:z?0xffb454:0x5ea0ff,transparent:true,opacity:.6,depthWrite:false}));
 function conLines(){const a=[[],[]];CON.forEach(c=>{if(!c.fig)return;const cen=new THREE.Vector3();c.fig.forEach(([p,q])=>{const A=stP(p),B=stP(q);a[c.z?1:0].push(A.x,A.y,A.z,B.x,B.y,B.z);cen.add(A).add(B)});c.c=cen.divideScalar(c.fig.length*2)});
@@ -2087,7 +1983,7 @@ if(selS&&!sel){ring.visible=true;ring.position.copy(selS.p);ring.scale.setScalar
 {const c=$("credits");$("bcr").onclick=()=>{c.hidden=!c.hidden;if(!c.hidden)populateCredits()};$("ccl").onclick=()=>{c.hidden=true};addEventListener("keydown",e=>{if(e.key=="Escape"&&!c.hidden){c.hidden=true;e.stopPropagation()}},true)}
 
 /* ============ PHASE C: textures, atmospheres, nebulae, clusters, exoplanets, black holes ============ */
-const RSUN=.004650467,RE_AU=6371/AU_KM,QF=Qn=="low"?.4:Qn=="med"?.7:1;selD=null;
+const RSUN=.004650467,RE_AU=6371/AU_KM,QF=Qn=="low"?.4:Qn=="med"?.7:1;let selD=null;
 const rng=s=>()=>{s|=0;s=s+1831565813|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const H3=(x,y,z)=>{const h=Math.sin(x*127.1+y*311.7+z*74.7)*43758.5453;return h-Math.floor(h)};
 function n3(x,y,z){const xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),xf=x-xi,yf=y-yi,zf=z-zi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=zf*zf*(3-2*zf),L=(a,b,t)=>a+(b-a)*t;
@@ -2143,12 +2039,10 @@ byId.earth.mesh.add(nightMesh);
 
 /* Saturn rings: planet shadow falls on the rings */
 const sat=byId.saturn,satRing=sat.tilt.children.find(o=>o.geometry&&o.geometry.type=="RingGeometry"),ringU={map:{value:satRing.material.map},sunL:{value:new THREE.Vector3(1,0,0)},rp:{value:sat.r}};
-satRing.material=new THREE.ShaderMaterial({
-  uniforms:ringU,side:THREE.DoubleSide,transparent:true,depthWrite:false,
-  vertexShader:"varying vec2 vUv;varying vec3 vP;void main(){vUv=uv;vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
-  fragmentShader:"#include <encodings_pars_fragment>\nuniform sampler2D map;uniform vec3 sunL;uniform float rp;varying vec2 vUv;varying vec3 vP;void main(){vec4 tex=texture2D(map,vec2(vUv.x,0.5));vec3 lin=sRGBToLinear(tex).rgb;vec3 q=vec3(vP.x,0.,-vP.y);float b=dot(q,sunL),c=dot(q,q)-rp*rp,disc=b*b-c;float sh=(b<0.&&disc>0.)?smoothstep(0.,.35*rp*rp,disc):0.;gl_FragColor=vec4(lin*(1.-.88*sh),tex.a);#include <encodings_fragment>}"
-});
-function ringGeo(i0,i1){const rg=new THREE.RingGeometry(sat.r*i0,sat.r*i1,180),p=rg.attributes.position,uv=rg.attributes.uv,v=new THREE.Vector3();for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);uv.setXY(k,(v.length()-sat.r*i0)/(sat.r*(i1-i0)),0.5)}return rg}
+satRing.material=new THREE.ShaderMaterial({uniforms:ringU,side:THREE.DoubleSide,transparent:true,
+vertexShader:"varying vec2 vUv;varying vec3 vP;void main(){vUv=uv;vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
+fragmentShader:"#include <encodings_pars_fragment>\nuniform sampler2D map;uniform vec3 sunL;uniform float rp;varying vec2 vUv;varying vec3 vP;void main(){vec4 tex=texture2D(map,vUv);vec3 lin=sRGBToLinear(tex).rgb;vec3 q=vec3(vP.x,0.,-vP.y);float b=dot(q,sunL),c=dot(q,q)-rp*rp,disc=b*b-c;float sh=(b<0.&&disc>0.)?smoothstep(0.,.3*rp*rp,disc):0.;gl_FragColor=vec4(lin*(1.-.85*sh),tex.a);#include <encodings_fragment>}"});
+function ringGeo(i0,i1){const rg=new THREE.RingGeometry(sat.r*i0,sat.r*i1,128),p=rg.attributes.position,uv=rg.attributes.uv,v=new THREE.Vector3();for(let k=0;k<p.count;k++){v.fromBufferAttribute(p,k);uv.setXY(k,(v.length()-sat.r*i0)/(sat.r*(i1-i0)),.5)}return rg}
 
 // Initial 2K loads for all bodies on every quality level
 const TXSLOTS=["mercury","venus","earth","moon","mars","jupiter","saturn","uranus","neptune"],TXX=[];
@@ -2293,7 +2187,7 @@ fragmentShader:"uniform vec3 uB,uSun;uniform float uD,uK,uG,uRp,uS;varying vec3 
 const m=new THREE.Mesh(new THREE.SphereGeometry(b.r*p.s,64,40),mat);m.renderOrder=2;b.tilt.add(m);atms.push({b,m,mat,s:p.s})}
 
 /* ---------- 3. DEEP-SKY OBJECT ENGINE ---------- */
-DSO=[];DSOid={},NU={pxs:{value:800},pr:{value:renderer.getPixelRatio()}},COLK={neb:"#ff9ec4",cl:"#ffd9a0",exo:"#7dffc0",exop:"#b8ffd9",bh:"#c9a0ff"},MKC={neb:[1,.55,.75],cl:[1,.85,.55],exo:[.45,1,.75],bh:[.8,.55,1]};
+const DSO=[],DSOid={},NU={pxs:{value:800},pr:{value:renderer.getPixelRatio()}},COLK={neb:"#ff9ec4",cl:"#ffd9a0",exo:"#7dffc0",exop:"#b8ffd9",bh:"#c9a0ff"},MKC={neb:[1,.55,.75],cl:[1,.85,.55],exo:[.45,1,.75],bh:[.8,.55,1]};
 const addD=d=>{DSO.push(d);DSOid[d.id]=d;d.vis=false;const l=document.createElement("div");l.className="lab";l.textContent=d.n;l.style.color=COLK[d.k];l.style.display="none";document.body.appendChild(l);d.lab=l;return d};
 const NV="attribute float size;attribute vec3 color;attribute float aa;varying vec3 c;varying float a;uniform float pxs,pr,al;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);float d=max(-mv.z,1e-9);float ps=size*pxs/d*pr;float cp=min(ps,240.*pr);c=color;a=aa*al*min(1.,ps*ps)*min(1.,cp/max(ps,1e-6));gl_PointSize=max(cp,1.);gl_Position=projectionMatrix*mv;}",
 NF="varying vec3 c;varying float a;void main(){float d=length(gl_PointCoord-.5)*2.;if(d>1.)discard;float f=1.-d;gl_FragColor=vec4(c,a*f*f);}",
@@ -2817,108 +2711,65 @@ requestAnimationFrame(()=>{
 });
 requestAnimationFrame(t=>{last=t;frame(t)});
 </script>
-<button id="fullscreenEscPill" class="fullscreen-esc-pill" aria-label="Exit Fullscreen (ESC)" title="Click or press ESC to exit fullscreen">
-  <span class="esc-badge">ESC</span>
-  <span>Exit Fullscreen</span>
-</button>
+<button id="fullscreenEscPill" style="display:none;position:fixed;bottom:16px;right:16px;z-index:99999;padding:8px 16px;background:rgba(2,3,10,0.85);color:#5ee1ff;border:1px solid rgba(94,225,255,0.3);border-radius:20px;font:14px Inter,sans-serif;cursor:pointer;backdrop-filter:blur(8px);align-items:center;gap:6px;">⛶ Fullscreen</button>
 <script>
 (function initAtlasFullscreen() {
   function isFs() {
-    return Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+    return Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
   }
-  function setFsPref(on) {
-    try {
-      if (on) sessionStorage.setItem('cosmos_fullscreen', '1');
-      else sessionStorage.removeItem('cosmos_fullscreen');
-    } catch (e) {}
+  function requestFs(el) {
+    if (el.requestFullscreen) return el.requestFullscreen();
+    if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+    if (el.mozRequestFullScreen) return el.mozRequestFullScreen();
+    return Promise.reject('no fullscreen API');
   }
-  function wantFs() {
-    try { return sessionStorage.getItem('cosmos_fullscreen') === '1'; } catch (e) { return false; }
-  }
-
-  function enterFs() {
-    const el = document.documentElement;
-    setFsPref(true);
-    if (el.requestFullscreen) {
-      el.requestFullscreen().catch(() => {});
-    } else if (el.webkitRequestFullscreen) {
-      el.webkitRequestFullscreen();
-    }
-  }
-
   function exitFs() {
-    setFsPref(false);
-    if (document.exitFullscreen) {
-      document.exitFullscreen().catch(() => {});
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    }
-    updateUi();
+    if (document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+    if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
+    return Promise.reject('no fullscreen API');
   }
 
-  function toggleFs() {
-    if (isFs()) exitFs();
-    else enterFs();
+  // Re-engage fullscreen on first user gesture if sessionStorage flag is set
+  var needsFs = sessionStorage.getItem('cosmos_fullscreen') === '1';
+  if (needsFs) {
+    var engageFs = function() {
+      if (isFs()) return;
+      requestFs(document.documentElement).catch(function(){});
+    };
+    var gestureEvents = ['pointerdown','click','keydown','touchstart'];
+    var addGestureListeners = function() {
+      gestureEvents.forEach(function(ev) {
+        document.addEventListener(ev, function handler() {
+          engageFs();
+          gestureEvents.forEach(function(e) { document.removeEventListener(e, handler); });
+        }, { once: true, passive: true });
+      });
+    };
+    addGestureListeners();
   }
 
-  const pill = document.getElementById('fullscreenEscPill');
+  // Fullscreen pill button
+  var pill = document.getElementById('fullscreenEscPill');
   if (pill) {
-    pill.onclick = (e) => {
-      e.stopPropagation();
-      exitFs();
-    };
-  }
-
-  const btn = document.getElementById('fsBtn');
-  if (btn) {
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      toggleFs();
-    };
-  }
-
-  function updateUi() {
-    const active = isFs();
-    if (pill) {
-      if (active) pill.classList.add('visible');
-      else pill.classList.remove('visible');
-    }
-    if (btn) {
-      btn.setAttribute('aria-pressed', String(active));
-      btn.innerHTML = active
-        ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>'
-        : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>';
-    }
-  }
-
-  document.addEventListener('fullscreenchange', updateUi);
-  document.addEventListener('webkitfullscreenchange', updateUi);
-
-  if (wantFs()) {
-    const tryResume = () => {
-      if (wantFs() && !isFs()) {
-        enterFs();
+    pill.style.display = 'flex';
+    pill.onclick = function() {
+      if (isFs()) {
+        exitFs().catch(function(){});
+        sessionStorage.setItem('cosmos_fullscreen', '0');
+      } else {
+        requestFs(document.documentElement).then(function() {
+          sessionStorage.setItem('cosmos_fullscreen', '1');
+        }).catch(function(){});
       }
-      window.removeEventListener('pointerdown', tryResume);
-      window.removeEventListener('click', tryResume);
-      window.removeEventListener('keydown', tryResume);
-      window.removeEventListener('touchstart', tryResume);
     };
-    window.addEventListener('pointerdown', tryResume, { once: true });
-    window.addEventListener('click', tryResume, { once: true });
-    window.addEventListener('keydown', tryResume, { once: true });
-    window.addEventListener('touchstart', tryResume, { once: true });
+    document.addEventListener('fullscreenchange', function() {
+      pill.textContent = isFs() ? '✕ Exit Fullscreen' : '⛶ Fullscreen';
+    });
+    document.addEventListener('webkitfullscreenchange', function() {
+      pill.textContent = isFs() ? '✕ Exit Fullscreen' : '⛶ Fullscreen';
+    });
   }
-
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isFs()) {
-      exitFs();
-    }
-  });
-
-  window.toggleCosmosFullscreen = toggleFs;
-  window.exitCosmosFullscreen = exitFs;
-  updateUi();
 })();
 </script>
 </body></html>
