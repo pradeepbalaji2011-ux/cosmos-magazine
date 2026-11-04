@@ -179,6 +179,13 @@
   letter-spacing: .08em;
   font-size: 10px;
 }
+.chip-icon {
+  font-family: "Arial Narrow", sans-serif;
+  font-weight: bold;
+  color: var(--amber);
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
 .ore-chip {
   display: flex;
   align-items: center;
@@ -282,7 +289,7 @@
   gap: 6px;
   font-size: 9px;
 }
-.bar-row span { width: 14px; }
+.bar-row span { width: 22px; font-size: 8px; font-weight: 700; color: var(--muted); letter-spacing: -0.02em; }
 .bar-track {
   flex: 1;
   height: 4px;
@@ -403,9 +410,9 @@
     <!-- Extraction Ores Sub-bar -->
     <div id="oreExtractionBar" style="grid-column: 1 / -1;">
       <span class="subbar-title">ORE DRILLS:</span>
-      <div class="ore-chip" data-res="waterIce"><span class="chip-icon">🧊</span><span class="chip-name">WATER ICE</span><strong id="waterIceVal">45</strong><em id="waterIceRate">+0/SOL</em></div>
-      <div class="ore-chip" data-res="ironOre"><span class="chip-icon">⛏️</span><span class="chip-name">IRON ORE</span><strong id="ironOreVal">60</strong><em id="ironOreRate">+0/SOL</em></div>
-      <div class="ore-chip" data-res="co2"><span class="chip-icon">💨</span><span class="chip-name">CO₂ GAS</span><strong id="co2Val">50</strong><em id="co2Rate">+0/SOL</em></div>
+      <div class="ore-chip" data-res="waterIce"><span class="chip-icon">W↓</span><span class="chip-name">WATER ICE</span><strong id="waterIceVal">45</strong><em id="waterIceRate">+0/SOL</em></div>
+      <div class="ore-chip" data-res="ironOre"><span class="chip-icon">Fe↓</span><span class="chip-name">IRON ORE</span><strong id="ironOreVal">60</strong><em id="ironOreRate">+0/SOL</em></div>
+      <div class="ore-chip" data-res="co2"><span class="chip-icon">CO₂</span><span class="chip-name">CO₂ GAS</span><strong id="co2Val">50</strong><em id="co2Rate">+0/SOL</em></div>
     </div>
   </section>
 
@@ -425,14 +432,14 @@
 
 <!-- DUST STORM WARNING BANNER -->
 <div id="stormAlertBanner">
-  <span style="font-size:16px">⚠️</span>
+  <span style="font-weight:bold;letter-spacing:0.1em;color:#ffdd88">[ ALERT ]</span>
   <span>MARTIAN DUST STORM · SOLAR POWER -60% · TAKE COVER</span>
 </div>
 
 <!-- COLONIST MANIFEST UI -->
 <aside id="colonistPanel" class="ui glass" aria-label="Colonist Status">
   <div class="colonist-header">
-    <span>👨‍🚀 CREW MANIFEST</span>
+    <span>CREW MANIFEST</span>
     <span id="crewHealthSummary">4 ACTIVE</span>
   </div>
   <div id="colonistsList"></div>
@@ -441,7 +448,7 @@
 <!-- STEP-BY-STEP MISSION OBJECTIVES PANEL -->
 <aside id="objectivesPanel" class="ui glass" aria-label="Mission Directives">
   <div class="obj-header">
-    <span>🚩 MISSION DIRECTIVES</span>
+    <span>MISSION DIRECTIVES</span>
     <span id="objProgressLabel">0 / 5 COMPLETE</span>
   </div>
   <div id="objectivesList"></div>
@@ -482,16 +489,16 @@ const WORLD={w:112,d:96,minX:-52,maxX:52,minZ:-44,maxZ:44};
 const TYPES={
  habitat:{name:'Habitat module',short:'HAB',icon:'H–01',cost:60,w:8,d:8,power:4,housing:8,pressurized:true,desc:'8 berths · requires network pressure'},
  solar:{name:'Solar array',short:'SOL',icon:'S≡≡',cost:25,w:8,d:8,powerGen:32,desc:'32 power · daylight dependent (drops in storm)'},
- reactor:{name:'Nuclear reactor',short:'NUC',icon:'☢',cost:150,w:12,d:12,powerGen:95,desc:'95 power · 24/7 continuous output immune to storms'},
+ reactor:{name:'Nuclear reactor',short:'NUC',icon:'N⊛',cost:150,w:12,d:12,powerGen:95,desc:'95 power · 24/7 continuous output immune to storms'},
  greenhouse:{name:'Greenhouse dome',short:'GRN',icon:'G◒',cost:75,w:12,d:8,power:6,food:24,waterUse:3,pressurized:true,desc:'24 food · consumes water & power'},
  isru:{name:'Oxygen / ISRU plant',short:'ISRU',icon:'O₂',cost:90,w:12,d:8,power:10,oxygen:32,waterUse:1,pressurized:true,desc:'32 oxygen · atmospheric processing'},
- miner:{name:'Water ice drill',short:'ICE',icon:'🧊',cost:80,w:12,d:8,power:8,water:20,waterIce:18,materials:2.5,desc:'Drills subsurface water ice (18/sol) & water'},
- drill_iron:{name:'Iron ore drill',short:'ORE',icon:'⛏️',cost:85,w:12,d:8,power:8,ironOre:16,materials:6,desc:'Heavy excavation rig yields iron ore & structural materials'},
- drill_co2:{name:'CO₂ sublimator',short:'CO₂',icon:'💨',cost:75,w:10,d:8,power:6,co2:22,oxygen:8,desc:'Extracts regolith CO₂ to fuel greenhouses & ISRU'},
+ miner:{name:'Water ice drill',short:'ICE',icon:'W↓',cost:80,w:12,d:8,power:8,water:20,waterIce:18,materials:2.5,desc:'Drills subsurface water ice (18/sol) & water'},
+ drill_iron:{name:'Iron ore drill',short:'ORE',icon:'Fe↓',cost:85,w:12,d:8,power:8,ironOre:16,materials:6,desc:'Heavy excavation rig yields iron ore & structural materials'},
+ drill_co2:{name:'CO₂ sublimator',short:'CO₂',icon:'CO₂',cost:75,w:10,d:8,power:6,co2:22,oxygen:8,desc:'Extracts regolith CO₂ to fuel greenhouses & ISRU'},
  battery:{name:'Battery station',short:'BAT',icon:'B▥',cost:55,w:8,d:8,power:1,powerCap:180,desc:'180 stored power reserve'},
  landing:{name:'Landing pad',short:'PAD',icon:'L↓',cost:110,w:16,d:16,power:1,desc:'Calls reusable supply rockets'},
  garage:{name:'Rover garage',short:'GAR',icon:'R▰',cost:85,w:12,d:12,power:3,desc:'Dispatches surface patrols'},
- radar:{name:'Radar / comms dish',short:'COM',icon:'📡',cost:70,w:8,d:8,power:4,desc:'Survey drones & planetary beacon link'},
+ radar:{name:'Radar / comms dish',short:'COM',icon:'C◝',cost:70,w:8,d:8,power:4,desc:'Survey drones & planetary beacon link'},
  lab:{name:'Research lab',short:'LAB',icon:'L+',cost:95,w:12,d:8,power:7,materials:.8,pressurized:true,desc:'Analysis yields 0.8 materials'},
  storage:{name:'Storage depot',short:'STO',icon:'S▦',cost:45,w:8,d:8,power:1,storage:180,desc:'Expands resource capacity'},
  tunnel:{name:'Connecting tunnel',short:'TUN',icon:'T═',cost:12,w:4,d:4,power:.2,pressurized:true,desc:'Links pressurized modules'}
@@ -523,35 +530,36 @@ const canvas=$('scene');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.48;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xbd8067);scene.fog=new THREE.Fog(0xbd8067,115,330);
 const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.15,900);
 camera.position.set(68,57,76);
 const controls=new OrbitControls(camera,canvas);controls.target.set(0,3,0);controls.enableDamping=true;controls.dampingFactor=.075;
 controls.minDistance=12;controls.maxDistance=190;controls.maxPolarAngle=Math.PI*.485;controls.minPolarAngle=.12;controls.panSpeed=.65;controls.rotateSpeed=.55;
-const pmrem=new THREE.PMREMGenerator(renderer);const roomEnv=new RoomEnvironment();scene.environment=pmrem.fromScene(roomEnv,.04).texture;scene.environmentIntensity=.3;roomEnv.dispose();pmrem.dispose();
-const hemi=new THREE.HemisphereLight(0xf4b99a,0x512a20,1.4);scene.add(hemi);
-const sun=new THREE.DirectionalLight(0xffe2bd,3.2);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-72;sun.shadow.camera.right=72;sun.shadow.camera.top=64;sun.shadow.camera.bottom=-64;sun.shadow.camera.near=1;sun.shadow.camera.far=260;sun.shadow.bias=-.00025;sun.shadow.normalBias=.055;scene.add(sun,sun.target);
-const fill=new THREE.DirectionalLight(0xb7b4d0,.38);fill.position.set(-40,30,-50);scene.add(fill);
+const pmrem=new THREE.PMREMGenerator(renderer);const roomEnv=new RoomEnvironment();scene.environment=pmrem.fromScene(roomEnv,.04).texture;scene.environmentIntensity=.85;roomEnv.dispose();pmrem.dispose();
+const hemi=new THREE.HemisphereLight(0xffdfcb,0x68382c,1.85);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff3e2,4.2);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-72;sun.shadow.camera.right=72;sun.shadow.camera.top=64;sun.shadow.camera.bottom=-64;sun.shadow.camera.near=1;sun.shadow.camera.far=260;sun.shadow.bias=-.00025;sun.shadow.normalBias=.055;scene.add(sun,sun.target);
+const fill=new THREE.DirectionalLight(0xd4e2ff,.75);fill.position.set(-40,32,-50);scene.add(fill);
+const bounce=new THREE.DirectionalLight(0xde7a50,.45);bounce.position.set(20,-30,20);scene.add(bounce);
 const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
-const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.32,.5,1.05);composer.addPass(bloomPass);composer.addPass(new OutputPass());
+const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.42,.55,.88);composer.addPass(bloomPass);composer.addPass(new OutputPass());
 const MAT={
- ivory:new THREE.MeshStandardMaterial({color:0xd8d0bd,roughness:.58,metalness:.34}),
- white:new THREE.MeshStandardMaterial({color:0xeee4ce,roughness:.45,metalness:.25}),
- orange:new THREE.MeshStandardMaterial({color:0xb95029,roughness:.6,metalness:.25}),
- dark:new THREE.MeshStandardMaterial({color:0x252628,roughness:.64,metalness:.62}),
- metal:new THREE.MeshStandardMaterial({color:0x777a77,roughness:.42,metalness:.82}),
- panel:new THREE.MeshStandardMaterial({color:0x8e8c80,roughness:.67,metalness:.4}),
- glass:new THREE.MeshStandardMaterial({color:0x6caaa0,roughness:.18,metalness:.12,transparent:true,opacity:.5,side:THREE.DoubleSide}),
- solar:new THREE.MeshStandardMaterial({color:0x172d43,roughness:.24,metalness:.72}),
- green:new THREE.MeshStandardMaterial({color:0x49643b,roughness:.9}),
- soil:new THREE.MeshStandardMaterial({color:0x4a2b20,roughness:1}),
- window:new THREE.MeshStandardMaterial({color:0x8fb9b5,emissive:0xffc77e,emissiveIntensity:1.6,roughness:.25,metalness:.25}),
- cyan:new THREE.MeshStandardMaterial({color:0x8cbdb6,emissive:0x70d6c4,emissiveIntensity:1.25,roughness:.35}),
- redLight:new THREE.MeshStandardMaterial({color:0xef795d,emissive:0xff4325,emissiveIntensity:2}),
- rock:new THREE.MeshStandardMaterial({color:0x85513a,roughness:1,vertexColors:true}),
- black:new THREE.MeshStandardMaterial({color:0x16191a,roughness:.72,metalness:.5})
+ ivory:new THREE.MeshStandardMaterial({color:0xf4ede2,roughness:.38,metalness:.22}),
+ white:new THREE.MeshStandardMaterial({color:0xfcf8f2,roughness:.32,metalness:.18}),
+ orange:new THREE.MeshStandardMaterial({color:0xeb602b,roughness:.42,metalness:.24}),
+ dark:new THREE.MeshStandardMaterial({color:0x2e3034,roughness:.55,metalness:.58}),
+ metal:new THREE.MeshStandardMaterial({color:0x9da3a9,roughness:.32,metalness:.86}),
+ panel:new THREE.MeshStandardMaterial({color:0xa5a9ae,roughness:.48,metalness:.38}),
+ glass:new THREE.MeshStandardMaterial({color:0x7fd9ce,roughness:.12,metalness:.15,transparent:true,opacity:.55,side:THREE.DoubleSide}),
+ solar:new THREE.MeshStandardMaterial({color:0x1b3c62,roughness:.18,metalness:.82}),
+ green:new THREE.MeshStandardMaterial({color:0x527742,roughness:.85}),
+ soil:new THREE.MeshStandardMaterial({color:0x543226,roughness:.95}),
+ window:new THREE.MeshStandardMaterial({color:0xa8ded8,emissive:0xffd18a,emissiveIntensity:2.2,roughness:.2,metalness:.2}),
+ cyan:new THREE.MeshStandardMaterial({color:0x98e2d8,emissive:0x6ae0cc,emissiveIntensity:1.8,roughness:.3}),
+ redLight:new THREE.MeshStandardMaterial({color:0xff7558,emissive:0xff3d20,emissiveIntensity:2.8}),
+ rock:new THREE.MeshStandardMaterial({color:0x965e45,roughness:1,vertexColors:true}),
+ black:new THREE.MeshStandardMaterial({color:0x1c1f21,roughness:.65,metalness:.5})
 };
 const unitBox=new THREE.BoxGeometry(1,1,1),unitCylinder=new THREE.CylinderGeometry(1,1,1,20),tempObj=new THREE.Object3D(),tempV=V3(),tempV2=V3();
 function disposeGroup(root){root?.traverse(o=>{if(o.isSprite){o.material.map?.dispose();o.material.dispose()}else if(o.isMesh&&o.geometry&&o.geometry!==unitBox&&o.geometry!==unitCylinder)o.geometry.dispose()})}
@@ -886,9 +894,9 @@ function renderColonistsUI(){
       </div>
       <div class="colonist-status">● ${c.status}</div>
       <div class="colonist-bars">
-        <div class="bar-row"><span>❤️</span><div class="bar-track"><div class="bar-fill bar-health" style="width:${Math.round(c.health)}%"></div></div></div>
-        <div class="bar-row"><span>🫁</span><div class="bar-track"><div class="bar-fill bar-oxygen" style="width:${Math.round(c.oxygen)}%"></div></div></div>
-        <div class="bar-row"><span>🧠</span><div class="bar-track"><div class="bar-fill bar-morale" style="width:${Math.round(c.morale)}%"></div></div></div>
+        <div class="bar-row"><span title="Health">HP</span><div class="bar-track"><div class="bar-fill bar-health" style="width:${Math.round(c.health)}%"></div></div></div>
+        <div class="bar-row"><span title="Oxygen">O₂</span><div class="bar-track"><div class="bar-fill bar-oxygen" style="width:${Math.round(c.oxygen)}%"></div></div></div>
+        <div class="bar-row"><span title="Morale">MOR</span><div class="bar-track"><div class="bar-fill bar-morale" style="width:${Math.round(c.morale)}%"></div></div></div>
       </div>
     </div>
   `).join('');
@@ -987,11 +995,11 @@ class AudioEngine{
 const audio=new AudioEngine();
 
 // ---------- Lighting, time-of-day, camera presets and first-person surface mode ----------
-function applyLights(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.isLight)o.visible=state.lights&&b.lights});const night=1-smooth(daylight()*2);MAT.window.emissiveIntensity=state.lights?.55+night*2.1:0;MAT.cyan.emissiveIntensity=state.lights?.55+night*1.35:0;MAT.redLight.emissiveIntensity=state.lights?1.5+night:0}
+function applyLights(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.isLight)o.visible=state.lights&&b.lights});const night=1-smooth(daylight()*2);MAT.window.emissiveIntensity=state.lights?.85+night*2.6:0;MAT.cyan.emissiveIntensity=state.lights?.75+night*1.8:0;MAT.redLight.emissiveIntensity=state.lights?2.2+night*1.2:0}
 function updateSun(){
  const a=(state.phase-.25)*Math.PI*2,sunHeight=Math.sin(a),day=smooth(Math.max(0,sunHeight)*2.2),dust=state.storm;
- sunDirection.set(Math.cos(a),sunHeight,-.38).normalize();sun.position.copy(sunDirection).multiplyScalar(145);sun.position.y+=12;sun.target.position.set(0,0,0);sun.intensity=(.08+3.1*day)*(1-dust*.7);sun.color.setHex(day>.4?0xffe2bd:0xf0a079);
- hemi.intensity=.22+1.25*day;hemi.color.setHex(day>.35?0xf2b79b:0x5f5874);hemi.groundColor.setHex(0x4b281f);fill.intensity=.15+.25*day;
+ sunDirection.set(Math.cos(a),sunHeight,-.38).normalize();sun.position.copy(sunDirection).multiplyScalar(145);sun.position.y+=12;sun.target.position.set(0,0,0);sun.intensity=(.25+4.2*day)*(1-dust*.7);sun.color.setHex(day>.4?0xfff3e2:0xf5ad85);
+ hemi.intensity=.45+1.75*day;hemi.color.setHex(day>.35?0xffdfcb:0x706888);hemi.groundColor.setHex(0x5a3126);fill.intensity=.3+.65*day;if(typeof bounce!=='undefined')bounce.intensity=.15+.35*day;
  const top=new THREE.Color().lerpColors(new THREE.Color(0x171a2a),new THREE.Color(0x9c6d78),day),horizon=new THREE.Color().lerpColors(new THREE.Color(0x392734),new THREE.Color(0xd79773),day);if(dust>.1){horizon.lerp(new THREE.Color(0x9d5e41),dust*.75);top.lerp(new THREE.Color(0x6b443a),dust*.6)}
  sky.material.uniforms.topColor.value.copy(top);sky.material.uniforms.horizonColor.value.copy(horizon);sky.material.uniforms.sunDir.value.copy(sunDirection);sky.material.uniforms.night.value=1-day;scene.fog.color.copy(horizon);scene.background.copy(horizon);stars.material.opacity=(1-day)*.75;
  const total=state.phase*24,hh=Math.floor(total)%24,mm=Math.floor((total-Math.floor(total))*60);$('clock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');if(document.activeElement!==$('timeSlider'))$('timeSlider').value=Math.round(state.phase*1000);applyLights();
