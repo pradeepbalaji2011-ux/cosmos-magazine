@@ -442,7 +442,7 @@ setTimeout(function(){if(document.getElementById('load')&&!window.__cosmosReady)
 </head><body>
 <noscript><p style="position:fixed;inset:0;z-index:30;margin:0;display:grid;place-content:center;padding:24px;background:#02030a;color:#e6ecff;text-align:center">COSMOS ATLAS needs JavaScript to draw the 3D universe.</p></noscript>
 <div id="load"><h1>COSMOS ATLAS</h1><i><b id="lb"></b></i><small style="color:#8a96b8">Charting the heavens…</small></div>
-<div id="top" class="glass"><a id="btn-back-bh" href="index.html" class="back-bh-btn" aria-label="Back to Black Hole">&larr; Back to Black Hole</a><h1>COSMOS ATLAS</h1><div id="crumb"></div><button id="bs" aria-label="Toggle catalog">☰ Catalog</button><button id="bcr" aria-label="Data sources and credits">ⓘ Credits</button></div>
+<div id="top" class="glass"><a id="btn-back-bh" href="index.html" class="back-bh-btn" aria-label="Back to Home">&larr; Back to Home</a><h1>COSMOS ATLAS</h1><div id="crumb"></div><button id="bs" aria-label="Toggle catalog">☰ Catalog</button><button id="bcr" aria-label="Data sources and credits">ⓘ Credits</button></div>
 <div id="side" class="glass"><div class="sheet-handle" aria-hidden="true"></div><button id="side-close" class="sheet-close" aria-label="Close catalog">✕</button><input id="q" placeholder="Search the cosmos…" aria-label="Search"><div id="list"></div></div>
 <div id="learn" class="glass" aria-live="polite"></div>
 <div id="panel" class="glass" role="region" aria-label="Object details" aria-hidden="true" inert></div>
@@ -2005,7 +2005,7 @@ root.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(ex,ey,ez))}
 const SPD={O:"a very hot blue star",B:"a hot blue-white star",A:"a white star",F:"a yellow-white star",G:"a yellow star like our Sun",K:"an orange star",M:"a cool red star"},TD={O:35000,B:15000,A:9000,F:6800,G:5700,K:4600,M:3300},LCN={I:"supergiant",Ia:"supergiant",Iab:"supergiant",Ib:"supergiant",II:"bright giant",III:"giant",IV:"subgiant",V:"main-sequence star"};
 function tRGB(T){const t=clamp(T,1500,40000)/100,r=t<=66?255:329.7*Math.pow(t-60,-.1332),g=t<=66?99.47*Math.log(t)-161.1:288.1*Math.pow(t-60,-.0755),b=t>=66?255:t<=19?0:138.5*Math.log(t-10)-305;return[clamp(r,0,255)/255,clamp(g,0,255)/255,clamp(b,0,255)/255]}
 const spT=sp=>{const m=/^([OBAFGKM])/.exec(sp||"");return m?TD[m[1]]:5500};
-const SM=[];selS=null,fillA=.5,starErr=false,showCon=true;const starT=new THREE.Object3D();scene.add(starT);
+const SM=[];selS=null;let fillA=.5,starErr=false,showCon=true;const starT=new THREE.Object3D();scene.add(starT);
 function starLayer(pos,col,am){const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(pos,3));g.setAttribute("color",new THREE.BufferAttribute(col,3));g.setAttribute("am",new THREE.BufferAttribute(am,1));
 const m=new THREE.ShaderMaterial({uniforms:{al:{value:1},boost:{value:0},pr:{value:renderer.getPixelRatio()}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
 vertexShader:"attribute float am;attribute vec3 color;varying vec3 c;varying float a;uniform float pr,boost;void main(){c=color;vec4 mv=modelViewMatrix*vec4(position,1.);float pc=max(length(mv.xyz)/206265.,1e-7);float m=am+5.*log(pc/10.)/2.302585-boost;float s=clamp(7.2-m,0.,7.5);gl_PointSize=(1.3+s*.9)*pr;a=clamp(.3+s*.14,0.,1.)*(1.-smoothstep(7.5,10.,m));gl_Position=projectionMatrix*mv;}",
