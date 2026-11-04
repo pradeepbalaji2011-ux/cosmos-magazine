@@ -403,9 +403,9 @@
     <!-- Extraction Ores Sub-bar -->
     <div id="oreExtractionBar" style="grid-column: 1 / -1;">
       <span class="subbar-title">ORE DRILLS:</span>
-      <div class="ore-chip"><span class="chip-icon">🧊</span><span class="chip-name">WATER ICE</span><strong id="waterIceVal">45</strong><em id="waterIceRate">+0/SOL</em></div>
-      <div class="ore-chip"><span class="chip-icon">⛏️</span><span class="chip-name">IRON ORE</span><strong id="ironOreVal">60</strong><em id="ironOreRate">+0/SOL</em></div>
-      <div class="ore-chip"><span class="chip-icon">💨</span><span class="chip-name">CO₂ GAS</span><strong id="co2Val">50</strong><em id="co2Rate">+0/SOL</em></div>
+      <div class="ore-chip" data-res="waterIce"><span class="chip-icon">🧊</span><span class="chip-name">WATER ICE</span><strong id="waterIceVal">45</strong><em id="waterIceRate">+0/SOL</em></div>
+      <div class="ore-chip" data-res="ironOre"><span class="chip-icon">⛏️</span><span class="chip-name">IRON ORE</span><strong id="ironOreVal">60</strong><em id="ironOreRate">+0/SOL</em></div>
+      <div class="ore-chip" data-res="co2"><span class="chip-icon">💨</span><span class="chip-name">CO₂ GAS</span><strong id="co2Val">50</strong><em id="co2Rate">+0/SOL</em></div>
     </div>
   </section>
 
@@ -820,7 +820,11 @@ function toggleSandbox(){state.sandbox=!state.sandbox;if(state.sandbox){state.re
 // ---------- UI readout and selected-module telemetry ----------
 function fmtRate(v){return`${v>=0?'+':''}${Math.abs(v)<10?v.toFixed(1):Math.round(v)} / SOL`}
 function updateHUD(){
- for(const k of Object.keys(state.res)){$(k+'Val').textContent=Math.floor(state.res[k]).toLocaleString();const r=$(k+'Rate');r.textContent=fmtRate(state.rates[k]);r.classList.toggle('neg',state.rates[k]<-.01);document.querySelector(`[data-res="${k}"]`).classList.toggle('low',state.res[k]<20)}
+ for(const k of Object.keys(state.res)){
+  const valEl=$(k+'Val');if(valEl)valEl.textContent=Math.floor(state.res[k]).toLocaleString();
+  const r=$(k+'Rate');if(r){r.textContent=fmtRate(state.rates[k]||0);r.classList.toggle('neg',(state.rates[k]||0)<-.01)}
+  const card=document.querySelector(`[data-res="${k}"]`);if(card)card.classList.toggle('low',(state.res[k]||0)<20);
+ }
  $('solLabel').textContent='SOL '+String(state.sol).padStart(3,'0');$('popLabel').textContent=state.sandbox?state.pop+' CREW':state.pop+' / 50';$('popProgress').style.width=(state.sandbox?Math.min(100,state.pop*2):state.pop*2)+'%';$('housingLabel').textContent=pressurizedHousing()+' BERTHS';
  const habs=buildings.filter(b=>b.type==='habitat'),connected=habs.filter(b=>b.pressurized).length;$('networkLabel').textContent=`${connected} / ${habs.length} HABITATS PRESSURIZED`;$('netDot').classList.toggle('bad',connected<habs.length);
  $('directiveTitle').textContent=state.pop<16?'Establish a foothold':state.pop<32?'Secure the settlement':'Become self-sufficient';$('directiveText').textContent=state.storm>.35?'Dust warning: solar generation suppressed. Battery reserve is keeping systems alive.':state.pop<16?'Keep life support positive. Expand with connected habitats to grow the crew.':'Balance expansion with food, oxygen and water. Isolated habitats cannot house crew.';
