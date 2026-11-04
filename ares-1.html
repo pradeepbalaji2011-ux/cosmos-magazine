@@ -161,6 +161,216 @@
   from { opacity: 0; transform: translate(-50%, -12px); }
   to { opacity: 1; transform: translate(-50%, 0); }
 }
+
+/* ==================== ARES-1 EXTENDED FEATURES CSS ==================== */
+/* 1. Extraction Bar Overlay */
+#oreExtractionBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  margin-top: 6px;
+  border-radius: 8px;
+  font-size: 11px;
+}
+.subbar-title {
+  color: var(--amber);
+  font-weight: bold;
+  letter-spacing: .08em;
+  font-size: 10px;
+}
+.ore-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.05);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.ore-chip strong {
+  color: #fff;
+  font-family: inherit;
+}
+.ore-chip em {
+  font-style: normal;
+  font-size: 9px;
+  color: var(--muted);
+}
+
+/* 2. Dust Storm Warning Banner */
+#stormAlertBanner {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: rgba(180, 40, 20, 0.92);
+  color: #fff;
+  border: 2px solid #ff5533;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: .08em;
+  box-shadow: 0 0 35px rgba(255, 60, 20, 0.6);
+  animation: pulseStorm 1.2s infinite alternate;
+  pointer-events: none;
+}
+@keyframes pulseStorm {
+  0% { transform: translateX(-50%) scale(0.98); opacity: 0.85; }
+  100% { transform: translateX(-50%) scale(1.02); opacity: 1; }
+}
+
+/* 3. Colonist Manifest Panel */
+#colonistPanel {
+  position: fixed;
+  bottom: 84px;
+  left: 16px;
+  z-index: 20;
+  width: 270px;
+  max-height: 380px;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.colonist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+  font-weight: bold;
+  color: var(--amber);
+  letter-spacing: .06em;
+}
+.colonist-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.colonist-card:hover {
+  background: rgba(242,166,90,0.12);
+  border-color: rgba(242,166,90,0.4);
+}
+.colonist-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.colonist-name { font-weight: bold; color: #fff; }
+.colonist-role { font-size: 9px; color: var(--muted); }
+.colonist-status { font-size: 9px; color: var(--green); margin-bottom: 5px; }
+.colonist-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+}
+.bar-row span { width: 14px; }
+.bar-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+.bar-health { background: #f08070; }
+.bar-oxygen { background: #70d6c4; }
+.bar-morale { background: #f2a65a; }
+
+/* 4. Enhanced Mission Objectives Panel */
+#objectivesPanel {
+  position: fixed;
+  top: 76px;
+  right: 16px;
+  z-index: 20;
+  width: 290px;
+  max-height: 440px;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.obj-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  color: var(--amber);
+  letter-spacing: .06em;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+}
+.obj-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.25s;
+}
+.obj-item.active {
+  background: rgba(242,166,90,0.08);
+  border-color: rgba(242,166,90,0.45);
+}
+.obj-item.done {
+  background: rgba(142,214,173,0.06);
+  border-color: rgba(142,214,173,0.35);
+  opacity: 0.85;
+}
+.obj-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+}
+.obj-badge {
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+.obj-item.done .obj-badge { background: rgba(142,214,173,0.25); color: var(--green); }
+.obj-item.active .obj-badge { background: rgba(242,166,90,0.25); color: var(--amber); }
+.obj-item.locked .obj-badge { background: rgba(255,255,255,0.08); color: var(--muted); }
+.obj-desc { font-size: 10px; color: var(--muted); }
+.obj-prog {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.obj-prog-fill {
+  height: 100%;
+  background: var(--amber);
+  transition: width 0.3s;
+}
+.obj-item.done .obj-prog-fill { background: var(--green); }
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
 </head>
@@ -182,13 +392,23 @@
 <canvas id="scene" aria-label="Interactive 3D Mars base"></canvas>
 <header id="top" class="ui">
   <section class="brand glass"><span class="brandmark"></span><div><h1>ARES-1</h1><small>UTOPIA PLANITIA · MARS</small></div><span class="solTag" id="solLabel" style="margin-left:auto;font-size:10px;color:var(--muted)">SOL 001</span></section>
+  
   <section class="resources glass" aria-label="Base resources">
     <div class="res" data-res="power"><label>POWER</label><strong id="powerVal">120</strong><em id="powerRate">+0 / SOL</em></div>
     <div class="res" data-res="oxygen"><label>OXYGEN</label><strong id="oxygenVal">180</strong><em id="oxygenRate">+0 / SOL</em></div>
     <div class="res" data-res="water"><label>WATER</label><strong id="waterVal">140</strong><em id="waterRate">+0 / SOL</em></div>
     <div class="res" data-res="food"><label>FOOD</label><strong id="foodVal">150</strong><em id="foodRate">+0 / SOL</em></div>
     <div class="res" data-res="materials"><label>MATERIALS</label><strong id="materialsVal">320</strong><em id="materialsRate">+0 / SOL</em></div>
+    
+    <!-- Extraction Ores Sub-bar -->
+    <div id="oreExtractionBar" style="grid-column: 1 / -1;">
+      <span class="subbar-title">ORE DRILLS:</span>
+      <div class="ore-chip"><span class="chip-icon">🧊</span><span class="chip-name">WATER ICE</span><strong id="waterIceVal">45</strong><em id="waterIceRate">+0/SOL</em></div>
+      <div class="ore-chip"><span class="chip-icon">⛏️</span><span class="chip-name">IRON ORE</span><strong id="ironOreVal">60</strong><em id="ironOreRate">+0/SOL</em></div>
+      <div class="ore-chip"><span class="chip-icon">💨</span><span class="chip-name">CO₂ GAS</span><strong id="co2Val">50</strong><em id="co2Rate">+0/SOL</em></div>
+    </div>
   </section>
+
   <section class="mission glass"><div class="missionline"><span>MISSION TARGET</span><b id="popLabel">6 / 50</b></div><div class="progress"><i id="popProgress"></i></div><div class="missionfoot"><span id="housingLabel">16 BERTHS</span><button class="textbtn" id="modeBtn">MISSION MODE</button></div></section>
 </header>
 <nav id="tools" class="ui glass" aria-label="Simulation toolbar">
@@ -200,8 +420,33 @@
   <button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
   <button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
 </nav>
-<aside id="objective" class="ui glass"><span class="eyebrow">Current directive</span><h2 id="directiveTitle">Establish a foothold</h2><p id="directiveText">Keep life support positive. Expand with connected habitats to grow the crew.</p><div class="netstatus"><span class="dot" id="netDot"></span><span id="networkLabel">2 / 2 HABITATS PRESSURIZED</span></div></aside>
+<aside id="objective" class="ui glass" style="display:none"><span class="eyebrow">Current directive</span><h2 id="directiveTitle">Establish a foothold</h2><p id="directiveText">Keep life support positive. Expand with connected habitats to grow the crew.</p><div class="netstatus"><span class="dot" id="netDot"></span><span id="networkLabel">2 / 2 HABITATS PRESSURIZED</span></div></aside>
 <aside id="info" class="ui glass" aria-live="polite"><button id="infoClose" aria-label="Close information">×</button><span class="eyebrow">Module telemetry</span><h2 id="infoName">Habitat</h2><div id="infoType">HAB-01 · ONLINE</div><div id="infoStatus"></div><div class="health"><i id="healthFill"></i></div><div id="infoActions"></div></aside>
+
+<!-- DUST STORM WARNING BANNER -->
+<div id="stormAlertBanner">
+  <span style="font-size:16px">⚠️</span>
+  <span>MARTIAN DUST STORM · SOLAR POWER -60% · TAKE COVER</span>
+</div>
+
+<!-- COLONIST MANIFEST UI -->
+<aside id="colonistPanel" class="ui glass" aria-label="Colonist Status">
+  <div class="colonist-header">
+    <span>👨‍🚀 CREW MANIFEST</span>
+    <span id="crewHealthSummary">4 ACTIVE</span>
+  </div>
+  <div id="colonistsList"></div>
+</aside>
+
+<!-- STEP-BY-STEP MISSION OBJECTIVES PANEL -->
+<aside id="objectivesPanel" class="ui glass" aria-label="Mission Directives">
+  <div class="obj-header">
+    <span>🚩 MISSION DIRECTIVES</span>
+    <span id="objProgressLabel">0 / 5 COMPLETE</span>
+  </div>
+  <div id="objectivesList"></div>
+</aside>
+
 <div id="events" class="ui" aria-live="polite"></div><div id="toast" class="ui" role="status"></div>
 <section id="buildArea" class="ui"><div id="buildHint" class="glass"><span id="hintText"><b>SELECT A MODULE</b> · click the terrain to deploy</span><span class="keys">R ROTATE · X DELETE · F WALK</span><button class="miniBtn" id="cancelBuild" hidden>CANCEL</button></div><div id="buildMenu" class="glass" aria-label="Building categories"></div></section>
 <div id="crosshair" class="ui"></div><div id="walkHint" class="ui">WASD MOVE · DRAG TO LOOK · SHIFT SPRINT · F EXIT</div><div id="mobileMove" class="ui"><span></span><button data-move="forward" aria-label="Walk forward">▲</button><span></span><button data-move="left" aria-label="Walk left">◀</button><button data-move="back" aria-label="Walk backward">▼</button><button data-move="right" aria-label="Walk right">▶</button></div>
@@ -236,19 +481,39 @@ const GRID=4,DAY_SECONDS=150,SAVE_KEY='ares1-save-v2';
 const WORLD={w:112,d:96,minX:-52,maxX:52,minZ:-44,maxZ:44};
 const TYPES={
  habitat:{name:'Habitat module',short:'HAB',icon:'H–01',cost:60,w:8,d:8,power:4,housing:8,pressurized:true,desc:'8 berths · requires network pressure'},
- solar:{name:'Solar array',short:'SOL',icon:'S≡≡',cost:25,w:8,d:8,powerGen:30,desc:'30 power · daylight dependent'},
+ solar:{name:'Solar array',short:'SOL',icon:'S≡≡',cost:25,w:8,d:8,powerGen:32,desc:'32 power · daylight dependent (drops in storm)'},
+ reactor:{name:'Nuclear reactor',short:'NUC',icon:'☢',cost:150,w:12,d:12,powerGen:95,desc:'95 power · 24/7 continuous output immune to storms'},
  greenhouse:{name:'Greenhouse dome',short:'GRN',icon:'G◒',cost:75,w:12,d:8,power:6,food:24,waterUse:3,pressurized:true,desc:'24 food · consumes water & power'},
  isru:{name:'Oxygen / ISRU plant',short:'ISRU',icon:'O₂',cost:90,w:12,d:8,power:10,oxygen:32,waterUse:1,pressurized:true,desc:'32 oxygen · atmospheric processing'},
- miner:{name:'Water ice miner',short:'ICE',icon:'W↓',cost:80,w:12,d:8,power:8,water:20,materials:2.5,desc:'20 water + 2.5 materials'},
+ miner:{name:'Water ice drill',short:'ICE',icon:'🧊',cost:80,w:12,d:8,power:8,water:20,waterIce:18,materials:2.5,desc:'Drills subsurface water ice (18/sol) & water'},
+ drill_iron:{name:'Iron ore drill',short:'ORE',icon:'⛏️',cost:85,w:12,d:8,power:8,ironOre:16,materials:6,desc:'Heavy excavation rig yields iron ore & structural materials'},
+ drill_co2:{name:'CO₂ sublimator',short:'CO₂',icon:'💨',cost:75,w:10,d:8,power:6,co2:22,oxygen:8,desc:'Extracts regolith CO₂ to fuel greenhouses & ISRU'},
  battery:{name:'Battery station',short:'BAT',icon:'B▥',cost:55,w:8,d:8,power:1,powerCap:180,desc:'180 stored power reserve'},
  landing:{name:'Landing pad',short:'PAD',icon:'L↓',cost:110,w:16,d:16,power:1,desc:'Calls reusable supply rockets'},
  garage:{name:'Rover garage',short:'GAR',icon:'R▰',cost:85,w:12,d:12,power:3,desc:'Dispatches surface patrols'},
- radar:{name:'Radar / comms dish',short:'COM',icon:'C◝',cost:70,w:8,d:8,power:4,desc:'Survey drones & event warnings'},
+ radar:{name:'Radar / comms dish',short:'COM',icon:'📡',cost:70,w:8,d:8,power:4,desc:'Survey drones & planetary beacon link'},
  lab:{name:'Research lab',short:'LAB',icon:'L+',cost:95,w:12,d:8,power:7,materials:.8,pressurized:true,desc:'Analysis yields 0.8 materials'},
  storage:{name:'Storage depot',short:'STO',icon:'S▦',cost:45,w:8,d:8,power:1,storage:180,desc:'Expands resource capacity'},
  tunnel:{name:'Connecting tunnel',short:'TUN',icon:'T═',cost:12,w:4,d:4,power:.2,pressurized:true,desc:'Links pressurized modules'}
 };
-const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320},rates:{power:0,oxygen:0,water:0,food:0,materials:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,selected:null,buildType:null,buildRotation:0,critical:0,won:false};
+const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false};
+
+// Named Colonists Manifest
+const COLONISTS = [
+  { id: 'c1', name: 'Cmdr. Elena Vance', role: 'Base Commander', suitMat: MAT.orange, health: 100, oxygen: 100, morale: 98, status: 'Inspecting Outpost' },
+  { id: 'c2', name: 'Dr. Marcus Chen', role: 'Chief Geochemist', suitMat: MAT.ivory, health: 96, oxygen: 100, morale: 92, status: 'Analyzing Regolith' },
+  { id: 'c3', name: 'Eng. Tarek Rossi', role: 'Power Systems Lead', suitMat: MAT.dark, health: 100, oxygen: 98, morale: 95, status: 'Calibrating Grid' },
+  { id: 'c4', name: 'Dr. Aiko Tanaka', role: 'Life Support Botanist', suitMat: MAT.white, health: 98, oxygen: 100, morale: 94, status: 'Monitoring Greenhouse' }
+];
+
+// Sequential Mission Objectives
+const OBJECTIVES = [
+  { id: 'hab', title: '1. Establish Foothold', desc: 'Deploy 2 connected Habitats', check: () => buildings.filter(b=>b.type==='habitat'&&b.pressurized).length >= 2, prog: () => Math.min(1, buildings.filter(b=>b.type==='habitat'&&b.pressurized).length / 2), label: () => `${buildings.filter(b=>b.type==='habitat'&&b.pressurized).length}/2 Habitats` },
+  { id: 'water', title: '2. Water Ice Extraction', desc: 'Deploy Water Drill & extract 80 Ice', check: () => state.res.waterIce >= 80, prog: () => Math.min(1, state.res.waterIce / 80), label: () => `${Math.floor(state.res.waterIce)}/80 Ice` },
+  { id: 'food', title: '3. Sustainable Agriculture', desc: 'Harvest 120 Food from Greenhouse', check: () => state.res.food >= 120, prog: () => Math.min(1, state.res.food / 120), label: () => `${Math.floor(state.res.food)}/120 Food` },
+  { id: 'power', title: '4. Nuclear Power Grid', desc: 'Deploy a Nuclear Fission Reactor', check: () => buildings.some(b=>b.type==='reactor'&&b.operational), prog: () => buildings.some(b=>b.type==='reactor') ? 1 : 0, label: () => buildings.some(b=>b.type==='reactor') ? '1/1 Reactor' : '0/1 Reactor' },
+  { id: 'beacon', title: '5. Deep Space Beacon', desc: 'Build Comms Dish & reach 15 Crew', check: () => buildings.some(b=>b.type==='radar') && state.pop >= 15, prog: () => Math.min(1, state.pop / 15), label: () => `${state.pop}/15 Colonists` }
+];
 let buildings=[],nextId=1,undoStack=[],redoStack=[],terrainMesh,ghost=null,ghostValid=false,ghostPos=V3(),connectionGroup,coreId=0;
 let roverRoute,rovers=[],agents=[],drones=[],meteors=[],rocket=null,eventId=0;
 const keys={};
@@ -343,7 +608,46 @@ function createLabel(text,y){const c=document.createElement('canvas');c.width=38
 function foundation(g,w,d){box(g,MAT.dark,0,.16,0,w+.3,.32,d+.3);for(const x of[-w*.38,w*.38])for(const z of[-d*.38,d*.38])cyl(g,MAT.metal,x,.35,z,.22,.7,8)}
 function makeBuilding(type,ghostMode=false){
  const g=new THREE.Group(),t=TYPES[type],w=t.w,d=t.d;foundation(g,w,d);
- if(type==='habitat'){
+ if(type==='reactor'){
+  // Heavy nuclear containment vessel
+  cyl(g,MAT.dark,0,.6,0,5.4,1.2,28);
+  const dome=mesh(new THREE.SphereGeometry(3.6,24,14,0,Math.PI*2,0,Math.PI/2),MAT.ivory,g,0,1.2,0);dome.scale.y=.85;
+  for(let i=0;i<4;i++){const a=i*Math.PI/2;ring(g,MAT.metal,0,1.5+i*.6,0,3.5-i*.3,.14,0)}
+  // Cooling towers with faint cherenkov glow
+  for(const x of[-3.8,3.8]){
+    cyl(g,MAT.panel,x,2.8,2.2,1.35,4.8,20);
+    cyl(g,MAT.dark,x,5.3,2.2,1.1,1,20);
+    lightMesh(g,x,5.2,2.2,1.8,.25,1.8,MAT.cyan);
+  }
+  // Power conduits & radiation shielding
+  box(g,MAT.orange,0,1.8,-3.4,4.8,2.2,1.6);
+  box(g,MAT.metal,0,2.9,-3.4,2.2,.4,1.2);
+  lightMesh(g,0,2.1,-2.55,.9,.28,.15,MAT.cyan);
+  antenna(g,3.5,1.2,-3.2,3.8);
+ }else if(type==='drill_iron'){
+  // Heavy dual-shaft iron ore extraction rig
+  box(g,MAT.dark,0,1.1,0,6.2,1.8,5.2);
+  box(g,MAT.orange,0,2.2,-1.4,4.2,1.6,2.8);
+  for(const x of[-2.4,2.4]){
+    cyl(g,MAT.metal,x,3.2,1.4,.45,5.2,12);
+    const dCone=mesh(new THREE.ConeGeometry(.85,3.6,12),MAT.dark,g,x,1.2,1.4);
+    dCone.rotation.x=Math.PI;
+  }
+  cylinderBetween(g,MAT.metal,V3(-2.4,5.4,1.4),V3(2.4,5.4,1.4),.35);
+  box(g,MAT.metal,0,2.4,2.2,3.2,1.2,1.8);
+  lightMesh(g,0,2.9,2.2,.8,.22,.12,MAT.window);
+  antenna(g,-3.6,.4,-2,3.2);
+ }else if(type==='drill_co2'){
+  // Atmospheric & regolith CO2 sublimator compressor
+  box(g,MAT.ivory,0,1.4,0,5.6,2.2,4.8);
+  for(const x of[-2.2,0,2.2]){
+    cyl(g,MAT.white,x,3.6,-.8,.9,4.4,20);
+    const sphere=mesh(new THREE.SphereGeometry(.95,16,10),MAT.cyan,g,x,5.8,-.8);
+    sphere.scale.set(1,.8,1);
+  }
+  box(g,MAT.panel,0,2.4,1.8,4.2,2.2,1.4);
+  lightMesh(g,0,3.4,2.5,2,.3,.1,MAT.cyan);
+ }else if(type==='habitat'){
   const body=mesh(new THREE.CylinderGeometry(2.65,2.65,6.2,24,1,false),MAT.ivory,g,0,3.05,0);body.rotation.z=Math.PI/2;
   for(const x of[-3.15,3.15]){const cap=mesh(new THREE.SphereGeometry(2.64,20,12),MAT.white,g,x,3.05,0);cap.scale.x=.28}
   for(const x of[-2.35,-.8,.8,2.35]){const rib=ring(g,MAT.dark,x,3.05,0,2.7,.08,0);rib.rotation.y=Math.PI/2}
@@ -437,15 +741,70 @@ function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot())
 function loadGame(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw){toast('No saved base in this browser');return}pushUndo();restore(JSON.parse(raw));toast('Saved base restored');logEvent('Local save loaded','SYSTEM')}catch(e){toast('Load failed: '+e.message)}}
 
 // ---------- Resource model: one sol integrates production, storage and life support ----------
-function capacities(){let power=150,other=240,materials=500;for(const b of buildings){if(b.type==='battery')power+=TYPES.battery.powerCap;if(b.type==='storage'){other+=TYPES.storage.storage;materials+=TYPES.storage.storage*2}}return{power,oxygen:other,water:other,food:other,materials}}
+function capacities(){let power=150,other=240,materials=500,ores=350;for(const b of buildings){if(b.type==='battery')power+=TYPES.battery.powerCap;if(b.type==='storage'){other+=TYPES.storage.storage;materials+=TYPES.storage.storage*2;ores+=200}}return{power,oxygen:other,water:other,food:other,materials,waterIce:ores,ironOre:ores,co2:ores}}
 function pressurizedHousing(){return buildings.reduce((n,b)=>n+(b.type==='habitat'&&b.pressurized?TYPES.habitat.housing:0),0)}
 function daylight(){return Math.max(0,Math.sin((state.phase-.25)*Math.PI*2))}
 function calculateRates(){
- let solar=0,use=0,oxygen=0,water=0,food=0,materials=0;const brownout=state.res.power<=.01&&state.rates.power<0,scale=brownout?.12:1;
- for(const b of buildings){const t=TYPES[b.type],active=b.operational&&b.health>15;if(!active)continue;use+=t.power||0;if(b.type==='solar')solar+=t.powerGen;if(active&&scale>.2){oxygen+=t.oxygen||0;water+=(t.water||0)-(t.waterUse||0);food+=t.food||0;materials+=t.materials||0}else{water-=(t.waterUse||0)*scale;food+=(t.food||0)*scale;materials+=(t.materials||0)*scale;oxygen+=(t.oxygen||0)*scale}}
+ let solar=0,nuclear=0,use=0,oxygen=0,water=0,food=0,materials=0,waterIce=0,ironOre=0,co2=0;
+ const brownout=state.res.power<=.01&&state.rates.power<0,scale=brownout?.12:1;
+ for(const b of buildings){
+  const t=TYPES[b.type],active=b.operational&&b.health>15;
+  if(!active)continue;
+  use+=t.power||0;
+  if(b.type==='solar') solar+=t.powerGen;
+  if(b.type==='reactor') nuclear+=t.powerGen;
+  if(active&&scale>.2){
+   oxygen+=t.oxygen||0;
+   water+=(t.water||0)-(t.waterUse||0);
+   food+=t.food||0;
+   materials+=t.materials||0;
+   waterIce+=t.waterIce||0;
+   ironOre+=t.ironOre||0;
+   co2+=t.co2||0;
+  }else{
+   water-=(t.waterUse||0)*scale;
+   food+=(t.food||0)*scale;
+   materials+=(t.materials||0)*scale;
+   oxygen+=(t.oxygen||0)*scale;
+   waterIce+=(t.waterIce||0)*scale;
+   ironOre+=(t.ironOre||0)*scale;
+   co2+=(t.co2||0)*scale;
+  }
+ }
  use+=state.pop*.22;oxygen-=state.pop*1.25;water-=state.pop*.95;food-=state.pop*1.2;
- const dust=1-state.storm*.84,solarOut=solar*Math.pow(daylight(),.7)*dust;
- state.rates.power=solarOut-use;state.rates.oxygen=oxygen;state.rates.water=water;state.rates.food=food;state.rates.materials=materials;
+ // Dust storm cuts solar by 60%
+ const dust=state.storm>.15 ? 0.40 : 1.0;
+ const solarOut=solar*Math.pow(daylight(),.7)*dust;
+ const totalPowerGen = solarOut + nuclear;
+ state.rates.power=totalPowerGen-use;
+ state.rates.oxygen=oxygen;
+ state.rates.water=water;
+ state.rates.food=food;
+ state.rates.materials=materials;
+ state.rates.waterIce=waterIce;
+ state.rates.ironOre=ironOre;
+ state.rates.co2=co2;
+
+ // Power grid glow: unpowered or disconnected buildings glow red
+ const hasPower = state.res.power > 0 || state.rates.power >= 0;
+ for(const b of buildings){
+  const needsPower = (TYPES[b.type].power || 0) > 0;
+  b.isPowered = hasPower && (b.connected || b.type==='solar' || b.type==='reactor' || b.type==='battery');
+  if(b.mesh){
+   b.mesh.traverse(o=>{
+    if(o.userData.isLight){
+     if(needsPower && !b.isPowered){
+      o.material = MAT.redLight;
+      o.visible = true;
+     } else if(b.failure > 0 || b.health < 20) {
+      o.material = MAT.redLight;
+     } else {
+      o.material = MAT.cyan;
+     }
+    }
+   });
+  }
+ }
 }
 function simulate(dtSol){
  calculateRates();const cap=capacities();for(const k of Object.keys(state.res))state.res[k]=clamp(state.res[k]+state.rates[k]*dtSol,0,cap[k]);
@@ -481,6 +840,100 @@ function logEvent(msg,tag='MISSION'){const e=document.createElement('div');e.cla
 // ---------- Astronauts, rovers, drones and reusable supply rocket ----------
 function astronautModel(accent=MAT.orange){const g=new THREE.Group();box(g,MAT.white,0,1.12,0,.62,.75,.42);box(g,accent,0,1.22,.23,.5,.18,.06);const helmet=mesh(new THREE.SphereGeometry(.34,12,8),MAT.white,g,0,1.78,0);const visor=mesh(new THREE.SphereGeometry(.29,12,8,0,Math.PI*2,0,Math.PI*.55),MAT.solar,g,0,1.8,.07);visor.rotation.x=Math.PI*.45;box(g,MAT.panel,0,1.18,-.32,.52,.68,.28);const limbs=[];for(const [x,z,isArm] of[[-.22,0,false],[.22,0,false],[-.43,0,true],[.43,0,true]]){const pivot=new THREE.Group();pivot.position.set(x,isArm?1.43:.78,z);g.add(pivot);box(pivot,MAT.white,0,-(isArm?.27:.36),0,isArm?.2:.24,isArm?.62:.75,isArm?.2:.25);limbs.push(pivot)}g.userData.limbs=limbs;g.scale.setScalar(.78);return g}
 function spawnAgent(){if(agents.length>=24)return;const homes=buildings.filter(b=>b.type==='habitat');if(!homes.length)return;const home=pick(homes),g=astronautModel(pick([MAT.orange,MAT.panel,MAT.ivory]));g.position.set(home.x+rr(-2,2),terrainHeight(home.x,home.z),home.z+4);scene.add(g);agents.push({mesh:g,at:home.id,target:null,t:rr(1,5),state:'idle',speed:rr(1.4,2.1),phase:rr(0,6.28),home:home.id})}
+
+// ==================== COLONIST AI & OBJECTIVES LOGIC ====================
+function updateColonistsSim(dtSol){
+  const hasO2 = state.res.oxygen > 15;
+  const isStorm = state.storm > 0.2;
+  const isHealthyBase = state.res.food > 15 && state.res.water > 15 && hasO2;
+
+  COLONISTS.forEach((c, idx) => {
+    // Oxygen
+    if(!hasO2) c.oxygen = Math.max(0, c.oxygen - dtSol * 18);
+    else c.oxygen = Math.min(100, c.oxygen + dtSol * 12);
+
+    // Morale
+    if(isStorm) c.morale = Math.max(15, c.morale - dtSol * 14);
+    else if(isHealthyBase) c.morale = Math.min(100, c.morale + dtSol * 6);
+
+    // Health
+    if(c.oxygen < 20 || !isHealthyBase) c.health = Math.max(0, c.health - dtSol * 15);
+    else c.health = Math.min(100, c.health + dtSol * 8);
+
+    // Dynamic Activity Status
+    if(isStorm) c.status = 'Sheltered in Habitat';
+    else if(idx === 0) c.status = buildings.some(b=>b.type==='radar') ? 'Comms Beacon Active' : 'Surveying Utopia';
+    else if(idx === 1) c.status = state.rates.waterIce > 0 ? 'Supervising Ice Extraction' : 'Field Geology';
+    else if(idx === 2) c.status = buildings.some(b=>b.type==='reactor') ? 'Maintaining Fission Core' : 'Tuning Solar Array';
+    else if(idx === 3) c.status = state.res.food > 50 ? 'Harvesting Hydroponics' : 'Bio-Filtering Recycler';
+  });
+
+  renderColonistsUI();
+}
+
+function renderColonistsUI(){
+  const list = $('colonistsList');
+  if(!list) return;
+  list.innerHTML = COLONISTS.map(c => `
+    <div class="colonist-card" onclick="focusColonist('${c.id}')" title="Click to track in 3D">
+      <div class="colonist-info">
+        <span class="colonist-name">${c.name}</span>
+        <span class="colonist-role">${c.role}</span>
+      </div>
+      <div class="colonist-status">● ${c.status}</div>
+      <div class="colonist-bars">
+        <div class="bar-row"><span>❤️</span><div class="bar-track"><div class="bar-fill bar-health" style="width:${Math.round(c.health)}%"></div></div></div>
+        <div class="bar-row"><span>🫁</span><div class="bar-track"><div class="bar-fill bar-oxygen" style="width:${Math.round(c.oxygen)}%"></div></div></div>
+        <div class="bar-row"><span>🧠</span><div class="bar-track"><div class="bar-fill bar-morale" style="width:${Math.round(c.morale)}%"></div></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.focusColonist = function(id){
+  const idx = COLONISTS.findIndex(c=>c.id===id);
+  if(idx >= 0 && agents[idx]){
+    const target = agents[idx].mesh.position;
+    controls.target.set(target.x, target.y + 1.2, target.z);
+    camera.position.set(target.x + 12, target.y + 9, target.z + 14);
+    controls.update();
+    toast('Tracking ' + COLONISTS[idx].name);
+  }
+};
+
+function updateObjectivesUI(){
+  const list = $('objectivesList');
+  const progLabel = $('objProgressLabel');
+  if(!list) return;
+
+  let completedCount = 0;
+  list.innerHTML = OBJECTIVES.map((obj, i) => {
+    const isDone = obj.check();
+    if(isDone) completedCount++;
+    const isActive = !isDone && (i === 0 || OBJECTIVES[i-1].check());
+    const statusClass = isDone ? 'done' : (isActive ? 'active' : 'locked');
+    const badgeText = isDone ? '✓ DONE' : (isActive ? '► ACTIVE' : 'LOCKED');
+    const progressVal = Math.round(obj.prog() * 100);
+
+    return `
+      <div class="obj-item ${statusClass}">
+        <div class="obj-title-row">
+          <span>${obj.title}</span>
+          <span class="obj-badge">${badgeText}</span>
+        </div>
+        <div class="obj-desc">${obj.desc} (${obj.label()})</div>
+        <div class="obj-prog">
+          <div class="obj-prog-fill" style="width:${isDone ? 100 : progressVal}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if(progLabel){
+    progLabel.textContent = `${completedCount} / ${OBJECTIVES.length} COMPLETE`;
+  }
+}
+
 function syncAgents(){const wanted=Math.min(24,state.pop);while(agents.length<wanted)spawnAgent();while(agents.length>wanted){const a=agents.pop();scene.remove(a.mesh);disposeGroup(a.mesh)}}
 function chooseAgentTarget(a){const night=daylight()<.08;let choices=buildings.filter(b=>b.operational&&(night?b.type==='habitat':['habitat','greenhouse','isru','lab','storage'].includes(b.type)));if(!choices.length)return;a.target=pick(choices);a.state='walk';a.t=0}
 function updateAgent(a,dt){const g=a.mesh,p=g.position;if(a.state==='idle'){a.t-=dt;a.mesh.visible=true;a.phase+=dt;g.rotation.y+=Math.sin(a.phase)*dt*.08;if(a.t<=0)chooseAgentTarget(a);return}if(a.state==='inside'){a.t-=dt;if(a.t<=0){g.visible=true;a.state='idle';a.t=rr(.5,2)}return}if(!a.target||!buildings.some(b=>b.id===a.target.id)){a.state='idle';a.t=1;return}const dx=a.target.x-p.x,dz=a.target.z-p.z,dist=Math.hypot(dx,dz);if(dist<3.8){a.at=a.target.id;a.state='inside';a.t=a.target.type==='habitat'&&daylight()<.08?rr(8,18):rr(3,9);g.visible=false;return}const step=Math.min(dist,a.speed*dt);p.x+=dx/dist*step;p.z+=dz/dist*step;p.y=terrainHeight(p.x,p.z)+.03;g.rotation.y=Math.atan2(dx,dz);a.phase+=dt*a.speed*5;const limbs=g.userData.limbs;limbs[0].rotation.x=Math.sin(a.phase)*.65;limbs[1].rotation.x=-Math.sin(a.phase)*.65;limbs[2].rotation.x=-Math.sin(a.phase)*.5;limbs[3].rotation.x=Math.sin(a.phase)*.5}
