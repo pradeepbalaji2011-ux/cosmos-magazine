@@ -1189,6 +1189,10 @@ const COLONISTS = [
   { id: 'c4', name: 'Dr. Aiko Tanaka', role: 'Life Support Botanist', suitColor: 'white', health: 98, oxygen: 100, morale: 94, status: 'Monitoring Greenhouse' }
 ];
 
+
+function syncColonistsRoster(){ ensureColonistsRoster(); }
+function updateAgents(){ syncAgents(); }
+
 function ensureColonistsRoster(){
   while(COLONISTS.length < state.pop){
     const id = 'c' + (COLONISTS.length + 1);
@@ -3606,8 +3610,8 @@ function clearBase(keepCoreOnly = true, playSound = true){
   state.res.water = 140;
   state.res.food = 150;
 
-  syncColonistsRoster();
-  updateAgents();
+  ensureColonistsRoster();
+  syncAgents();
 
   computeNetwork();
   calculateRates();
@@ -3646,8 +3650,8 @@ function restorePrebuiltBase(){
     waterIce: 80, ironOre: 80, co2: 80
   });
 
-  syncColonistsRoster();
-  updateAgents();
+  ensureColonistsRoster();
+  syncAgents();
 
   roverRoute = new THREE.CatmullRomCurve3([
     V3(-65,0,25), V3(-45,0,-55), V3(15,0,-65), V3(75,0,-20),
@@ -3674,7 +3678,7 @@ function initialBase(){
  state.startMode = state.startMode || 'prebuilt';
  state.pop = 32;
  Object.assign(state.res, { materials: 400, power: 240, oxygen: 220, water: 200, food: 200, waterIce: 80, ironOre: 80, co2: 80 });
- syncColonistsRoster();
+ ensureColonistsRoster();
  roverRoute=new THREE.CatmullRomCurve3([V3(-65,0,25),V3(-45,0,-55),V3(15,0,-65),V3(75,0,-20),V3(80,0,35),V3(35,0,65),V3(-25,0,55)],true,'catmullrom',.35);
  afterBaseChange();applyLights();updateSun();
 }
