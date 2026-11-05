@@ -9,7 +9,7 @@
 <style>
 :root{--ink:#f3e9d8;--muted:#b9ab9c;--amber:#f2a65a;--orange:#d96b3b;--green:#8ed6ad;--red:#f08070;--glass:rgba(24,20,19,.88);--line:rgba(243,233,216,.16);--thin:rgba(243,233,216,.08)}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#1b1514;color:var(--ink);font-family:"Aptos Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace}button,input{font:inherit}button{color:inherit}button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:3px}button{touch-action:manipulation}#scene{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:grab}#scene:active{cursor:grabbing}#scene.building{cursor:crosshair}.ui{position:fixed;z-index:5;pointer-events:none}.ui button,.ui input,.ui [data-action]{pointer-events:auto}.glass{background:var(--glass);border:1px solid var(--line);box-shadow:0 12px 35px rgba(0,0,0,.2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-#top{left:16px;right:16px;top:14px;display:grid;grid-template-columns:minmax(180px,.75fr) minmax(490px,1.7fr) minmax(190px,.7fr);gap:10px;align-items:stretch}.brand,.resources,.mission{min-height:74px;border-radius:4px}.brand{padding:13px 16px;display:flex;align-items:center;gap:13px}.brandmark{width:35px;height:35px;border:1px solid var(--amber);border-radius:50%;position:relative;flex:none}.brandmark:before,.brandmark:after{content:"";position:absolute;background:var(--amber)}.brandmark:before{width:21px;height:1px;left:6px;top:16px}.brandmark:after{height:21px;width:1px;left:16px;top:6px}.brand h1{font-family:"Arial Narrow","Aptos Display",sans-serif;font-stretch:condensed;font-size:25px;letter-spacing:.16em;line-height:1;margin:0;font-weight:700}.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:.15em;margin-top:7px}.resources{display:grid;grid-template-columns:repeat(5,1fr);padding:9px 6px}.res{padding:3px 10px;border-right:1px solid var(--thin);min-width:0}.res:last-child{border:0}.res label{display:block;font-size:9px;letter-spacing:.13em;color:var(--muted);white-space:nowrap}.res strong{display:block;font-family:"Arial Narrow",sans-serif;font-size:21px;line-height:1.2;font-weight:500;margin-top:4px}.res em{font-style:normal;font-size:9px;color:var(--green);white-space:nowrap}.res em.neg{color:var(--red)}.res.low strong{color:var(--red)}.mission{padding:11px 14px}.missionline{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.08em}.missionline b{font-size:12px;color:var(--amber)}.progress{height:3px;background:var(--thin);margin:10px 0 8px;overflow:hidden}.progress i{display:block;height:100%;width:12%;background:var(--amber);transition:width .3s}.missionfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:9px}.textbtn{border:0;background:none;padding:0;color:var(--amber);cursor:pointer;font-size:9px;text-transform:uppercase;letter-spacing:.08em;min-height:20px}
+#top{left:16px;right:16px;top:14px;display:grid;grid-template-columns:minmax(180px,.75fr) minmax(460px,1.8fr) auto;gap:10px;align-items:stretch}.brand,.resources,.mission{min-height:74px;border-radius:4px}.brand{padding:13px 16px;display:flex;align-items:center;gap:13px}.brandmark{width:35px;height:35px;border:1px solid var(--amber);border-radius:50%;position:relative;flex:none}.brandmark:before,.brandmark:after{content:"";position:absolute;background:var(--amber)}.brandmark:before{width:21px;height:1px;left:6px;top:16px}.brandmark:after{height:21px;width:1px;left:16px;top:6px}.brand h1{font-family:"Arial Narrow","Aptos Display",sans-serif;font-stretch:condensed;font-size:25px;letter-spacing:.16em;line-height:1;margin:0;font-weight:700}.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:.15em;margin-top:7px}.resources{display:grid;grid-template-columns:repeat(5,1fr);padding:9px 6px}.res{padding:3px 10px;border-right:1px solid var(--thin);min-width:0}.res:last-child{border:0}.res label{display:block;font-size:9px;letter-spacing:.13em;color:var(--muted);white-space:nowrap}.res strong{display:block;font-family:"Arial Narrow",sans-serif;font-size:21px;line-height:1.2;font-weight:500;margin-top:4px}.res em{font-style:normal;font-size:9px;color:var(--green);white-space:nowrap}.res em.neg{color:var(--red)}.res.low strong{color:var(--red)}.mission{padding:11px 14px}.missionline{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.08em}.missionline b{font-size:12px;color:var(--amber)}.progress{height:3px;background:var(--thin);margin:10px 0 8px;overflow:hidden}.progress i{display:block;height:100%;width:12%;background:var(--amber);transition:width .3s}.missionfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:9px}.textbtn{border:0;background:none;padding:0;color:var(--amber);cursor:pointer;font-size:9px;text-transform:uppercase;letter-spacing:.08em;min-height:20px}
 #tools{right:16px;top:98px;width:198px;padding:8px;border-radius:4px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.tool{border:1px solid var(--thin);background:rgba(255,255,255,.025);min-height:36px;padding:5px 3px;cursor:pointer;font-size:9px;color:var(--muted);border-radius:2px;transition:background .15s,color .15s,border-color .15s}.tool:hover{background:rgba(242,166,90,.1);color:var(--ink)}.tool.on{color:var(--amber);border-color:rgba(242,166,90,.4)}.tool.wide{grid-column:span 2}.tool.danger:hover{color:var(--red);border-color:var(--red)}#timeWrap{grid-column:1/-1;padding:5px 4px 2px;display:grid;grid-template-columns:36px 1fr 40px;align-items:center;gap:6px;font-size:9px;color:var(--muted)}#timeSlider{width:100%;height:18px;accent-color:var(--amber);cursor:pointer}#clock{color:var(--ink);text-align:right}
 #objective{left:16px;top:98px;width:214px;padding:12px 14px;border-radius:4px}.eyebrow{font-size:9px;letter-spacing:.15em;color:var(--amber);text-transform:uppercase}#objective h2{font-family:"Arial Narrow",sans-serif;font-size:17px;letter-spacing:.03em;margin:5px 0 8px;font-weight:500}#objective p{font-size:10px;line-height:1.55;color:var(--muted);margin:0}.netstatus{display:flex;gap:6px;align-items:center;margin-top:10px;font-size:9px}.dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px currentColor}.dot.bad{background:var(--red)}
 #buildArea{left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(1120px,calc(100vw - 32px));pointer-events:auto}#buildHint{min-height:34px;margin:0 auto 7px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:3px;font-size:10px;color:var(--muted);width:fit-content;max-width:100%}#buildHint b{color:var(--ink);font-weight:500}#buildHint .keys{white-space:nowrap;color:var(--amber)}.miniBtn{border:1px solid var(--line);background:transparent;min-height:24px;padding:2px 7px;font-size:9px;cursor:pointer;color:var(--muted)}.miniBtn:hover{color:var(--ink);border-color:var(--amber)}#buildMenu{display:flex;gap:6px;overflow-x:auto;padding:7px;border-radius:4px;scrollbar-width:thin;scrollbar-color:var(--orange) transparent}.buildCard{position:relative;flex:1 0 78px;max-width:100px;min-height:70px;border:1px solid var(--thin);background:rgba(255,255,255,.025);padding:9px 7px 7px;text-align:left;cursor:pointer;border-radius:2px;transition:transform .15s,border-color .15s,background .15s}.buildCard:hover{transform:translateY(-2px);border-color:rgba(242,166,90,.55);background:rgba(242,166,90,.07)}.buildCard.active{border-color:var(--amber);background:rgba(242,166,90,.12)}.buildCard:disabled{opacity:.42;cursor:not-allowed;transform:none}.buildCard .ico{display:block;font-family:"Arial Narrow",sans-serif;font-size:18px;color:var(--amber);height:23px;letter-spacing:-.04em}.buildCard .name{display:block;font-size:9px;line-height:1.25;min-height:23px}.buildCard .cost{display:block;font-size:8px;color:var(--muted);margin-top:4px}
@@ -547,22 +547,19 @@
 
 /* Satellite Radar Minimap & Sector HUD */
 #minimapCard {
-  position: fixed;
-  bottom: 72px;
-  right: 16px;
-  z-index: 25;
-  width: 216px;
-  padding: 10px;
-  border-radius: 6px;
+  position: absolute;
+  top: 108px;
+  left: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: rgba(24, 20, 19, 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(242, 166, 90, 0.4);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
-  transition: transform 0.2s, opacity 0.2s;
+  z-index: 10;
+  pointer-events: auto;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+  font-family: 'Share Tech Mono', monospace;
 }
 #minimapCard.hidden {
   display: none;
@@ -862,7 +859,13 @@
     </div>
   </section>
 
-  <section class="mission glass"><div class="missionline"><span>MISSION TARGET</span><b id="popLabel">6 / 50</b></div><div class="progress"><i id="popProgress"></i></div><div class="missionfoot"><span id="housingLabel">16 BERTHS</span><button class="textbtn" id="modeBtn">MISSION MODE</button></div></section>
+  <section class="mission-btn-wrap glass" style="display:flex;align-items:center;justify-content:center;padding:8px 12px;min-height:54px;border-radius:4px;">
+    <button id="missionPopupBtn" class="primary" style="display:flex;align-items:center;gap:8px;padding:9px 15px;font-size:11px;font-weight:700;letter-spacing:0.12em;white-space:nowrap;background:rgba(242,166,90,0.18);border:1px solid var(--amber);color:var(--amber);cursor:pointer;border-radius:3px;">
+      <span>🎯 MISSIONS</span>
+      <span id="popLabel" style="color:var(--ink);font-weight:400;font-size:10px;">32 / 32 CREW</span>
+    </button>
+    <div style="display:none;"><div class="progress"><i id="popProgress"></i></div><span id="housingLabel">32 BERTHS</span><button class="textbtn" id="modeBtn">MISSION MODE</button></div>
+  </section>
 </header>
 <nav id="tools" class="ui glass" aria-label="Simulation toolbar">
   <button class="tool wide on" id="toolsToggle" style="display:none">CONTROLS</button>
@@ -1347,8 +1350,8 @@ const MAT={
  rock:new THREE.MeshStandardMaterial({color:0x965e45,roughness:1,vertexColors:true}),
  black:new THREE.MeshStandardMaterial({color:0x1c1f21,roughness:.65,metalness:.5}),
  amberLight:new THREE.MeshStandardMaterial({color:0xffd18a,emissive:0xf2a65a,emissiveIntensity:2.4,roughness:.18,metalness:.2}),
- asphalt:new THREE.MeshStandardMaterial({color:0x221c19,roughness:0.92,metalness:0.08,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),
- curb:new THREE.MeshStandardMaterial({color:0x7a6e64,roughness:0.85,metalness:0.12,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3}),
+ asphalt: new THREE.MeshStandardMaterial({ color: 0x34221c, roughness: 0.88, metalness: 0.12 }),
+ curb: new THREE.MeshStandardMaterial({ color: 0x8a543e, roughness: 0.82, metalness: 0.15 }),
  marking:new THREE.MeshStandardMaterial({color:0xf2a65a,emissive:0x663311,emissiveIntensity:0.6,roughness:0.6,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4}),
  walkway:new THREE.MeshStandardMaterial({color:0xded6c8,roughness:0.75,metalness:0.15,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3}),
  glow:new THREE.MeshBasicMaterial({color:0xf2a65a,transparent:true,opacity:0.28,depthWrite:false,blending:THREE.AdditiveBlending})
@@ -1379,43 +1382,46 @@ function rawTerrainHeight(x,z){
 
 function terrainHeight(x,z){
  const raw = rawTerrainHeight(x, z);
- // Outside city limits, return natural undulating Martian dunes
- if(x < -80 || x > 72 || z < -54 || z > 54) return raw;
+ const r = Math.hypot(x, z);
+ if(r > 78) return raw;
 
  let fw = 0;
- // Main North-South Boulevard (x in [-4.5, 4.5], z in [-52, 52])
- const dBlvd = Math.max(0, Math.abs(x) - 4.2);
- if(dBlvd < 4.0 && z >= -52 && z <= 52) fw = Math.max(fw, 1 - dBlvd / 4.0);
+ // 1. Central Bio-Dome Crown & Pedestrian Plaza (Radius 0 to 24m)
+ if(r <= 24){
+   fw = 1.0;
+ } else if(r < 26){
+   fw = Math.max(fw, 1 - (r - 24) / 2);
+ }
 
- // North Avenue (z = -24, x in [-46, 46])
- const dNorth = Math.max(0, Math.abs(z - (-24)) - 2.6);
- if(dNorth < 3.5 && x >= -46 && x <= 46) fw = Math.max(fw, 1 - dNorth / 3.5);
+ // 2. Inner Ring Road (Radius 25.8 to 30.2m)
+ const dInnerRing = Math.abs(r - 28.0);
+ if(dInnerRing < 3.2) fw = Math.max(fw, 1 - dInnerRing / 3.2);
 
- // South Avenue (z = 24, x in [-46, 46])
- const dSouth = Math.max(0, Math.abs(z - 24) - 2.6);
- if(dSouth < 3.5 && x >= -46 && x <= 46) fw = Math.max(fw, 1 - dSouth / 3.5);
+ // 3. Outer Ring Road (Radius 43.8 to 48.2m)
+ const dOuterRing = Math.abs(r - 46.0);
+ if(dOuterRing < 3.2) fw = Math.max(fw, 1 - dOuterRing / 3.2);
 
- // Spaceport Expressway (z = 8, x in [0, 68])
- const dSp = Math.max(0, Math.abs(z - 8) - 3.2);
- if(dSp < 3.5 && x >= 0 && x <= 68) fw = Math.max(fw, 1 - dSp / 3.5);
+ // 4. Radial Spoke Avenues (Outside r >= 26m)
+ if(r >= 26){
+   // North & South Avenues (x ~ 0, z in [-56, -26] and [26, 56])
+   if(Math.abs(x) < 3.2 && Math.abs(z) <= 56) fw = Math.max(fw, 1 - Math.abs(x) / 3.2);
+   // West Avenue (z ~ 0, x in [-70, -26])
+   if(Math.abs(z) < 3.2 && x >= -72 && x <= -26) fw = Math.max(fw, 1 - Math.abs(z) / 3.2);
+   // East Spaceport Expressway (z ~ 0, x in [26, 68])
+   if(Math.abs(z) < 3.6 && x >= 26 && x <= 68) fw = Math.max(fw, 1 - Math.abs(z) / 3.6);
+ }
 
- // Service Loops (x = -44 and x = 44, z in [-24, 24])
- const dWSvc = Math.max(0, Math.abs(x - (-44)) - 2.2);
- if(dWSvc < 3.0 && z >= -24 && z <= 24) fw = Math.max(fw, 1 - dWSvc / 3.0);
- const dESvc = Math.max(0, Math.abs(x - 44) - 2.2);
- if(dESvc < 3.0 && z >= -24 && z <= 24) fw = Math.max(fw, 1 - dESvc / 3.0);
-
- // Flattening for Master-Planned Building Pads
+ // 5. Building Pads
  for(let i = 0; i < PREBUILT_BASE.length; i++){
-  const b = PREBUILT_BASE[i];
-  const t = TYPES[b[0]];
-  if(!t) continue;
-  const hw = (t.w || 8) * 0.5 + 1.2;
-  const hd = (t.d || 8) * 0.5 + 1.2;
-  const dx = Math.max(0, Math.abs(x - b[1]) - hw);
-  const dz = Math.max(0, Math.abs(z - b[2]) - hd);
-  const dist = Math.hypot(dx, dz);
-  if(dist < 3.5) fw = Math.max(fw, 1 - dist / 3.5);
+   const b = PREBUILT_BASE[i];
+   const t = TYPES[b[0]];
+   if(!t) continue;
+   const hw = (t.w || 8) * 0.5 + 1.2;
+   const hd = (t.d || 8) * 0.5 + 1.2;
+   const dx = Math.max(0, Math.abs(x - b[1]) - hw);
+   const dz = Math.max(0, Math.abs(z - b[2]) - hd);
+   const dist = Math.hypot(dx, dz);
+   if(dist < 3.2) fw = Math.max(fw, 1 - dist / 3.2);
  }
 
  fw = smooth(clamp(fw, 0, 1));
@@ -1908,16 +1914,23 @@ function updateMinimap(){
  }
 
 
- // Render Master-Plan Road Grid on Satellite Radar
- ctx.strokeStyle='rgba(242,166,90,0.35)';
+ // Render Circular Concentric Road Grid on Satellite Radar
+ ctx.strokeStyle='rgba(242,166,90,0.4)';
  ctx.lineWidth=1.5;
+ // Inner Ring Road (R = 28m)
  ctx.beginPath();
- ctx.moveTo(toX(0),toY(-52));ctx.lineTo(toX(0),toY(52)); // Main Blvd
- ctx.moveTo(toX(-48),toY(-24));ctx.lineTo(toX(44),toY(-24)); // North Ave
- ctx.moveTo(toX(-48),toY(24));ctx.lineTo(toX(44),toY(24)); // South Ave
- ctx.moveTo(toX(0),toY(8));ctx.lineTo(toX(56),toY(8)); // Spaceport Expy
- ctx.moveTo(toX(-44),toY(-24));ctx.lineTo(toX(-44),toY(24));ctx.lineTo(toX(-64),toY(20)); // West Loop
- ctx.moveTo(toX(44),toY(-24));ctx.lineTo(toX(44),toY(24)); // East Loop
+ ctx.arc(toX(0), toY(0), (28/224)*w, 0, Math.PI * 2);
+ ctx.stroke();
+ // Outer Ring Road (R = 46m)
+ ctx.beginPath();
+ ctx.arc(toX(0), toY(0), (46/224)*w, 0, Math.PI * 2);
+ ctx.stroke();
+ // 4 Radial Spoke Avenues
+ ctx.beginPath();
+ ctx.moveTo(toX(0), toY(-26)); ctx.lineTo(toX(0), toY(-54)); // North
+ ctx.moveTo(toX(0), toY(26)); ctx.lineTo(toX(0), toY(54));   // South
+ ctx.moveTo(toX(-26), toY(0)); ctx.lineTo(toX(-66), toY(0)); // West
+ ctx.moveTo(toX(26), toY(0)); ctx.lineTo(toX(56), toY(0));   // East Spaceport
  ctx.stroke();
 
  // 2. Render Ore Deposits
@@ -3422,6 +3435,15 @@ $('beginBtn').onclick=()=>{
   logEvent('ARES-1 pre-built base initialization sequence confirmed','SYSTEM');
   audio.play('grow');
 };
+if($('missionPopupBtn')){
+  $('missionPopupBtn').onclick = () => {
+    if(typeof switchGuideTab === 'function'){
+      $('guideModal').style.display = 'flex';
+      switchGuideTab('missions');
+      audio.play('select');
+    }
+  };
+}
 if($('beginScratchBtn')){
   $('beginScratchBtn').onclick=()=>{
     audio.init();
@@ -3442,8 +3464,8 @@ if($('clearBaseBtn')){
     let est = 0;
     const coreHab = buildings.find(b => b.core || b.id === coreId) || buildings.find(b => b.type === 'habitat');
     const pad = buildings.find(b => b.type === 'landing');
-    const oneSolar = buildings.find(b => b.type === 'solar' && b.x === -48 && b.z === 8) || buildings.find(b => b.type === 'solar');
-    const tunnel = buildings.find(b => b.type === 'tunnel' && Math.hypot(b.x - (coreHab ? coreHab.x : -16), b.z - (coreHab ? coreHab.z : -8)) < 9);
+    const oneSolar = buildings.find(b => b.type === 'solar' && b.x === -40 && b.z === 12) || buildings.find(b => b.type === 'solar');
+    const tunnel = buildings.find(b => b.type === 'tunnel' && Math.hypot(b.x - (coreHab ? coreHab.x : 0), b.z - (coreHab ? coreHab.z : 0)) < 9);
     const keptIds = new Set([coreHab?.id, pad?.id, oneSolar?.id, tunnel?.id].filter(Boolean));
     for(const b of buildings){
       if(!keptIds.has(b.id)) est += (TYPES[b.type]?.cost || 20) * 0.5;
@@ -3473,88 +3495,64 @@ function makeBuildMenu(){const menu=$('buildMenu');for(const [key,t] of Object.e
 
 // ==================== PREBUILT BASE & INFRASTRUCTURE SYSTEM ====================
 const PREBUILT_BASE = [
-  // ==================== 1. CORE / RESIDENTIAL DISTRICT (Center Spine) ====================
-  // 4 Habitats (8x8) in symmetrical blocks along Main Boulevard
-  ['habitat', -16, -8, 0, { core: true, district: 'RESIDENTIAL' }],
-  ['habitat', -16, 8, 0, { district: 'RESIDENTIAL' }],
-  ['habitat', 16, -8, 0, { district: 'RESIDENTIAL' }],
-  ['habitat', 16, 8, 0, { district: 'RESIDENTIAL' }],
+  // ==================== 1. THE CROWN: CENTRAL DOME COMPLEX (R <= 28.5m) ====================
+  ['habitat', 0, 0, 0, { core: true, district: 'THE CROWN' }],
+  ['tunnel', 0, -8, 0, { district: 'THE CROWN' }],
+  ['tunnel', 0, 8, 0, { district: 'THE CROWN' }],
+  ['tunnel', -8, 0, 0, { district: 'THE CROWN' }],
+  ['tunnel', 8, 0, 0, { district: 'THE CROWN' }],
+  ['greenhouse', 0, -16, 0, { district: 'LIFE SUPPORT' }],
+  ['greenhouse', 0, 16, 0, { district: 'LIFE SUPPORT' }],
+  ['isru', -16, 0, 0, { district: 'LIFE SUPPORT' }],
+  ['lab', 16, 0, 0, { district: 'RESEARCH' }],
+  ['tunnel', -8, -16, 0, { district: 'RESIDENTIAL' }],
+  ['habitat', -16, -16, 0, { district: 'RESIDENTIAL' }],
+  ['tunnel', 8, -16, 0, { district: 'RESIDENTIAL' }],
+  ['habitat', 16, -16, 0, { district: 'RESIDENTIAL' }],
+  ['tunnel', -8, 16, 0, { district: 'RESIDENTIAL' }],
+  ['habitat', -16, 16, 0, { district: 'RESIDENTIAL' }],
 
-  // Straight Hermetic Connecting Tunnels
-  ['tunnel', -16, 0, 0, { district: 'RESIDENTIAL' }], // West Hab link
-  ['tunnel', 16, 0, 0, { district: 'RESIDENTIAL' }],  // East Hab link
+  // Central Core Power Pylons (R <= 26m)
+  ['pylon', -24, -8, 0, { district: 'POWER' }],
+  ['pylon', 24, -8, 0, { district: 'POWER' }],
+  ['pylon', -24, 8, 0, { district: 'POWER' }],
+  ['pylon', 24, 8, 0, { district: 'POWER' }],
 
-  // Cross-Boulevard Plaza Hermetic Walkway
-  ['tunnel', -8, 0, 0, { district: 'RESIDENTIAL' }],
-  ['tunnel', 0, 0, 0, { district: 'RESIDENTIAL' }],
-  ['tunnel', 8, 0, 0, { district: 'RESIDENTIAL' }],
+  // ==================== 2. INTER-RING SECTOR QUADRANTS (R between 38m and 60m) ====================
+  // Quadrant 1: NW Energy Complex (Nuclear Reactor + Batteries)
+  ['reactor', -36, -36, 0, { district: 'POWER' }],
+  ['battery', -48, -20, 0, { district: 'POWER' }],
+  ['battery', -20, -48, 0, { district: 'POWER' }],
+  ['pylon', -38, -20, 0, { district: 'POWER' }],
 
-  // ==================== 2. LIFE SUPPORT DISTRICT (North Avenue) ====================
-  // 2 Greenhouses (12x8) in parallel row
-  ['greenhouse', -16, -24, 0, { district: 'LIFE SUPPORT' }],
-  ['greenhouse', 16, -24, 0, { district: 'LIFE SUPPORT' }],
+  // Quadrant 2: SW Resource Extraction & Refinery
+  ['miner', -34, 34, 0, { district: 'EXTRACTION' }],
+  ['drill_iron', -48, 20, 0, { district: 'EXTRACTION' }],
+  ['drill_co2', -20, 46, 0, { district: 'EXTRACTION' }],
+  ['storage', -44, 28, 0, { district: 'EXTRACTION' }],
+  ['pylon', -38, 20, 0, { district: 'POWER' }],
+  ['pylon', -20, 38, 0, { district: 'POWER' }],
 
-  // Hermetic Tunnels linking Residential Core to Greenhouses
-  ['tunnel', -16, -16, 0, { district: 'LIFE SUPPORT' }],
-  ['tunnel', 16, -16, 0, { district: 'LIFE SUPPORT' }],
+  // Quadrant 3: NE Telemetry & Rover Operations
+  ['radar', 36, -36, 0, { district: 'TELEMETRY' }],
+  ['garage', 20, -48, 0, { district: 'LOGISTICS' }],
+  ['storage', 48, -20, 0, { district: 'LOGISTICS' }],
+  ['pylon', 20, -36, 0, { district: 'POWER' }],
+  ['pylon', 38, -20, 0, { district: 'POWER' }],
 
-  // 1 Oxygen ISRU Plant (12x8) & connecting tunnel
-  ['isru', -32, -24, 0, { district: 'LIFE SUPPORT' }],
-  ['tunnel', -24, -24, 0, { district: 'LIFE SUPPORT' }],
+  // Quadrant 4: SE Spaceport Logistics
+  ['garage', 36, 36, 0, { district: 'LOGISTICS' }],
+  ['pylon', 38, 20, 0, { district: 'POWER' }],
 
-  // 1 CO2 Sublimator (10x8) near Thermal Vent deposit
-  ['drill_co2', -20, -40, 0, { district: 'LIFE SUPPORT' }],
+  // ==================== 3. SPACEPORT APRON (East District, R > 66m) ====================
+  ['landing', 78, 0, 0, { district: 'SPACEPORT' }],
+  ['pylon', 68, 12, 0, { district: 'POWER' }],
 
-  // ==================== 3. COMMS & RESEARCH DISTRICT (East Flank) ====================
-  // 1 Research Lab (12x8) & connecting tunnel
-  ['lab', 32, -8, 0, { district: 'RESEARCH' }],
-  ['tunnel', 24, -8, 0, { district: 'RESEARCH' }],
-
-  // 1 Radar / Comms Dish (8x8) on elevated survey rise
-  ['radar', 32, -24, 0, { district: 'RESEARCH' }],
-
-  // ==================== 4. POWER FIELD DISTRICT (South-West Quadrant) ====================
-  // 3 Solar Arrays (8x8) in strict column grid (4m equal gap)
-  ['solar', -48, 8, 0, { district: 'POWER FIELD' }],
-  ['solar', -48, 20, 0, { district: 'POWER FIELD' }],
-  ['solar', -48, 32, 0, { district: 'POWER FIELD' }],
-
-  // 1 Nuclear Reactor (12x12) isolated with safety perimeter buffer
-  ['reactor', -68, 20, 0, { district: 'POWER FIELD' }],
-
-  // 2 Battery Banks (8x8)
-  ['battery', -32, 12, 0, { district: 'POWER FIELD' }],
-  ['battery', -32, 24, 0, { district: 'POWER FIELD' }],
-
-  // Power Corridor Pylons linking Nuclear & Solar to Core
-  ['pylon', -24, 8, 0, { district: 'POWER FIELD' }],
-  ['pylon', -40, 20, 0, { district: 'POWER FIELD' }],
-  ['pylon', -56, 20, 0, { district: 'POWER FIELD' }],
-
-  // ==================== 5. INDUSTRIAL & MINING DISTRICT (South Sector) ====================
-  // 1 Rover Garage (12x12) at district entrance
-  ['garage', -16, 28, 0, { district: 'INDUSTRIAL' }],
-
-  // 2 Storage Hubs (8x8)
-  ['storage', 16, 24, 0, { district: 'INDUSTRIAL' }],
-  ['storage', 16, 36, 0, { district: 'INDUSTRIAL' }],
-
-  // Resource Drills on deposits
-  ['miner', 32, -40, 0, { district: 'INDUSTRIAL' }],     // Water Ice Drill on Permafrost Glade beta
-  ['drill_iron', -36, 44, 0, { district: 'INDUSTRIAL' }], // Iron Ore Drill on Basalt Ridge Fe-1
-
-  // Industrial Substation Pylons
-  ['pylon', -28, 36, 0, { district: 'INDUSTRIAL' }],
-  ['pylon', -20, -32, 0, { district: 'INDUSTRIAL' }],
-  ['pylon', 32, -32, 0, { district: 'INDUSTRIAL' }],
-
-  // ==================== 6. SPACEPORT DISTRICT (East Expressway Terminus) ====================
-  // 1 Landing Pad (16x16) with approach clearway
-  ['landing', 56, 8, 0, { district: 'SPACEPORT' }],
-
-  // Spaceport Power Pylons
-  ['pylon', 32, 8, 0, { district: 'SPACEPORT' }],
-  ['pylon', 44, 8, 0, { district: 'SPACEPORT' }]
+  // ==================== 4. POWER FIELD (Solar Arrays in North / NW Outer Fields) ====================
+  ['solar', -74, -20, 0, { district: 'POWER' }],
+  ['solar', -74, -32, 0, { district: 'POWER' }],
+  ['solar', -74, -44, 0, { district: 'POWER' }],
+  ['pylon', -74, -8, 0, { district: 'POWER' }]
 ];
 
 const KEEP_TYPES = ['habitat', 'landing', 'solar', 'tunnel'];
@@ -3615,144 +3613,142 @@ function buildInfrastructure(){
     disposeGroup(infraGroup);
   }
   infraGroup = new THREE.Group();
-  infraGroup.name = 'city_infrastructure';
+  infraGroup.name = 'circular_city_infrastructure';
   cityPointLights = [];
 
   // -------------------------------------------------------------
-  // 1. MASTER-PLANNED ROAD RIBBONS WITH CURBS & DASHED MARKINGS
+  // 1. MARTIAN BASALT CONCENTRIC RING ROADS & RADIAL SPOKE AVENUES
   // -------------------------------------------------------------
-  const roadSegments = [
-    // Main Boulevard (North-South central spine, 7.6m wide)
-    { x0: 0, z0: -52, x1: 0, z1: 52, w: 7.6, type: 'boulevard' },
-    // North Avenue (East-West Life Support & Comms corridor, 4.6m wide)
-    { x0: -48, z0: -24, x1: 44, z1: -24, w: 4.6, type: 'avenue' },
-    // South Avenue (East-West Industrial & Mining corridor, 4.6m wide)
-    { x0: -48, z0: 24, x1: 44, z1: 24, w: 4.6, type: 'avenue' },
-    // Spaceport Expressway (5.6m wide)
-    { x0: 0, z0: 8, x1: 56, z1: 8, w: 5.6, type: 'expressway' },
-    // West Service Loop (Servicing Solar & Power corridor, 3.8m wide)
-    { x0: -44, z0: -24, x1: -44, z1: 24, w: 3.8, type: 'service' },
-    // Reactor Access Spur
-    { x0: -44, z0: 20, x1: -64, z1: 20, w: 3.8, type: 'service' },
-    // East Service Loop (Servicing Research & Storage, 3.8m wide)
-    { x0: 44, z0: -24, x1: 44, z1: 24, w: 3.8, type: 'service' },
-    // Mining Access Roads
-    { x0: 32, z0: -24, x1: 32, z1: -40, w: 3.8, type: 'service' },
-    { x0: -36, z0: 24, x1: -36, z1: 44, w: 3.8, type: 'service' }
+  // Helper to build ring road ribbon
+  function addRingRoad(innerR, outerR, segs = 64){
+    const roadRing = new THREE.Mesh(new THREE.RingGeometry(innerR, outerR, segs), MAT.asphalt);
+    roadRing.rotation.x = -Math.PI / 2;
+    roadRing.position.set(0, 0.04, 0);
+    roadRing.receiveShadow = true;
+    infraGroup.add(roadRing);
+
+    // Inner & Outer Curb Borders (Terra-Cotta Basalt Dust)
+    const curbIn = new THREE.Mesh(new THREE.RingGeometry(innerR - 0.22, innerR, segs), MAT.curb);
+    curbIn.rotation.x = -Math.PI / 2;
+    curbIn.position.set(0, 0.045, 0);
+    infraGroup.add(curbIn);
+
+    const curbOut = new THREE.Mesh(new THREE.RingGeometry(outerR, outerR + 0.22, segs), MAT.curb);
+    curbOut.rotation.x = -Math.PI / 2;
+    curbOut.position.set(0, 0.045, 0);
+    infraGroup.add(curbOut);
+
+    // Dashed Center Arc
+    const midR = (innerR + outerR) * 0.5;
+    for(let i = 0; i < segs; i += 2){
+      const a0 = (i / segs) * Math.PI * 2;
+      const a1 = ((i + 0.75) / segs) * Math.PI * 2;
+      const dash = new THREE.Mesh(new THREE.RingGeometry(midR - 0.12, midR + 0.12, 4, 1, a0, a1 - a0), MAT.marking);
+      dash.rotation.x = -Math.PI / 2;
+      dash.position.set(0, 0.05, 0);
+      infraGroup.add(dash);
+    }
+  }
+
+  // Inner Ring Road (Center R = 34m, width 4m: inner 32.0 to outer 36.0, clears central bio-domes)
+  addRingRoad(32.0, 36.0, 72);
+
+  // Outer Ring Road (Center R = 64m, width 4m: inner 62.0 to outer 66.0, encircles all sector quadrants)
+  addRingRoad(62.0, 66.0, 96);
+
+  // Radial Spoke Avenues (linking Inner Ring to Outer Ring without intersecting central tunnels or structures)
+  const radialAvenues = [
+    // North Spoke Avenue: connects Inner Ring to Outer Ring along North meridian
+    { x0: 0, z0: -36, x1: 0, z1: -62, w: 4.0 },
+    // South Spoke Avenue: connects Inner Ring to Outer Ring along South meridian
+    { x0: 0, z0: 36, x1: 0, z1: 62, w: 4.0 },
+    // West Spoke Avenue: connects Inner Ring to Outer Ring along West meridian
+    { x0: -36, z0: 0, x1: -62, z1: 0, w: 4.0 },
+    // East Spaceport Expressway: connects Inner Ring past Outer Ring directly to Spaceport Apron
+    { x0: 36, z0: 0, x1: 70, z1: 0, w: 4.6 }
   ];
 
-  for(const seg of roadSegments){
+  for(const seg of radialAvenues){
     const dx = seg.x1 - seg.x0, dz = seg.z1 - seg.z0;
     const len = Math.hypot(dx, dz);
     const angle = Math.atan2(dz, dx);
-    const steps = Math.max(2, Math.ceil(len / 4.0));
+    const mx = (seg.x0 + seg.x1) * 0.5, mz = (seg.z0 + seg.z1) * 0.5;
+    const y = terrainHeight(mx, mz) + 0.04;
 
-    for(let s = 0; s < steps; s++){
-      const t1 = s / steps, t2 = (s + 1) / steps;
-      const mx = seg.x0 + dx * (t1 + t2) * 0.5;
-      const mz = seg.z0 + dz * (t1 + t2) * 0.5;
-      const segLen = len / steps;
-      const y = terrainHeight(mx, mz) + 0.04;
+    const roadPlane = new THREE.Mesh(new THREE.PlaneGeometry(len, seg.w), MAT.asphalt);
+    roadPlane.rotation.x = -Math.PI / 2;
+    roadPlane.rotation.z = -angle;
+    roadPlane.position.set(mx, y, mz);
+    roadPlane.receiveShadow = true;
+    infraGroup.add(roadPlane);
 
-      // Main Road Asphalt Slab
-      const roadPlane = new THREE.Mesh(new THREE.PlaneGeometry(segLen, seg.w), MAT.asphalt);
-      roadPlane.rotation.x = -Math.PI / 2;
-      roadPlane.rotation.z = -angle;
-      roadPlane.position.set(mx, y, mz);
-      roadPlane.receiveShadow = true;
-      infraGroup.add(roadPlane);
+    // Curbs
+    const curbW = 0.22;
+    const px = -Math.sin(angle) * (seg.w * 0.5 - curbW * 0.5);
+    const pz = Math.cos(angle) * (seg.w * 0.5 - curbW * 0.5);
 
-      // Outer Curb Stripes (left & right)
-      const curbWidth = 0.22;
-      const perpX = -Math.sin(angle) * (seg.w * 0.5 - curbWidth * 0.5);
-      const perpZ = Math.cos(angle) * (seg.w * 0.5 - curbWidth * 0.5);
+    const curbL = new THREE.Mesh(new THREE.PlaneGeometry(len, curbW), MAT.curb);
+    curbL.rotation.x = -Math.PI / 2;
+    curbL.rotation.z = -angle;
+    curbL.position.set(mx + px, y + 0.005, mz + pz);
+    infraGroup.add(curbL);
 
-      const curbL = new THREE.Mesh(new THREE.PlaneGeometry(segLen, curbWidth), MAT.curb);
-      curbL.rotation.x = -Math.PI / 2;
-      curbL.rotation.z = -angle;
-      curbL.position.set(mx + perpX, y + 0.005, mz + perpZ);
-      infraGroup.add(curbL);
+    const curbR = new THREE.Mesh(new THREE.PlaneGeometry(len, curbW), MAT.curb);
+    curbR.rotation.x = -Math.PI / 2;
+    curbR.rotation.z = -angle;
+    curbR.position.set(mx - px, y + 0.005, mz - pz);
+    infraGroup.add(curbR);
 
-      const curbR = new THREE.Mesh(new THREE.PlaneGeometry(segLen, curbWidth), MAT.curb);
-      curbR.rotation.x = -Math.PI / 2;
-      curbR.rotation.z = -angle;
-      curbR.position.set(mx - perpX, y + 0.005, mz - perpZ);
-      infraGroup.add(curbR);
-
-      // Center Lane Dashed Marking (for Boulevard & Expressway)
-      if((seg.type === 'boulevard' || seg.type === 'expressway') && s % 2 === 0){
-        const mark = new THREE.Mesh(new THREE.PlaneGeometry(segLen * 0.65, 0.22), MAT.marking);
-        mark.rotation.x = -Math.PI / 2;
-        mark.rotation.z = -angle;
-        mark.position.set(mx, y + 0.008, mz);
-        infraGroup.add(mark);
-      }
+    // Center dashed marking
+    const steps = Math.max(2, Math.floor(len / 4.0));
+    for(let s = 0; s < steps; s += 2){
+      const t = (s + 0.5) / steps;
+      const dX = seg.x0 + dx * t, dZ = seg.z0 + dz * t;
+      const dash = new THREE.Mesh(new THREE.PlaneGeometry(len / steps * 0.65, 0.2), MAT.marking);
+      dash.rotation.x = -Math.PI / 2;
+      dash.rotation.z = -angle;
+      dash.position.set(dX, y + 0.008, dZ);
+      infraGroup.add(dash);
     }
   }
 
   // -------------------------------------------------------------
-  // 2. PEDESTRIAN WALKWAYS (Connecting Hermetic Quarters & Domes)
+  // 2. PEDESTRIAN WALKWAY COURTYARD (Inside the Central Bio-Dome Crown)
   // -------------------------------------------------------------
-  const walkways = [
-    // West Habs to Central Plaza
-    { x0: -16, z0: -8, x1: 0, z1: 0 },
-    { x0: -16, z0: 8, x1: 0, z1: 0 },
-    // East Habs to Central Plaza
-    { x0: 16, z0: -8, x1: 0, z1: 0 },
-    { x0: 16, z0: 8, x1: 0, z1: 0 },
-    // Hab to Greenhouses
-    { x0: -16, z0: -8, x1: -16, z1: -24 },
-    { x0: 16, z0: -8, x1: 16, z1: -24 },
-    // East Hab to Research Lab
-    { x0: 16, z0: -8, x1: 32, z1: -8 }
-  ];
-
-  for(const walk of walkways){
-    const dx = walk.x1 - walk.x0, dz = walk.y1 || (walk.z1 - walk.z0);
-    const len = Math.hypot(dx, dz);
-    const angle = Math.atan2(dz, dx);
-    const mx = (walk.x0 + walk.x1) * 0.5;
-    const mz = (walk.z0 + walk.z1) * 0.5;
-    const y = terrainHeight(mx, mz) + 0.055;
-    const walkMesh = new THREE.Mesh(new THREE.PlaneGeometry(len, 1.3), MAT.walkway);
-    walkMesh.rotation.x = -Math.PI / 2;
-    walkMesh.rotation.z = -angle;
-    walkMesh.position.set(mx, y, mz);
-    infraGroup.add(walkMesh);
-  }
+  const walkwayRing = new THREE.Mesh(new THREE.RingGeometry(18.5, 20.0, 32), MAT.walkway);
+  walkwayRing.rotation.x = -Math.PI / 2;
+  walkwayRing.position.set(0, 0.055, 0);
+  infraGroup.add(walkwayRing);
 
   // -------------------------------------------------------------
-  // 3. INSTANCED STREETLIGHTS & PROJECTED GROUND GLOW POOLS
+  // 3. INSTANCED STREETLIGHTS ALONG CIRCULAR RINGS & RADIAL AVENUES
   // -------------------------------------------------------------
   const streetLightCoords = [];
-  // Along Boulevard (left & right sides every 12 units)
-  for(let z = -48; z <= 48; z += 12){
-    streetLightCoords.push({ x: -4.4, z: z, rot: Math.PI * 0.5 });
-    streetLightCoords.push({ x: 4.4, z: z, rot: -Math.PI * 0.5 });
+  // 16 Streetlights on Inner Ring Road outer curb (R = 36.8m)
+  for(let i = 0; i < 16; i++){
+    const ang = (i / 16) * Math.PI * 2;
+    if (Math.abs(Math.sin(ang)) < 0.15 || Math.abs(Math.cos(ang)) < 0.15) continue;
+    streetLightCoords.push({ x: Math.cos(ang) * 36.8, z: Math.sin(ang) * 36.8, rot: ang + Math.PI });
   }
-  // Along North Avenue
-  for(const x of [-40, -28, -16, 16, 28, 40]){
-    streetLightCoords.push({ x: x, z: -26.8, rot: 0 });
-    streetLightCoords.push({ x: x, z: -21.2, rot: Math.PI });
+  // 24 Streetlights on Outer Ring Road inner curb (R = 61.2m)
+  for(let i = 0; i < 24; i++){
+    const ang = (i / 24) * Math.PI * 2;
+    if (Math.abs(Math.sin(ang)) < 0.12 || Math.abs(Math.cos(ang)) < 0.12) continue;
+    streetLightCoords.push({ x: Math.cos(ang) * 61.2, z: Math.sin(ang) * 61.2, rot: ang });
   }
-  // Along South Avenue
-  for(const x of [-40, -28, -16, 16, 28, 40]){
-    streetLightCoords.push({ x: x, z: 21.2, rot: 0 });
-    streetLightCoords.push({ x: x, z: 26.8, rot: Math.PI });
+  // Streetlights along East Spaceport Expressway
+  for(const x of [42, 52, 62]){
+    streetLightCoords.push({ x: x, z: 2.8, rot: 0 });
+    streetLightCoords.push({ x: x, z: -2.8, rot: Math.PI });
   }
-  // Along Spaceport Expressway
-  for(const x of [12, 24, 36, 48]){
-    streetLightCoords.push({ x: x, z: 5.2, rot: 0 });
-    streetLightCoords.push({ x: x, z: 10.8, rot: Math.PI });
-  }
-  // Spaceport Landing Pad Corner Floodlights
-  const padLights = [
-    { x: 48, z: 0, rot: Math.PI * 0.25, mast: true },
-    { x: 64, z: 0, rot: Math.PI * 0.75, mast: true },
-    { x: 48, z: 16, rot: -Math.PI * 0.25, mast: true },
-    { x: 64, z: 16, rot: -Math.PI * 0.75, mast: true }
+  // Spaceport Landing Pad Corner Masts (Landing pad at x=78, z=0, size 16x16: bounds [70, 86] x [-8, 8])
+  const padCornerLights = [
+    { x: 70, z: -8, rot: Math.PI * 0.25, mast: true },
+    { x: 86, z: -8, rot: Math.PI * 0.75, mast: true },
+    { x: 70, z: 8, rot: -Math.PI * 0.25, mast: true },
+    { x: 86, z: 8, rot: -Math.PI * 0.75, mast: true }
   ];
-  streetLightCoords.push(...padLights);
+  streetLightCoords.push(...padCornerLights);
 
   const numLights = streetLightCoords.length;
   const poleGeo = new THREE.CylinderGeometry(0.08, 0.1, 3.4, 8);
@@ -3774,14 +3770,12 @@ function buildInfrastructure(){
     const y = terrainHeight(sl.x, sl.z);
     const mastScale = sl.mast ? 1.45 : 1.0;
 
-    // Pole transform
     dummy.position.set(sl.x, y + 1.7 * mastScale, sl.z);
     dummy.scale.set(1, mastScale, 1);
     dummy.rotation.set(0, sl.rot, 0);
     dummy.updateMatrix();
     poleInstanced.setMatrixAt(i, dummy.matrix);
 
-    // Lamp fixture transform
     const armX = sl.x + Math.sin(sl.rot) * 0.45;
     const armZ = sl.z + Math.cos(sl.rot) * 0.45;
     dummy.position.set(armX, y + 3.35 * mastScale, armZ);
@@ -3790,7 +3784,6 @@ function buildInfrastructure(){
     dummy.updateMatrix();
     lampInstanced.setMatrixAt(i, dummy.matrix);
 
-    // Projected ground glow pool
     dummy.position.set(armX, y + 0.05, armZ);
     dummy.scale.set(mastScale, mastScale, mastScale);
     dummy.rotation.set(-Math.PI / 2, 0, 0);
@@ -3807,16 +3800,17 @@ function buildInfrastructure(){
   infraGroup.add(glowInstanced);
 
   // -------------------------------------------------------------
-  // 4. REAL POINT LIGHTS AT KEY BOULEVARD INTERSECTIONS
+  // 4. REAL POINT LIGHTS AT THE 4 CARDINAL RING INTERSECTIONS
   // -------------------------------------------------------------
-  const keyIntersections = [
-    { x: 0, z: 0, color: 0xffe2a4, intensity: 1.8 },      // Central Plaza
-    { x: 0, z: -24, color: 0xffd18a, intensity: 1.5 },    // North Avenue
-    { x: 0, z: 24, color: 0xffd18a, intensity: 1.5 },     // South Avenue
-    { x: 56, z: 8, color: 0x7fd9ce, intensity: 2.2 }      // Spaceport Terminal
+  const keyRingIntersections = [
+    { x: 0, z: -28, color: 0xffd18a, intensity: 1.6 }, // North Ring Gate
+    { x: 0, z: 28, color: 0xffd18a, intensity: 1.6 },  // South Ring Gate
+    { x: -28, z: 0, color: 0xffd18a, intensity: 1.6 }, // West Ring Gate
+    { x: 28, z: 0, color: 0xffd18a, intensity: 1.6 },  // East Spaceport Gate
+    { x: 78, z: 0, color: 0x7fd9ce, intensity: 2.2 }   // Spaceport Terminal
   ];
 
-  for(const pt of keyIntersections){
+  for(const pt of keyRingIntersections){
     const pl = new THREE.PointLight(pt.color, pt.intensity, 28, 1.8);
     pl.position.set(pt.x, terrainHeight(pt.x, pt.z) + 4.2, pt.z);
     pl.userData.isLight = true;
@@ -3825,44 +3819,14 @@ function buildInfrastructure(){
   }
 
   // -------------------------------------------------------------
-  // 5. INDUSTRIAL PIPELINES & ROAD CONDUITS
+  // 5. SPACEPORT SECURITY BARRIER & TARGET MARKINGS
   // -------------------------------------------------------------
-  const pipeMat = new THREE.MeshStandardMaterial({ color: 0x9fa5ad, roughness: 0.32, metalness: 0.85 });
-  const pipeRuns = [
-    // Water Ice Drill (32, -40) -> North Avenue to Greenhouses
-    [ [32, -40], [32, -26], [16, -26], [0, -26], [-16, -26], [-32, -26] ],
-    // CO2 Sublimator (-20, -40) -> Oxygen ISRU (-32, -24)
-    [ [-20, -40], [-20, -26], [-32, -26] ]
-  ];
-
-  for(const run of pipeRuns){
-    for(let i = 0; i < run.length - 1; i++){
-      const a = run[i], b = run[i+1];
-      const ay = terrainHeight(a[0], a[1]) + 0.42;
-      const by = terrainHeight(b[0], b[1]) + 0.42;
-      cylinderBetween(infraGroup, pipeMat, V3(a[0], ay, a[1]), V3(b[0], by, b[1]), 0.16);
-      const dist = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      const stanchions = Math.max(1, Math.floor(dist / 6.5));
-      for(let s = 1; s <= stanchions; s++){
-        const f = s / (stanchions + 1);
-        const sx = lerp(a[0], b[0], f), sz = lerp(a[1], b[1], f);
-        const sy = terrainHeight(sx, sz);
-        cyl(infraGroup, MAT.dark, sx, sy + 0.22, sz, 0.06, 0.44, 8);
-      }
-    }
-  }
-
-  // -------------------------------------------------------------
-  // 6. SPACEPORT SECURITY PERIMETER & PAD TARGET MARKING
-  // -------------------------------------------------------------
-  const padX = 56, padZ = 8, padH = terrainHeight(padX, padZ) + 0.18;
-  // Landing Pad Helipad Decal Ring & Target Cross
+  const padX = 78, padZ = 0, padH = terrainHeight(padX, padZ) + 0.18;
   const targetRing = new THREE.Mesh(new THREE.RingGeometry(4.2, 4.6, 32), MAT.marking);
   targetRing.rotation.x = -Math.PI / 2;
   targetRing.position.set(padX, padH + 0.02, padZ);
   infraGroup.add(targetRing);
 
-  // Perimeter barrier bollards around landing pad
   for(let i = 0; i < 16; i++){
     const ang = (i / 16) * Math.PI * 2;
     const bx = padX + Math.cos(ang) * 8.6;
@@ -3874,37 +3838,37 @@ function buildInfrastructure(){
   }
 
   // -------------------------------------------------------------
-  // 7. DISTRICT HOLOGRAPHIC LABELS (Shown with LABELS toggle)
+  // 6. DISTRICT HOLOGRAPHIC LABELS
   // -------------------------------------------------------------
   districtLabelsGroup = new THREE.Group();
   districtLabelsGroup.name = 'district_labels';
-  const districtMarkers = [
-    { text: 'CORE RESIDENTIAL DISTRICT', x: 0, z: 0, color: '#55e2cf' },
-    { text: 'LIFE SUPPORT COMPLEX', x: 0, z: -24, color: '#8ed6ad' },
-    { text: 'POWER GENERATION FIELD', x: -48, z: 20, color: '#f2a65a' },
-    { text: 'INDUSTRIAL & MINING PARK', x: 0, z: 24, color: '#ffd277' },
-    { text: 'ARES SPACEPORT TERMINAL', x: 56, z: 8, color: '#6ad5ff' },
-    { text: 'COMMS & ADVANCED RESEARCH', x: 32, z: -16, color: '#c988e8' }
+  const circularDistrictMarkers = [
+    { text: 'THE CROWN · CENTRAL COMMAND DOME', x: 0, z: 0, color: '#55e2cf' },
+    { text: 'LIFE SUPPORT & ATMO SECTOR', x: 0, z: -28, color: '#8ed6ad' },
+    { text: 'POWER GENERATION ARC', x: -38, z: 20, color: '#f2a65a' },
+    { text: 'INDUSTRIAL & MINING PARK', x: 0, z: 28, color: '#ffd277' },
+    { text: 'ARES SPACEPORT TERMINAL', x: 78, z: 0, color: '#6ad5ff' },
+    { text: 'COMMS & PLANETARY RESEARCH', x: 28, z: -28, color: '#c988e8' }
   ];
 
-  for(const dm of districtMarkers){
+  for(const dm of circularDistrictMarkers){
     const canvas = document.createElement('canvas');
-    canvas.width = 320; canvas.height = 48;
+    canvas.width = 340; canvas.height = 48;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'rgba(20, 16, 14, 0.75)';
+    ctx.fillStyle = 'rgba(20, 16, 14, 0.78)';
     ctx.strokeStyle = dm.color;
     ctx.lineWidth = 2;
-    ctx.strokeRect(2, 2, 316, 44);
-    ctx.fillRect(2, 2, 316, 44);
+    ctx.strokeRect(2, 2, 336, 44);
+    ctx.fillRect(2, 2, 336, 44);
     ctx.fillStyle = dm.color;
-    ctx.font = 'bold 14px monospace';
+    ctx.font = 'bold 13px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('⬡ ' + dm.text, 160, 28);
+    ctx.fillText('⬡ ' + dm.text, 170, 28);
 
     const tex = new THREE.CanvasTexture(canvas);
-    const sprMat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.9 });
+    const sprMat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.92 });
     const sprite = new THREE.Sprite(sprMat);
-    sprite.scale.set(16, 2.4, 1);
+    sprite.scale.set(17, 2.4, 1);
     sprite.position.set(dm.x, terrainHeight(dm.x, dm.z) + 7.5, dm.z);
     districtLabelsGroup.add(sprite);
   }
@@ -4004,11 +3968,21 @@ function restorePrebuiltBase(){
   syncAgents();
 
   roverRoute = new THREE.CatmullRomCurve3([
-    V3(-16, 0.15, 24), V3(0, 0.15, 24), V3(0, 0.15, 8), V3(44, 0.15, 8),
-    V3(56, 0.15, 8), V3(44, 0.15, 8), V3(0, 0.15, 8), V3(0, 0.15, -24),
-    V3(32, 0.15, -24), V3(32, 0.15, -36), V3(16, 0.15, -24), V3(0, 0.15, -24),
-    V3(-32, 0.15, -24), V3(-44, 0.15, -24), V3(-44, 0.15, 0), V3(-44, 0.15, 24),
-    V3(-32, 0.15, 24), V3(-16, 0.15, 24)
+    V3(16, 0.15, 28),   // Garage exit
+    V3(0, 0.15, 28),    // South Ring Gate
+    V3(20, 0.15, 20),   // Inner Ring Southeast arc
+    V3(28, 0.15, 0),    // East Ring Gate
+    V3(44, 0.15, 0),    // Spaceport Expressway
+    V3(56, 0.15, 0),    // Landing Pad terminal loop
+    V3(44, 0.15, 0),    // Return along expressway
+    V3(28, 0.15, 0),    // East Ring Gate
+    V3(20, 0.15, -20),  // Northeast arc
+    V3(0, 0.15, -28),   // North Ring Gate
+    V3(-20, 0.15, -20), // Northwest arc
+    V3(-28, 0.15, 0),   // West Ring Gate
+    V3(-46, 0.15, 0),   // West Avenue (Solar & Power Field)
+    V3(-32, 0.15, 32),  // Southwest arc
+    V3(0, 0.15, 28)     // South Ring Gate
   ], true, 'catmullrom', 0.25);
 
   computeNetwork();
@@ -4033,11 +4007,21 @@ function initialBase(){
  Object.assign(state.res, { materials: 400, power: 240, oxygen: 220, water: 200, food: 200, waterIce: 80, ironOre: 80, co2: 80 });
  ensureColonistsRoster();
  roverRoute = new THREE.CatmullRomCurve3([
-    V3(-16, 0.15, 24), V3(0, 0.15, 24), V3(0, 0.15, 8), V3(44, 0.15, 8),
-    V3(56, 0.15, 8), V3(44, 0.15, 8), V3(0, 0.15, 8), V3(0, 0.15, -24),
-    V3(32, 0.15, -24), V3(32, 0.15, -36), V3(16, 0.15, -24), V3(0, 0.15, -24),
-    V3(-32, 0.15, -24), V3(-44, 0.15, -24), V3(-44, 0.15, 0), V3(-44, 0.15, 24),
-    V3(-32, 0.15, 24), V3(-16, 0.15, 24)
+    V3(16, 0.15, 28),   // Garage exit
+    V3(0, 0.15, 28),    // South Ring Gate
+    V3(20, 0.15, 20),   // Inner Ring Southeast arc
+    V3(28, 0.15, 0),    // East Ring Gate
+    V3(44, 0.15, 0),    // Spaceport Expressway
+    V3(56, 0.15, 0),    // Landing Pad terminal loop
+    V3(44, 0.15, 0),    // Return along expressway
+    V3(28, 0.15, 0),    // East Ring Gate
+    V3(20, 0.15, -20),  // Northeast arc
+    V3(0, 0.15, -28),   // North Ring Gate
+    V3(-20, 0.15, -20), // Northwest arc
+    V3(-28, 0.15, 0),   // West Ring Gate
+    V3(-46, 0.15, 0),   // West Avenue (Solar & Power Field)
+    V3(-32, 0.15, 32),  // Southwest arc
+    V3(0, 0.15, 28)     // South Ring Gate
   ], true, 'catmullrom', 0.25);
  afterBaseChange();applyLights();updateSun();
 }
