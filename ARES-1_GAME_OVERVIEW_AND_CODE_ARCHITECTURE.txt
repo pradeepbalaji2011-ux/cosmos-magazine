@@ -1,0 +1,392 @@
+================================================================================
+ARES-1: 3D MARS BASE BUILDER & COLONY SIMULATION
+Comprehensive Architecture, Game Mechanics, Technical Specification & Developer Guide
+================================================================================
+
+Target Live Deployment:
+https://pradeepbalaji2011-ux.github.io/cosmos-magazine/ares-1.html
+Repository Source File:
+c:\Users\DELL\cosmos magazine\ares-1.html
+
+Author / Project: Cosmos Magazine Interactive Diorama Series
+Engine: Three.js (r164) + WebGL + Web Audio API (Vanilla HTML5/ES Module)
+Date: November 2026
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. EXECUTIVE OVERVIEW & GAMEPLAY GOAL
+2. ENGINE & RENDERING ARCHITECTURE
+3. SIMULATION LOOP & RESOURCE ECONOMY
+4. COMPLETE MODULE CATALOG (15 BUILDING TYPES & STATS)
+5. THE 5 ENHANCED SYSTEMS
+   - 5.1 Subsurface Resource Extraction System
+   - 5.2 Colonist AI & Real-Time Telemetry
+   - 5.3 Martian Dust Storm Dynamic Weather System
+   - 5.4 Nuclear Power Grid & Brownout Hazard Glow
+   - 5.5 Step-by-Step Mission Directives System
+6. CONTROLS, CAMERA PRESETS & SURFACE WALK MODE
+7. STEP-BY-STEP MISSION COMPLETION WALKTHROUGH
+8. FULL CODE STRUCTURE & KEY FUNCTION MAP
+9. ROADMAP & PROMPTS FOR FUTURE EXTENSION WITH CLAUDE
+
+================================================================================
+1. EXECUTIVE OVERVIEW & GAMEPLAY GOAL
+================================================================================
+ARES-1 is an interactive, browser-based 3D Mars base builder and survival simulation
+set in Utopia Planitia, Mars. Rendered as a tabletop diorama with tactile,
+aerospace-grade models, the player oversees the establishment, growth, and survival
+of humanity's first permanent Martian outpost.
+
+Core Objective:
+Grow the initial settlement of 6 pioneers up to a thriving, self-sufficient colony
+of 50 colonists. To succeed, life support grids (Power, Oxygen, Water, and Food)
+must maintain positive net rates per Sol, modules must maintain structural connection
+to the base core, and the colony must endure periodic Martian dust storms that cripple
+solar generation.
+
+Design Philosophy:
+- Zero external build dependencies (single self-contained HTML file).
+- Clean, technical aerospace typography (monospace glyphs, chemical notation, amber UI).
+- Real-time physical materials (PBR standard materials, bloom, procedural regolith).
+- Pure procedural audio (harmonic sine/triangle/sawtooth tone synthesis).
+
+================================================================================
+2. ENGINE & RENDERING ARCHITECTURE
+================================================================================
+- Three.js Version: 0.164.1 loaded via native browser <script type="importmap">
+  pointing to jsdelivr CDN.
+- Canvas & Viewport:
+  - Responsive WebGLRenderer with high-performance power preference.
+  - Pixel ratio capped at min(devicePixelRatio, 2) for smooth 60fps on retina displays.
+  - ACESFilmicToneMapping calibrated with toneMappingExposure = 1.25 for crisp
+    dynamic range without overexposure glare or murky shadows.
+  - PCFSoftShadowMap enabled for soft contact shadows under base modules.
+- Lighting Pipeline:
+  - Directional Sun Light (3.5 intensity, daylight color #fff3e2): orbits with the
+    solar cycle, drops by 60% during dust storms.
+  - Hemisphere Light (1.55 intensity, sky #ffdfcb, ground #68382c): simulates diffuse
+    Mars atmospheric scatter and red bounce.
+  - Fill Directional Light (0.52 intensity, cool tint #d4e2ff): softens hard shadows.
+  - Underside Ground Bounce Light (0.28 intensity, warm ochre #de7a50): illuminates
+    building foundations and bottom bevels.
+  - PMREMGenerator & RoomEnvironment: generates image-based ambient reflections
+    (environmentIntensity = 0.62) to give brushed titanium, solar cells, and composite
+    plastics realistic specular highlights.
+- Post-Processing:
+  - EffectComposer with RenderPass and UnrealBloomPass (resolution: innerWidth/innerHeight,
+    strength: 0.35, radius: 0.55, threshold: 0.94).
+  - Emissive window glass, cyan reactor conduits, antenna beacons, and rover headlights
+    emit a distinct, luminous sci-fi bloom.
+- Procedural Terrain:
+  - PlaneGeometry (112 x 96 units, 112 x 96 subdivisions).
+  - Heightmap computed mathematically via Fractional Brownian Motion (fBm) layered with
+    perlin noise, crater depressions, and smoothed dune gradients.
+  - Custom canvas-generated 256x256 regolith texture applied as diffuse and bump map
+    with 8x8 anisotropic repeat.
+  - Exposed floating rock slab with 4 sedimentary strata bands around the perimeter.
+
+================================================================================
+3. SIMULATION LOOP & RESOURCE ECONOMY
+================================================================================
+The simulation updates continuously via requestAnimationFrame with a delta time clamp:
+
+Sol Day/Night Cycle:
+- 1 Martian Sol = 150 seconds real-time (DAY_SECONDS = 150).
+- State phase tracks solar angle:
+  phase = (simTime / DAY_SECONDS) % 1.0;
+  Sol counter increments every completed revolution.
+- daylight() returns a smoothed [0, 1] coefficient based on the sun's elevation.
+
+Resource Economy State (`state.res` & `state.rates`):
+1. Power (kW):
+   - Generated by Solar Arrays (daylight-dependent) and Nuclear Reactors (24/7 continuous).
+   - Consumed by Habitats, Greenhouses, ISRU plants, Drills, and Radar.
+   - Deficits draw from Battery Stations. If batteries reach 0 kW, brownout occurs.
+2. Oxygen (O₂):
+   - Produced by Oxygen ISRU Plants (+32/sol) and CO₂ Sublimators (+8/sol).
+   - Consumed by living colonists (-1.5 O₂ per colonist/sol).
+3. Water (H₂O):
+   - Extracted by Water Ice Drills (+20 liquid water/sol).
+   - Consumed by colonists (-1.0/sol), Greenhouses (-3/sol), and ISRU plants (-1/sol).
+4. Food:
+   - Harvested from Greenhouse Domes (+24 food/sol).
+   - Consumed by colonists (-1.2 rations per colonist/sol).
+5. Structural Materials:
+   - Extracted by Iron Ore Drills (+6/sol), Research Labs (+0.8/sol), or Supply Rockets.
+   - Spent to construct and repair modules.
+6. Subsurface Ores (Raw Extraction System):
+   - Water Ice (waterIce): Subsurface glacial extraction (18/sol per Water Drill).
+   - Iron Ore (ironOre): Hematite/magnetite regolith excavation (16/sol per Iron Drill).
+   - Carbon Dioxide (co2): Regolith gas desorption & sublimation (22/sol per CO₂ unit).
+
+Colonist Growth Mechanics:
+- When berths > pop, and O₂, Water, Food, and Power remain positive (> 0),
+  the base gains population growth progress. Once full, a new colonist arrives.
+- If resources hit 0, colonists suffer morale and health penalties.
+
+================================================================================
+4. COMPLETE MODULE CATALOG (15 BUILDING TYPES & STATS)
+================================================================================
+All modules adhere to strict monospace scientific symbols, modular footprint grids,
+and bespoke 3D geometric meshes:
+
++--------------+------+------+------+---------+-----------------------------------+
+| Module Name  | Icon | Cost | W x D| Power   | Primary Function / Yield          |
++--------------+------+------+------+---------+-----------------------------------+
+| Habitat      | H–01 |  60  | 8x8  | -4 kW   | Houses 8 colonists (pressurized)  |
+| Solar Array  | S≡≡  |  25  | 8x8  | +32 kW* | Solar power (drops 60% in storm)  |
+| Nuclear Core | N⊛   | 150  |12x12 | +95 kW  | 24/7 continuous baseload power    |
+| Greenhouse   | G◒   |  75  | 12x8 | -6 kW   | +24 Food/sol (uses 3 water)       |
+| Oxygen ISRU  | O₂   |  90  | 12x8 | -10 kW  | +32 Oxygen/sol (uses 1 water)     |
+| Water Drill  | W↓   |  80  | 12x8 | -8 kW   | +18 Water Ice/sol, +20 Water      |
+| Iron Drill   | Fe↓  |  85  | 12x8 | -8 kW   | +16 Iron Ore/sol, +6 Materials    |
+| CO₂ Sublim.  | CO₂  |  75  | 10x8 | -6 kW   | +22 CO₂/sol, +8 Oxygen            |
+| Battery Bank | B▥   |  55  | 8x8  | -1 kW   | +180 kW Stored electrical reserve |
+| Landing Pad  | L↓   | 110  |16x16 | -1 kW   | Summons reusable supply rockets   |
+| Rover Garage | R▰   |  85  |12x12 | -3 kW   | Houses and dispatches surface rovers|
+| Comms Dish   | C◝   |  70  | 8x8  | -4 kW   | Survey drones & Earth beacon link |
+| Research Lab | L+   |  95  | 12x8 | -7 kW   | +0.8 Materials/sol via analysis   |
+| Storage Hub  | S▦   |  45  | 8x8  | -1 kW   | +180 Resource capacity expansion  |
+| Tunnel Piece | T═   |  12  | 4x4  | -0.2 kW | Hermetic pressurized module link  |
++--------------+------+------+------+---------+-----------------------------------+
+
+3D Mesh Architecture Highlights:
+- Nuclear Reactor: Cylindrical containment base, ivory dome, titanium reinforcing rings,
+  twin cooling towers with cyan Cherenkov energy glow, radiation conduits.
+- Iron Drill: Heavy industrial frame with dual counter-rotating excavation cones,
+  overhead hydraulic crossbeam, safety antenna.
+- CO₂ Sublimator: Ivory compressor chassis, triple pressurized gas spheres with
+  cyan illumination, heat exchanger panels.
+- Greenhouse Dome: Hexagonal structural ring, glass geodesic dome, interior soil
+  bed with leafy hydroponic flora meshes.
+- Rovers & Drones: Articulated 6-wheel rocker-bogie chassis with steerable mast and
+  solar panel; autonomous drones hover and patrol perimeter waypoints.
+
+================================================================================
+5. THE 5 ENHANCED SYSTEMS
+================================================================================
+
+5.1 Subsurface Resource Extraction System:
+- Real-time ore extraction counters displayed directly beneath the primary HUD:
+  [ W↓ WATER ICE ] [ Fe↓ IRON ORE ] [ CO₂ GAS ]
+- Live extraction rates calculated in calculateRates() based on active drills.
+- Provides materials and resources essential for sustaining large populations.
+
+5.2 Colonist AI & Real-Time Telemetry:
+- 4 Named Initial Pioneers with unique specialized roles and suit designations:
+  1. Cmdr. Elena Vance - Mission Commander (Suit: Aerospace Orange)
+  2. Dr. Marcus Chen - Chief Geologist (Suit: Cyan Life-Support)
+  3. Eng. Tarek Rossi - Systems Engineer (Suit: High-Vis Yellow)
+  4. Dr. Aiko Tanaka - Lead Botanist (Suit: Pure White Composite)
+- Real-time Telemetry Bars:
+  - HP: Physical health (drops during decompression, famine, or extreme cold).
+  - O₂: Individual suit oxygen reserve.
+  - MOR: Morale (boosted by food diversity and operational habitats; drops in storms).
+- Dynamic 3D Camera Tracking: Clicking any colonist card in the Crew Manifest
+  smoothly pans and locks the 3D orbital camera directly onto that astronaut
+  as they move across the Martian terrain.
+
+5.3 Martian Dust Storm Dynamic Weather System:
+- Automated storm timer triggers every 5–10 minutes of simulation time.
+- Atmospheric Shader Response:
+  - Mars sky top color darkens to dusky umber (#6b443a).
+  - Horizon shifts to dense, particulate rust-orange (#9d5e41).
+  - Fog distance shrinks, creating a claustrophobic dust haze.
+- Solar Suppression: Solar array power output drops immediately by 60%.
+- Warning Alert Banner: High-priority technical alert banner slides into view:
+  "[ ALERT ] MARTIAN DUST STORM · SOLAR POWER -60% · TAKE COVER"
+- Audio Synth: Procedural wind noise gain increases from 0.04 to 0.32.
+
+5.4 Nuclear Power Grid & Brownout Hazard Glow:
+- Nuclear Fission Reactor produces 95 kW continuous baseload energy unaffected
+  by dust storms or day/night cycles.
+- Power Grid Validation Logic:
+  - Modules check whether base stored power > 0 and whether they are connected
+    to the active grid.
+  - Disconnected buildings or modules operating during an electrical brownout
+    have their status indicator lights switched to pulsing red hazard beacons
+    (MAT.redLight), giving instant visual cues across the base.
+
+5.5 Step-by-Step Mission Directives System:
+- Persistent HUD panel displaying 5 progressive mission objectives:
+  1. "1. Establish Initial Colony": Build Habitat & Solar Array.
+  2. "2. Subsurface Mining Rig": Deploy Water Ice or Iron Ore Drill.
+  3. "3. Life Support Synthesis": Deploy Oxygen ISRU Plant & Greenhouse Dome.
+  4. "4. Nuclear Power Grid": Deploy a Nuclear Fission Reactor.
+  5. "5. Deep Space Communications": Deploy Radar Comms Dish & reach 20+ colonists.
+- Real-time progress bar fills automatically as prerequisites are completed.
+
+================================================================================
+6. CONTROLS, CAMERA PRESETS & SURFACE WALK MODE
+================================================================================
+Camera Navigation:
+- Left-click + drag: Orbit camera around focal point.
+- Right-click + drag: Pan across the Utopia Planitia terrain.
+- Scroll wheel: Zoom in/out (distance clamped between 12 and 190 units).
+- Number Keys 1–5: Instant camera preset angles:
+  [1] Overview High Orbit (Default diorama view)
+  [2] Habitat Hub Low Angle (Close-up of base center)
+  [3] Mining & Extraction Ridge
+  [4] Solar Array & Power Field
+  [5] Top-Down Blueprint Satellite View
+
+Construction Controls:
+- Click card in bottom build tray: Select building for deployment.
+- Hover terrain: Displays green hologram ghost (valid) or red ghost (blocked/slope).
+- R: Rotate active module by 90°.
+- Left-click terrain: Deploy module and deduct materials.
+- X: Deconstruct selected module (recovers 50% materials).
+- Ctrl + Z / Ctrl + Y: Full Undo and Redo deployment stack.
+- Spacebar: Pause / Resume simulation clock.
+
+Surface Walk Mode (First-Person Astronaut):
+- Toggle with "F" key or the "WALK" button in top toolbar.
+- Controls: W/A/S/D to walk across terrain, Shift to sprint.
+- Mouse movement pitches and yaws the helmet visor.
+- Camera height dynamically tracks terrainHeight(x, z) + 1.72m eye level.
+
+Fullscreen & UI Controls:
+- "BACK TO COSMOS": Top-left button navigates back to the Cosmos Magazine portal.
+- "EXIT FULLSCREEN": Positioned cleanly directly beneath the Back button (left: 16px).
+- "GUIDE & MISSIONS": Persistent glowing amber button anchored in the bottom-right corner.
+
+================================================================================
+7. STEP-BY-STEP MISSION COMPLETION WALKTHROUGH
+================================================================================
+Follow this optimal operational order to achieve mission victory:
+
+PHASE 1: SURVIVAL FOUNDATION (Directive 1)
+- Start: You begin with 320 Materials, 120 Power, and 6 Colonists.
+- Step 1: Select Habitat Module (H–01, 60 Mat) and deploy it adjacent to the core.
+- Step 2: Select Solar Array (S≡≡, 25 Mat) and deploy nearby.
+- Step 3: Use a Connecting Tunnel (T═, 12 Mat) to bridge the living modules.
+- Result: Housing berths expand to 16, power generation rises by +32 kW during day.
+
+PHASE 2: SECURING RAW EXTRACTS (Directive 2)
+- Step 4: Select Water Ice Drill (W↓, 80 Mat) and deploy on the open regolith.
+- Result: Begins drilling 18 ice and 20 water per Sol. Water counter turns positive.
+
+PHASE 3: LIFE SUPPORT INDEPENDENCE (Directive 3)
+- Step 5: Select Oxygen ISRU Plant (O₂, 90 Mat) and place near the main base.
+  Generates +32 Oxygen/sol, securing breathable air for up to 21 colonists.
+- Step 6: Select Greenhouse Dome (G◒, 75 Mat) and deploy.
+  Uses 3 water to produce 24 food/sol. Colonist famine risk is eliminated.
+
+PHASE 4: DUST STORM DEFENSE & BASELOAD POWER (Directive 4)
+- Step 7: Deploy a Battery Station (B▥, 55 Mat) to buffer night power.
+- Step 8: Save 150 materials (accumulated via Iron Ore Drills or supply rocket drops).
+- Step 9: Deploy the Nuclear Reactor (N⊛, 150 Mat).
+  Generates 95 kW continuous power 24/7. Dust storm alerts will no longer brown out
+  your life-support grid!
+
+PHASE 5: EXPANSION & VICTORY (Directive 5)
+- Step 10: Deploy Radar / Comms Dish (C◝, 70 Mat) to initiate orbital link.
+- Step 11: Deploy 3 additional Habitat Modules (H–01) to expand berths past 24.
+- Step 12: Ensure all rates (Power, O₂, Water, Food) remain green (+).
+- Step 13: Watch supply rockets land at the Landing Pad with new colonists until
+  the population reaches 50 pioneers.
+- Result: Victory screen triggers: "MISSION COMPLETE: A NEW WORLD, INHABITED."
+
+================================================================================
+8. FULL CODE STRUCTURE & KEY FUNCTION MAP
+================================================================================
+File: `c:\Users\DELL\cosmos magazine\ares-1.html`
+
+Lines 001 - 390: CSS Stylesheet & Responsive Breakpoints
+  - Glassmorphic panels, HUD grid, build menu tray, colonist cards, directives panel.
+  - Positioning for #backCosmosBtn (top:14px, left:16px), #fullscreenEscPill (top:66px, left:16px),
+    and #guidanceBtn (bottom:18px, right:18px).
+  - PBR color scheme variables: --amber (#f2a65a), --ink (#f3e9d8), --muted (#9f9184).
+
+Lines 391 - 470: HTML DOM Hierarchy
+  - #scene: WebGL canvas.
+  - #top: Brand title, Sol counter, resource counter cards, ore extraction sub-bar.
+  - #tools: Toolbar buttons (PAUSE, SPEED, CYCLE, WALK, LIGHTS, HELP, SAVE/LOAD).
+  - #colonistPanel: Real-time pioneer manifest with HP/O₂/MOR bars.
+  - #objectivesPanel: Step-by-step mission directives list.
+  - #buildArea & #buildMenu: Module selector carousel with cost & icon cards.
+  - #guidanceBtn & #help: Field Manual modal with tabs for Controls and Missions.
+
+Lines 471 - 580: Three.js Setup & Physically Based Materials
+  - Renderer, ACESFilmic tone mapper (exposure: 1.25), PCFSoft shadows.
+  - Camera, OrbitControls, PMREMGenerator with RoomEnvironment (intensity: 0.62).
+  - Sun, Hemisphere, Fill, and Underside Bounce lights.
+  - UnrealBloomPass post-processing pass.
+  - `MAT` dictionary: ivory, white, orange, dark, metal, panel, glass, solar, green,
+    soil, window, cyan, redLight, rock, black.
+
+Lines 581 - 650: Procedural Terrain Generation
+  - `regolithTexture()`: Renders procedural noise & grain onto 2D canvas texture.
+  - `terrainHeight(x, z)`: Multi-octave fBm calculation for dunes and craters.
+  - `buildTerrain()`: Generates PlaneGeometry mesh, vertex normal calculation,
+    slab perimeter boxes, and distant silhouette ridges.
+
+Lines 651 - 760: 3D Module Mesh Generators (`makeBuilding`)
+  - Geometric primitives for all 15 building types (cylinder, box, ring, cone).
+  - Hitbox generation and connection snap points.
+
+Lines 761 - 850: Network Pressure & Electrical Grid Solver
+  - `computeNetwork()`: Breadth-first graph traversal from core habitat through
+    tunnels and airlocks to determine pressurized modules.
+  - Power grid solver: validates building power connectivity; sets unpowered modules
+    to glow red (`MAT.redLight`).
+
+Lines 851 - 920: Simulation Physics & Rates (`calculateRates`)
+  - Resource accumulation/depletion logic per Sol tick.
+  - Storm impact calculations (suppresses solar by 60%).
+  - Colonist health, oxygen, and morale updates based on life support status.
+
+Lines 921 - 980: Colonist AI & Autonomous Vehicles
+  - `COLONISTS` array definition and status updates.
+  - `syncAgents()`, `updateAgent()`, `astronautModel()`.
+  - Rover waypoint navigation along Catmull-Rom spline; drone aerial survey patrols.
+
+Lines 981 - 1040: Dynamic Lighting, Sun Cycle & Dust Storms
+  - `updateSun()`: Computes solar elevation angle, daylight lerp, and sky shader tints.
+  - `triggerStorm()`: Initiates random dust storm event, sets storm timer, darkens sky.
+  - `applyLights()`: Floodlight and emissive window toggle.
+
+Lines 1041 - 1150: Pointer Input, Raycasting, Placement & Undo Stack
+  - `screenToGround()`: Raycasts mouse coordinate against ground plane.
+  - `updateGhost()`, `placeGhost()`, `removeBuilding()`: Handles snapping, collision
+    testing, slope limits, and material costs.
+  - `pushUndo()`, `undo()`, `redo()`: Full state history tracking.
+
+Lines 1151 - 1240: Audio Engine & Lifecycle Initialization
+  - `AudioEngine`: Web Audio API procedural sound effects (place, delete, alarm, grow).
+  - `init()`: Asynchronous boot sequence (terrain -> network -> agents -> HUD).
+
+Lines 1241 - 1350: Fullscreen Manager & Modal Bindings
+  - `initAresFullscreen()`: Tracks document.fullscreenElement, updates button SVGs.
+  - `switchGuideTab()`: Toggles between "HOW TO PLAY" and "MISSION WALKTHROUGH".
+
+================================================================================
+9. ROADMAP & PROMPTS FOR FUTURE EXTENSION WITH CLAUDE
+================================================================================
+When you share this file with Claude in future conversations, you can use any of
+the following prompts to instantly add new features:
+
+PROMPT 1 (Surface Rover Expeditions):
+"I am working on ARES-1 (a Three.js Mars builder). Refer to the ARES-1 architecture doc.
+Please add an interactive Surface Expedition mechanic to the Rover Garage (R▰).
+Allow the player to click on a rover, select an expedition destination (e.g. Olympus Mons,
+Valles Marineris, or Polar Ice Cap), and dispatch it on a 2-minute timed mission
+that returns with bonus Iron Ore, Water Ice, or rare scientific artifacts."
+
+PROMPT 2 (Meteor Defense Laser Battery):
+"Refer to the ARES-1 architecture doc. Please add a new module: Meteor Defense Laser (M⌖).
+Cost: 120 Materials, 15 kW Power. When meteors spawn during triggerMeteor(), the laser
+should automatically rotate its turret toward the incoming projectile and fire a glowing
+red cylinder beam to vaporize the meteor before it impacts and damages base modules."
+
+PROMPT 3 (Colonist Skill Trees & Specializations):
+"Refer to the ARES-1 architecture doc. Please enhance the Colonist AI system so that each
+of the 4 named pioneers gains XP over time while assigned to specific modules
+(Elena boosts base morale in Habitats, Marcus boosts drill yields in Mining Rigs,
+Tarek lowers repair costs in the Garage, and Aiko boosts Greenhouse yields).
+Display their level and perk badge in the Crew Manifest panel."
+
+================================================================================
+END OF SPECIFICATION
+================================================================================
