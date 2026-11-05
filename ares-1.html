@@ -670,6 +670,159 @@
   }
 }
 
+
+/* Unit Inspector Panel (Colonists, Rovers & Drones) */
+.unit-inspector {
+  position: fixed;
+  top: 76px;
+  left: 16px;
+  z-index: 35;
+  width: 285px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(24, 20, 19, 0.96);
+  border: 1px solid rgba(242, 166, 90, 0.55);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(242, 166, 90, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: translateX(-340px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+.unit-inspector.show {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.unit-insp-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+.unit-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(242, 166, 90, 0.15);
+  border: 1.5px solid var(--amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.unit-sub {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.unit-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.unit-status-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--green);
+  line-height: 1.4;
+}
+.unit-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 4px;
+}
+.unit-actions .actionBtn {
+  font-size: 10px;
+  padding: 8px;
+  text-align: center;
+}
+
+/* Floating Procedural Speech Bubble */
+.speech-bubble {
+  position: fixed;
+  z-index: 100;
+  max-width: 280px;
+  background: rgba(20, 16, 15, 0.95);
+  border: 1px solid var(--amber);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.4;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.8), 0 0 15px rgba(242,166,90,0.3);
+  pointer-events: none;
+  animation: speechPop 0.25s ease-out;
+  transform: translate(-50%, -100%);
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--amber);
+}
+.speech-sender {
+  display: block;
+  font-size: 9px;
+  font-weight: bold;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+@keyframes speechPop {
+  0% { transform: translate(-50%, -85%) scale(0.9); opacity: 0; }
+  100% { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+}
+
+/* Unit Hover Tooltip */
+.unit-hover-badge {
+  position: fixed;
+  z-index: 90;
+  background: rgba(18, 14, 12, 0.92);
+  border: 1px solid rgba(242, 166, 90, 0.6);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  color: #fff;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+  transform: translate(-50%, -120%);
+}
+@media(max-width: 768px) {
+  .unit-inspector {
+    top: auto;
+    bottom: 84px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 48vh;
+    transform: translateY(120%);
+  }
+  .unit-inspector.show {
+    transform: translateY(0);
+  }
+}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
 </head>
@@ -717,7 +870,7 @@
   <div id="timeWrap"><span>TIME</span><input id="timeSlider" aria-label="Time of day" type="range" min="0" max="1000" value="320"><span id="clock">07:40</span></div>
   <button class="tool on" id="mapBtn" title="Toggle Radar Minimap (M)">MAP</button><button class="tool" id="heatmapBtn" title="Toggle Ore Heatmap (H)">HEATMAP</button><button class="tool" id="stormBtn">STORM</button><button class="tool" id="meteorBtn">METEOR</button><button class="tool on" id="lightsBtn">LIGHTS</button><button class="tool" id="labelsBtn">LABELS</button>
   <button class="tool on" id="shadowsBtn">SHADOW</button><button class="tool" id="bloomBtn">BLOOM</button><button class="tool on" id="soundBtn">SOUND</button><button class="tool" id="helpBtn" title="Help (?)">HELP ?</button>
-  <button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
+  <button class="tool" id="deployRoverBtn" title="Deploy Rover from Garage">⛟ ROVER</button><button class="tool" id="launchDroneBtn" title="Launch Drone from Radar">⌖ DRONE</button><button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
   <button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
 </nav>
 <aside id="objective" class="ui glass" style="display:none"><span class="eyebrow">Current directive</span><h2 id="directiveTitle">Establish a foothold</h2><p id="directiveText">Keep life support positive. Expand with connected habitats to grow the crew.</p><div class="netstatus"><span class="dot" id="netDot"></span><span id="networkLabel">2 / 2 HABITATS PRESSURIZED</span></div></aside>
@@ -728,6 +881,35 @@
   <span style="font-weight:bold;letter-spacing:0.1em;color:#ffdd88">[ ALERT ]</span>
   <span>MARTIAN DUST STORM · SOLAR POWER -60% · TAKE COVER</span>
 </div>
+
+
+<!-- UNIT INSPECTOR PANEL (COLONISTS, ROVERS & DRONES) -->
+<aside id="unitInspector" class="ui glass unit-inspector" aria-live="polite">
+  <button id="unitInspectorClose" class="modalClose" aria-label="Close inspector">×</button>
+  <div class="unit-insp-header">
+    <div class="unit-avatar" id="unitAvatar">👤</div>
+    <div>
+      <span class="eyebrow" id="unitEyebrow">COLONIST TELEMETRY</span>
+      <h2 id="unitName" style="font-size:14px;margin:2px 0;">Cmdr. Elena Vance</h2>
+      <div id="unitRole" class="unit-sub">Base Commander · Active</div>
+    </div>
+  </div>
+  <div id="unitStats" class="unit-stats"></div>
+  <div id="unitStatusText" class="unit-status-box">● Inspecting Greenhouse Dome</div>
+  <div class="unit-actions" id="unitActions">
+    <button class="actionBtn" id="unitFollowBtn">FOLLOW</button>
+    <button class="actionBtn" id="unitCloseupBtn">CLOSE-UP</button>
+    <button class="actionBtn" id="unitTalkBtn">COMM LINK</button>
+    <button class="actionBtn delete" id="unitExitBtn">EXIT</button>
+  </div>
+</aside>
+
+<!-- PROCEDURAL SPEECH BUBBLE & HOVER TOOLTIP -->
+<div id="unitSpeechBubble" class="ui speech-bubble" style="display:none">
+  <span class="speech-sender" id="speechSender">Cmdr. Elena Vance</span>
+  <p id="speechText" style="margin:0;">"O2 levels nominal. Pressure holding steady."</p>
+</div>
+<div id="unitHoverBadge" class="unit-hover-badge" style="display:none"></div>
 
 <!-- SATELLITE RADAR MINIMAP & SECTOR HUD -->
 <aside id="minimapCard" class="ui glass" aria-label="Satellite Radar Minimap">
@@ -771,7 +953,7 @@
 <aside id="objectivesPanel" class="ui glass" aria-label="Mission Directives">
   <div class="obj-header">
     <span>MISSION DIRECTIVES</span>
-    <span id="objProgressLabel">0 / 5 COMPLETE</span>
+    <span id="objProgressLabel">0 / 6 COMPLETE</span>
   </div>
   <div id="objectivesList"></div>
 </aside>
@@ -954,12 +1136,50 @@ const TYPES={
 };
 const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false,unlockedPlots:new Set(['B2','B3','C2','C3']),heatmap:false,showMinimap:true,selectedPlot:'B2'};
 
-// Named Colonists Manifest
+// ==================== EXPANDED COLONIST POPULATION ROSTER ====================
+const COLONIST_FIRST_NAMES = ['Dr. Maya', 'Eng. Leo', 'Cmdr. James', 'Tech Nadia', 'Dr. Soren', 'Specialist Liam', 'Dr. Zara', 'Tech Kenji', 'Eng. Clara', 'Dr. Mateo', 'Pilot Sam', 'Botanist Nina', 'Dr. Tariq', 'Tech Jin'];
+const COLONIST_LAST_NAMES = ['Vance', 'Chen', 'Rossi', 'Tanaka', 'Kowalski', 'Novak', 'Dubois', 'Kim', "O'Connor", 'Al-Mansoor', 'Lindqvist', 'Morales', 'Zhang', 'Patel'];
+const COLONIST_ROLES = ['Life Support Specialist', 'ISRU Technician', 'Hydroponics Botanist', 'Field Geologist', 'Power Systems Tech', 'Structural Engineer', 'Airlock Inspector', 'Robotics Specialist', 'Atmospheric Analyst'];
+const COLONIST_SUIT_COLORS = ['orange', 'ivory', 'white', 'panel', 'dark', 'cyan'];
+
 const COLONISTS = [
   { id: 'c1', name: 'Cmdr. Elena Vance', role: 'Base Commander', suitColor: 'orange', health: 100, oxygen: 100, morale: 98, status: 'Inspecting Outpost' },
   { id: 'c2', name: 'Dr. Marcus Chen', role: 'Chief Geochemist', suitColor: 'ivory', health: 96, oxygen: 100, morale: 92, status: 'Analyzing Regolith' },
   { id: 'c3', name: 'Eng. Tarek Rossi', role: 'Power Systems Lead', suitColor: 'dark', health: 100, oxygen: 98, morale: 95, status: 'Calibrating Grid' },
   { id: 'c4', name: 'Dr. Aiko Tanaka', role: 'Life Support Botanist', suitColor: 'white', health: 98, oxygen: 100, morale: 94, status: 'Monitoring Greenhouse' }
+];
+
+function ensureColonistsRoster(){
+  while(COLONISTS.length < state.pop){
+    const id = 'c' + (COLONISTS.length + 1);
+    const fname = pick(COLONIST_FIRST_NAMES);
+    const lname = pick(COLONIST_LAST_NAMES);
+    const role = pick(COLONIST_ROLES);
+    const suitColor = pick(COLONIST_SUIT_COLORS);
+    COLONISTS.push({
+      id,
+      name: `${fname} ${lname}`,
+      role,
+      suitColor,
+      health: rr(88, 100),
+      oxygen: 100,
+      morale: rr(85, 98),
+      status: 'On duty at outpost'
+    });
+  }
+}
+
+const PROCEDURAL_SPEECH_LINES = [
+  "O2 levels nominal. Atmospheric scrubbers holding steady across the core.",
+  "Commander! Utopia Planitia is unusually clear today.",
+  "Hydroponics batch 4 is thriving under the spectral grow lamps.",
+  "Checking pressure differentials on the habitat airlock seals. All green.",
+  "Heading over to inspect the ISRU compressor valves and sublimation feeds.",
+  "Core nuclear reactor hum is steady at 95 kW continuous output.",
+  "Radiation shielding telemetry is holding within safe operational parameters.",
+  "Solar array surfaces look clean, no heavy regolith accumulation detected.",
+  "Life support synthesis is well balanced. Great job keeping the base humming!",
+  "Perimeter dust sensors are quiet. It's a peaceful sol on the red planet."
 ];
 
 // Sequential Mission Objectives
@@ -968,7 +1188,8 @@ const OBJECTIVES = [
   { id: 'water', title: '2. Water Ice Extraction', desc: 'Deploy Water Drill & extract 80 Ice', check: () => state.res.waterIce >= 80, prog: () => Math.min(1, state.res.waterIce / 80), label: () => `${Math.floor(state.res.waterIce)}/80 Ice` },
   { id: 'food', title: '3. Sustainable Agriculture', desc: 'Harvest 120 Food from Greenhouse', check: () => state.res.food >= 120, prog: () => Math.min(1, state.res.food / 120), label: () => `${Math.floor(state.res.food)}/120 Food` },
   { id: 'power', title: '4. Nuclear Power Grid', desc: 'Deploy a Nuclear Fission Reactor', check: () => buildings.some(b=>b.type==='reactor'&&b.operational), prog: () => buildings.some(b=>b.type==='reactor') ? 1 : 0, label: () => buildings.some(b=>b.type==='reactor') ? '1/1 Reactor' : '0/1 Reactor' },
-  { id: 'beacon', title: '5. Deep Space Beacon', desc: 'Build Comms Dish & reach 15 Crew', check: () => buildings.some(b=>b.type==='radar') && state.pop >= 15, prog: () => Math.min(1, state.pop / 15), label: () => `${state.pop}/15 Colonists` }
+  { id: 'beacon', title: '5. Deep Space Beacon', desc: 'Build Comms Dish & reach 15 Crew', check: () => buildings.some(b=>b.type==='radar') && state.pop >= 15, prog: () => Math.min(1, state.pop / 15), label: () => `${state.pop}/15 Colonists` },
+  { id: 'fleet', title: '6. Autonomous Fleet', desc: 'Deploy 3 Rovers & 3 Drones', check: () => rovers.length >= 3 && drones.length >= 3, prog: () => Math.min(1, (rovers.length + drones.length) / 6), label: () => `${rovers.length}/3 Rovers · ${drones.length}/3 Drones` }
 ];
 
 // 4x4 Land Plot Sectors across 224x192 Utopia Planitia
@@ -1044,10 +1265,20 @@ renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xbd8067);scene.fog=new THREE.Fog(0xbd8067,115,330);
+// 3D Unit Selection Holographic Ring
+const selRingGeo = new THREE.RingGeometry(1.4, 1.75, 32);
+selRingGeo.rotateX(-Math.PI / 2);
+const selectionRing = new THREE.Mesh(selRingGeo, new THREE.MeshBasicMaterial({color: 0x55e2cf, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide}));
+scene.add(selectionRing);
+let selectedUnit = null; // { type: 'colonist'|'rover'|'drone', data, mesh }
+let trackingMode = null; // null | 'follow' | 'closeup'
+let speechTimer = null;
+let hoveredUnit = null;
 const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.15,900);
 camera.position.set(68,57,76);
 const controls=new OrbitControls(camera,canvas);controls.target.set(0,3,0);controls.enableDamping=true;controls.dampingFactor=.075;
-controls.minDistance=12;controls.maxDistance=360;controls.maxPolarAngle=Math.PI*.485;controls.minPolarAngle=.12;controls.panSpeed=.65;controls.rotateSpeed=.55;
+controls.minDistance=12;controls.maxDistance=360;
+controls.addEventListener('start', () => { trackingMode = null; });controls.maxPolarAngle=Math.PI*.485;controls.minPolarAngle=.12;controls.panSpeed=.65;controls.rotateSpeed=.55;
 const pmrem=new THREE.PMREMGenerator(renderer);const roomEnv=new RoomEnvironment();scene.environment=pmrem.fromScene(roomEnv,.04).texture;scene.environmentIntensity=.62;roomEnv.dispose();pmrem.dispose();
 const hemi=new THREE.HemisphereLight(0xffdfcb,0x68382c,1.55);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xfff3e2,3.5);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-72;sun.shadow.camera.right=72;sun.shadow.camera.top=64;sun.shadow.camera.bottom=-64;sun.shadow.camera.near=1;sun.shadow.camera.far=260;sun.shadow.bias=-.00025;sun.shadow.normalBias=.055;scene.add(sun,sun.target);
@@ -1349,11 +1580,15 @@ function computeNetwork(){
   connectionGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat));
  }
 }
-function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won,unlockedPlots:Array.from(state.unlockedPlots),selectedPlot:state.selectedPlot},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
+function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won,unlockedPlots:Array.from(state.unlockedPlots),selectedPlot:state.selectedPlot,COLONISTS:COLONISTS.map(c=>({...c})),rovers:rovers.map(r=>({id:r.id,type:r.type,battery:r.battery,task:r.task,cargo:r.cargo,home:r.home})),drones:drones.map(d=>({id:d.id,type:d.type,battery:d.battery,task:d.task,cargo:d.cargo,home:d.home}))},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
 function restore(s){
  if(!s||s.version!==2||!Array.isArray(s.buildings)||!s.state)throw new Error('Invalid ARES-1 save');
  clearBuildings();if(s.state.unlockedPlots&&Array.isArray(s.state.unlockedPlots))state.unlockedPlots=new Set(s.state.unlockedPlots);
   if(s.state.selectedPlot)state.selectedPlot=s.state.selectedPlot;
+    if(s.state.COLONISTS && Array.isArray(s.state.COLONISTS)){
+      COLONISTS.length = 0;
+      COLONISTS.push(...s.state.COLONISTS);
+    }
   buildPlotBorders();
   updateSectorCardUI();
   Object.assign(state,{sandbox:!!s.state.sandbox,phase:clamp(+s.state.phase||0,0,1),sol:Math.max(1,+s.state.sol||1),solFraction:clamp(+s.state.solFraction||0,0,1),simTime:Math.max(0,+s.state.simTime||0),pop:clamp(+s.state.pop||1,1,50),growth:0,stormUntil:0,nextEvent:55,won:!!s.state.won});Object.assign(state.res,s.state.res);for(const k of Object.keys(state.res))state.res[k]=clamp(+state.res[k]||0,0,99999);nextId=Math.max(1,+s.nextId||1);coreId=+s.coreId||0;
@@ -1400,7 +1635,19 @@ function calculateRates(){
  // Dust storm cuts solar by 60%
  const dust=state.storm>.15 ? 0.40 : 1.0;
  const solarOut=solar*Math.pow(daylight(),.7)*dust;
- const totalPowerGen = solarOut + nuclear;
+ // Passive logistics bonus from active Haulers and Cargo Drones
+  let activeHaulers = 0;
+  for(const r of rovers){ if(r.type==='hauler'&&r.battery>15&&state.storm<0.2) activeHaulers++; }
+  let activeCargoDrones = 0;
+  for(const d of drones){ if(d.type==='cargo'&&d.battery>15&&state.storm<0.2) activeCargoDrones++; }
+  materials += activeHaulers * 0.5 + activeCargoDrones * 0.4;
+
+  let chargingVehicles = 0;
+  for(const r of rovers){ if(r.charging) chargingVehicles++; }
+  for(const d of drones){ if(d.charging) chargingVehicles++; }
+  use += chargingVehicles * 1.5;
+
+  const totalPowerGen = solarOut + nuclear;
  state.rates.power=totalPowerGen-use;
  state.rates.oxygen=oxygen;
  state.rates.water=water;
@@ -1699,10 +1946,8 @@ function renderColonistsUI(){
 window.focusColonist = function(id){
   const idx = COLONISTS.findIndex(c=>c.id===id);
   if(idx >= 0 && agents[idx]){
-    const target = agents[idx].mesh.position;
-    controls.target.set(target.x, target.y + 1.2, target.z);
-    camera.position.set(target.x + 12, target.y + 9, target.z + 14);
-    controls.update();
+    inspectUnit({ type: 'colonist', data: COLONISTS[idx], agent: agents[idx], mesh: agents[idx].mesh });
+    trackingMode = 'closeup';
     toast('Tracking ' + COLONISTS[idx].name);
   }
 };
@@ -1740,19 +1985,447 @@ function updateObjectivesUI(){
   }
 }
 
-function syncAgents(){const wanted=Math.min(24,state.pop);while(agents.length<wanted)spawnAgent();while(agents.length>wanted){const a=agents.pop();scene.remove(a.mesh);disposeGroup(a.mesh)}}
-function chooseAgentTarget(a){const night=daylight()<.08;let choices=buildings.filter(b=>b.operational&&(night?b.type==='habitat':['habitat','greenhouse','isru','lab','storage'].includes(b.type)));if(!choices.length)return;a.target=pick(choices);a.state='walk';a.t=0}
-function updateAgent(a,dt){const g=a.mesh,p=g.position;if(a.state==='idle'){a.t-=dt;a.mesh.visible=true;a.phase+=dt;g.rotation.y+=Math.sin(a.phase)*dt*.08;if(a.t<=0)chooseAgentTarget(a);return}if(a.state==='inside'){a.t-=dt;if(a.t<=0){g.visible=true;a.state='idle';a.t=rr(.5,2)}return}if(!a.target||!buildings.some(b=>b.id===a.target.id)){a.state='idle';a.t=1;return}const dx=a.target.x-p.x,dz=a.target.z-p.z,dist=Math.hypot(dx,dz);if(dist<3.8){a.at=a.target.id;a.state='inside';a.t=a.target.type==='habitat'&&daylight()<.08?rr(8,18):rr(3,9);g.visible=false;return}const step=Math.min(dist,a.speed*dt);p.x+=dx/dist*step;p.z+=dz/dist*step;p.y=terrainHeight(p.x,p.z)+.03;g.rotation.y=Math.atan2(dx,dz);a.phase+=dt*a.speed*5;const limbs=g.userData.limbs;limbs[0].rotation.x=Math.sin(a.phase)*.65;limbs[1].rotation.x=-Math.sin(a.phase)*.65;limbs[2].rotation.x=-Math.sin(a.phase)*.5;limbs[3].rotation.x=Math.sin(a.phase)*.5}
-function roverModel(){const g=new THREE.Group();box(g,MAT.ivory,0,1.25,0,2.8,.65,3.6);box(g,MAT.orange,0,1.7,-.35,2.1,.4,1.9);box(g,MAT.dark,0,1.65,1.25,2.2,.3,.7);for(const x of[-1.55,1.55])for(const z of[-1.25,0,1.25]){const w=mesh(new THREE.CylinderGeometry(.52,.52,.35,12),MAT.black,g,x,.72,z);w.rotation.z=Math.PI/2}const mast=cyl(g,MAT.metal,0,2.5,.4,.07,1.8,8);box(g,MAT.solar,0,3.28,.4,.75,.35,.55);lightMesh(g,0,3.3,.7,.45,.15,.05,MAT.cyan);return g}
-function makeRover(offset=0){const g=roverModel();scene.add(g);const r={mesh:g,u:offset,speed:rr(.012,.017),patrol:0};rovers.push(r);return r}
-function syncVehicles(){const garages=buildings.filter(b=>b.type==='garage'&&b.operational).length;while(rovers.length<Math.min(2,garages))makeRover(rovers.length*.5);while(rovers.length>Math.max(2,Math.min(2,garages))&&rovers.length>0){const r=rovers.pop();scene.remove(r.mesh);disposeGroup(r.mesh)}const radars=buildings.filter(b=>b.type==='radar'&&b.operational).length;while(drones.length<Math.min(2,radars))makeDrone(drones.length);while(drones.length>Math.min(2,radars)){const d=drones.pop();scene.remove(d.mesh);disposeGroup(d.mesh)}
- const pad=buildings.find(b=>b.type==='landing');if(pad&&!rocket)createRocket(pad);if(rocket&&pad){rocket.pad=pad;if(rocket.state==='pad')rocket.mesh.position.set(pad.x,terrainHeight(pad.x,pad.z)+.8,pad.z)}else if(rocket&&!pad){scene.remove(rocket.mesh);disposeGroup(rocket.mesh);rocket=null}
+// ==================== ASTRONAUTS, ROVERS & DRONES FLEET SYSTEM ====================
+function astronautModel(suitColorName='orange', cId='c1'){
+  const g = new THREE.Group();
+  const accent = suitColorName==='ivory'?MAT.ivory:suitColorName==='white'?MAT.white:suitColorName==='panel'?MAT.panel:suitColorName==='dark'?MAT.dark:suitColorName==='cyan'?MAT.cyan:MAT.orange;
+  box(g, MAT.white, 0, 1.12, 0, .62, .75, .42);
+  box(g, accent, 0, 1.22, .23, .5, .18, .06);
+  const helmet = mesh(new THREE.SphereGeometry(.34, 12, 8), MAT.white, g, 0, 1.78, 0);
+  const visor = mesh(new THREE.SphereGeometry(.29, 12, 8, 0, Math.PI * 2, 0, Math.PI * .55), MAT.solar, g, 0, 1.8, .07);
+  visor.rotation.x = Math.PI * .45;
+  box(g, MAT.panel, 0, 1.18, -.32, .52, .68, .28);
+  const limbs = [];
+  for(const [x, z, isArm] of [[-.22, 0, false], [.22, 0, false], [-.43, 0, true], [.43, 0, true]]){
+    const pivot = new THREE.Group();
+    pivot.position.set(x, isArm ? 1.43 : .78, z);
+    g.add(pivot);
+    box(pivot, isArm ? accent : MAT.white, 0, -(isArm ? .27 : .36), 0, isArm ? .2 : .24, isArm ? .62 : .75, isArm ? .2 : .25);
+    limbs.push(pivot);
+  }
+  g.userData.limbs = limbs;
+  g.userData.colonistId = cId;
+  g.scale.setScalar(.8);
+  g.traverse(o => { o.userData.colonistId = cId; });
+  return g;
 }
-function updateRovers(dt){if(!roverRoute)return;for(const r of rovers){r.u=(r.u+r.speed*dt*(r.patrol>0?1.6:1))%1;r.patrol=Math.max(0,r.patrol-dt);const p=roverRoute.getPointAt(r.u,tempV),t=roverRoute.getTangentAt(r.u,tempV2);r.mesh.position.set(p.x,terrainHeight(p.x,p.z)+.08,p.z);r.mesh.rotation.y=Math.atan2(t.x,t.z);if(rnd()<dt*2)spawnDust(p.x,terrainHeight(p.x,p.z)+.2,p.z,1,0xa65c3d)}}
-function spawnPatrol(){if(!buildings.some(b=>b.type==='garage')){toast('Build a rover garage first');return}if(rovers.length<3)makeRover(0);for(const r of rovers)r.patrol=30;toast('Rover patrol dispatched');logEvent('Surface patrol surveying perimeter','ROVERS');audio.play('select');focusCamera(V3(-18,2,20),42)}
-function makeDrone(i){const g=new THREE.Group();box(g,MAT.ivory,0,0,0,1.1,.3,.8);box(g,MAT.orange,0,.23,0,.5,.18,.5);const rotors=[];for(const x of[-.85,.85])for(const z of[-.65,.65]){cylinderBetween(g,MAT.dark,V3(0,0,0),V3(x,0,z),.045);const r=mesh(new THREE.BoxGeometry(1.15,.025,.08),MAT.metal,g,x,.12,z);rotors.push(r)}lightMesh(g,0,-.15,.45,.3,.18,.08,MAT.cyan);scene.add(g);const d={mesh:g,rotors,phase:i*Math.PI,active:0,center:V3()};drones.push(d);return d}
-function launchDrone(){if(!drones.length){toast('Build a radar / comms dish first');return}for(const d of drones)d.active=22;toast('Survey drones airborne · mapping ice deposits');logEvent('Low-altitude survey in progress','DRONES');audio.play('select')}
-function updateDrones(dt){for(const d of drones){d.phase+=dt*(d.active>0?1.15:.4);d.active=Math.max(0,d.active-dt);const radar=buildings.find(b=>b.type==='radar');if(radar)d.center.set(radar.x,0,radar.z);const radius=d.active>0?24:10,height=d.active>0?14:8;d.mesh.position.set(d.center.x+Math.cos(d.phase)*radius,terrainHeight(d.center.x,d.center.z)+height+Math.sin(d.phase*2)*2,d.center.z+Math.sin(d.phase)*radius);d.mesh.rotation.y=-d.phase;for(const r of d.rotors)r.rotation.y+=dt*28}}
+
+function spawnAgent(cIdx){
+  ensureColonistsRoster();
+  const colonist = COLONISTS[cIdx] || COLONISTS[0];
+  const homes = buildings.filter(b => b.type === 'habitat');
+  const home = homes.length ? pick(homes) : { id: 0, x: 0, z: 0 };
+  const g = astronautModel(colonist.suitColor, colonist.id);
+  g.position.set(home.x + rr(-2, 2), terrainHeight(home.x, home.z) + .03, home.z + 4);
+  scene.add(g);
+  agents.push({
+    mesh: g,
+    colonist,
+    at: home.id,
+    target: null,
+    t: rr(1, 4),
+    state: 'idle',
+    speed: rr(1.4, 2.1),
+    phase: rr(0, 6.28),
+    home: home.id,
+    waving: 0
+  });
+}
+
+function syncAgents(){
+  ensureColonistsRoster();
+  const wanted = Math.min(36, state.pop);
+  while(agents.length < wanted) spawnAgent(agents.length);
+  while(agents.length > wanted){
+    const a = agents.pop();
+    scene.remove(a.mesh);
+    disposeGroup(a.mesh);
+  }
+}
+
+function chooseAgentTarget(a){
+  const night = daylight() < .08;
+  const isStorm = state.storm > .2;
+  if(isStorm || night){
+    const habs = buildings.filter(b => b.type === 'habitat' && b.operational);
+    if(habs.length){ a.target = pick(habs); a.state = 'walk'; a.t = 0; return; }
+  }
+  const choices = buildings.filter(b => b.operational && ['habitat', 'greenhouse', 'isru', 'lab', 'storage', 'miner'].includes(b.type));
+  if(!choices.length) return;
+  a.target = pick(choices);
+  a.state = 'walk';
+  a.t = 0;
+}
+
+function updateAgent(a, dt){
+  const g = a.mesh, p = g.position;
+  const limbs = g.userData.limbs;
+
+  // Waving interaction when selected
+  if(a.waving > 0){
+    a.waving -= dt;
+    limbs[3].rotation.x = -1.2 + Math.sin(performance.now() * 0.012) * 0.5;
+    limbs[3].rotation.z = Math.sin(performance.now() * 0.012) * 0.4;
+  }
+
+  if(a.state === 'idle'){
+    a.t -= dt;
+    a.mesh.visible = true;
+    a.phase += dt;
+    g.rotation.y += Math.sin(a.phase) * dt * .08;
+    if(a.t <= 0) chooseAgentTarget(a);
+    return;
+  }
+  if(a.state === 'inside'){
+    a.t -= dt;
+    // Greenhouse dome allows colonist visibility inside
+    if(a.target && a.target.type === 'greenhouse'){
+      g.visible = true;
+      g.position.set(a.target.x + Math.sin(a.phase) * 2.2, terrainHeight(a.target.x, a.target.z) + 1.25, a.target.z + Math.cos(a.phase) * 2.2);
+      a.phase += dt * .8;
+      g.rotation.y = a.phase;
+    } else {
+      g.visible = false;
+    }
+    if(a.t <= 0){
+      g.visible = true;
+      a.state = 'idle';
+      a.t = rr(.5, 2.5);
+    }
+    return;
+  }
+  if(!a.target || !buildings.some(b => b.id === a.target.id)){
+    a.state = 'idle';
+    a.t = 1;
+    return;
+  }
+  const dx = a.target.x - p.x, dz = a.target.z - p.z, dist = Math.hypot(dx, dz);
+  if(dist < 3.8){
+    a.at = a.target.id;
+    a.state = 'inside';
+    a.t = a.target.type === 'greenhouse' ? rr(12, 24) : (a.target.type === 'habitat' && daylight() < .08 ? rr(8, 18) : rr(3, 9));
+    if(a.target.type !== 'greenhouse') g.visible = false;
+    return;
+  }
+  const step = Math.min(dist, a.speed * dt);
+  p.x += dx / dist * step;
+  p.z += dz / dist * step;
+  p.y = terrainHeight(p.x, p.z) + .03;
+  g.rotation.y = Math.atan2(dx, dz);
+  a.phase += dt * a.speed * 5;
+  if(a.waving <= 0){
+    limbs[0].rotation.x = Math.sin(a.phase) * .65;
+    limbs[1].rotation.x = -Math.sin(a.phase) * .65;
+    limbs[2].rotation.x = -Math.sin(a.phase) * .5;
+    limbs[3].rotation.x = Math.sin(a.phase) * .5;
+    limbs[3].rotation.z = 0;
+  }
+}
+
+// ----------------- ROVERS FLEET (6-Wheel Rocker-Bogie) -----------------
+let nextRoverNum = 1;
+function makeRoverModel(r){
+  const g = new THREE.Group();
+  const type = r.type;
+  const accent = type === 'scout' ? MAT.orange : type === 'hauler' ? MAT.panel : MAT.ivory;
+
+  // Main chassis
+  box(g, MAT.dark, 0, 1.25, 0, 2.7, .65, 3.8);
+  box(g, accent, 0, 1.7, -.2, 2.2, .5, 2.2);
+
+  // 6 Wheels with Rocker-Bogie Suspension
+  for(const x of [-1.55, 1.55]){
+    cylinderBetween(g, MAT.metal, V3(x, 1.1, -1.3), V3(x, .9, 0), .08);
+    cylinderBetween(g, MAT.metal, V3(x, .9, 0), V3(x, 1.1, 1.3), .08);
+    for(const z of [-1.35, 0, 1.35]){
+      const w = cyl(g, MAT.black, x, .72, z, .52, .36, 14);
+      w.rotation.z = Math.PI / 2;
+      cyl(g, MAT.metal, x * 1.05, .72, z, .18, .38, 8).rotation.z = Math.PI / 2;
+    }
+  }
+
+  // Dual forward night headlights
+  const hl1 = lightMesh(g, -.75, 1.35, 1.95, .32, .18, .1, MAT.window);
+  const hl2 = lightMesh(g, .75, 1.35, 1.95, .32, .18, .1, MAT.window);
+  g.userData.headlights = [hl1, hl2];
+
+  if(type === 'scout'){
+    cyl(g, MAT.metal, 0, 2.8, -.6, .06, 2.2, 8);
+    lightMesh(g, 0, 3.9, -.6, .2, .2, .2, MAT.redLight);
+    box(g, MAT.orange, 0, 2.1, -1.6, 2.4, .15, .6);
+  } else if(type === 'hauler'){
+    box(g, MAT.orange, 0, 1.9, -1.1, 2.2, 1.0, 1.6);
+    box(g, MAT.panel, 0, 2.45, -1.1, 2.0, .15, 1.4);
+    lightMesh(g, 0, 2.45, -1.9, .4, .2, .1, MAT.cyan);
+  } else {
+    cylinderBetween(g, MAT.metal, V3(.7, 1.8, .8), V3(.9, 2.5, 1.4), .08);
+    box(g, MAT.cyan, .9, 2.5, 1.4, .4, .3, .5);
+    const dish = mesh(new THREE.SphereGeometry(.75, 16, 8, 0, Math.PI * 2, 0, .8), MAT.ivory, g, -.6, 2.6, -.6);
+    dish.rotation.x = -1.2;
+  }
+
+  g.userData.roverId = r.id;
+  g.traverse(o => { o.userData.roverId = r.id; });
+  return g;
+}
+
+function createRover(type, garageId=0){
+  const rId = 'r' + nextRoverNum++;
+  const rType = type || (rovers.length % 3 === 0 ? 'scout' : rovers.length % 3 === 1 ? 'hauler' : 'science');
+  const name = `ROVER-${String(nextRoverNum - 1).padStart(2, '0')} (${rType.toUpperCase()})`;
+  const rover = {
+    id: rId,
+    type: rType,
+    name,
+    state: 'patrol',
+    battery: rr(85, 100),
+    speed: rType === 'scout' ? .022 : rType === 'hauler' ? .014 : .017,
+    task: rType === 'hauler' ? 'Hauling ore to Storage Hub' : rType === 'scout' ? 'Long-range perimeter patrol' : 'Scanning mineral deposits',
+    cargo: rType === 'hauler' ? '12/20 Ore' : 'None',
+    home: garageId,
+    u: rr(0, 1),
+    patrol: 0,
+    charging: false,
+    mesh: null
+  };
+  rover.mesh = makeRoverModel(rover);
+  scene.add(rover.mesh);
+  rovers.push(rover);
+  return rover;
+}
+
+function deployRover(){
+  const garages = buildings.filter(b => b.type === 'garage' && b.operational);
+  const maxRovers = garages.length * 2;
+  if(rovers.length < maxRovers){
+    const r = createRover(null, garages[rovers.length % garages.length].id);
+    toast(`${r.name} deployed from Garage!`);
+    logEvent(`New ${r.name} joined Utopia surface operations`, 'FLEET');
+    audio.play('place');
+    if(selectedUnit && selectedUnit.data.id === r.id) inspectUnit(selectedUnit);
+    return true;
+  }
+  toast(`Garage capacity full (${rovers.length}/${maxRovers}) · Build another Garage!`);
+  audio.play('error');
+  return false;
+}
+
+function updateRovers(dt){
+  if(!roverRoute) return;
+  const isNight = daylight() < .15;
+  const isStorm = state.storm > .2;
+
+  for(const r of rovers){
+    // Battery discharge / recharge
+    if(r.charging){
+      r.battery = Math.min(100, r.battery + dt * 5);
+      r.task = 'Charging at Garage station';
+      if(r.battery >= 98){
+        r.charging = false;
+        r.task = r.type === 'hauler' ? 'Transporting ore' : 'Resuming patrol';
+      }
+    } else {
+      r.battery = Math.max(0, r.battery - dt * 0.25);
+      if(r.battery < 20){
+        r.charging = true;
+        r.task = 'Low Battery · Returning to Garage';
+      }
+    }
+
+    if(isStorm){
+      r.task = 'Sheltering near Garage (Dust Storm)';
+    }
+
+    // Motion along route
+    r.u = (r.u + r.speed * dt * (r.patrol > 0 ? 1.6 : 1)) % 1;
+    r.patrol = Math.max(0, r.patrol - dt);
+    const p = roverRoute.getPointAt(r.u, tempV);
+    const t = roverRoute.getTangentAt(r.u, tempV2);
+    r.mesh.position.set(p.x, terrainHeight(p.x, p.z) + .08, p.z);
+    r.mesh.rotation.y = Math.atan2(t.x, t.z);
+
+    // Dust trail under wheels
+    if(rnd() < dt * 2.8) spawnDust(p.x, terrainHeight(p.x, p.z) + .2, p.z, 1, 0xa65c3d);
+
+    // Headlights activation at night
+    if(r.mesh.userData.headlights){
+      for(const hl of r.mesh.userData.headlights){
+        hl.material = isNight ? MAT.window : MAT.panel;
+      }
+    }
+  }
+}
+
+// ----------------- DRONES FLEET (Hovering, Shadows, Rotors) -----------------
+let nextDroneNum = 1;
+function makeDroneModel(d){
+  const g = new THREE.Group();
+  const isCargo = d.type === 'cargo';
+  box(g, isCargo ? MAT.orange : MAT.ivory, 0, 0, 0, 1.1, .32, 1.1);
+  box(g, MAT.dark, 0, .22, 0, .6, .18, .6);
+
+  const rotors = [];
+  for(const x of [-.95, .95]) for(const z of [-.95, .95]){
+    cylinderBetween(g, MAT.dark, V3(0, 0, 0), V3(x, .05, z), .05);
+    cyl(g, MAT.metal, x, .16, z, .12, .24, 8);
+    const rProp = mesh(new THREE.BoxGeometry(1.3, .02, .09), MAT.metal, g, x, .28, z);
+    rotors.push(rProp);
+  }
+  g.userData.rotors = rotors;
+
+  lightMesh(g, .95, .15, 0, .15, .15, .15, MAT.cyan);
+  lightMesh(g, -.95, .15, 0, .15, .15, .15, MAT.redLight);
+
+  if(isCargo){
+    box(g, MAT.panel, 0, -.36, 0, .9, .45, .8);
+    lightMesh(g, 0, -.58, 0, .25, .1, .25, MAT.window);
+  } else {
+    mesh(new THREE.SphereGeometry(.32, 14, 8), MAT.solar, g, 0, -.22, .2);
+  }
+
+  // Translucent ground shadow disc
+  const shadowGeo = new THREE.CircleGeometry(1.4, 16);
+  shadowGeo.rotateX(-Math.PI / 2);
+  const shadowMesh = mesh(shadowGeo, new THREE.MeshBasicMaterial({ color: 0x140e0c, transparent: true, opacity: .45, depthWrite: false }), scene);
+  d.shadowMesh = shadowMesh;
+
+  g.userData.droneId = d.id;
+  g.traverse(o => { o.userData.droneId = d.id; });
+  return g;
+}
+
+function createDrone(type, radarId=0){
+  const dId = 'd' + nextDroneNum++;
+  const dType = type || (drones.length % 2 === 0 ? 'survey' : 'cargo');
+  const name = `DRONE-${String(nextDroneNum - 1).padStart(2, '0')} (${dType.toUpperCase()})`;
+  const drone = {
+    id: dId,
+    type: dType,
+    name,
+    state: 'flying',
+    battery: rr(80, 100),
+    task: dType === 'cargo' ? 'Transferring supply pods' : 'Perimeter atmospheric survey',
+    cargo: dType === 'cargo' ? '4 MAT parts' : 'None',
+    home: radarId,
+    phase: rr(0, Math.PI * 2),
+    active: 0,
+    speed: rr(.9, 1.3),
+    charging: false,
+    center: V3(),
+    mesh: null,
+    shadowMesh: null
+  };
+  drone.mesh = makeDroneModel(drone);
+  scene.add(drone.mesh);
+  drones.push(drone);
+  return drone;
+}
+
+function launchDrone(){
+  const radars = buildings.filter(b => b.type === 'radar' && b.operational);
+  const maxDrones = radars.length * 2;
+  if(drones.length < maxDrones){
+    const d = createDrone(null, radars[drones.length % radars.length].id);
+    toast(`${d.name} launched into flight!`);
+    logEvent(`New ${d.name} initiated aerial patrol`, 'FLEET');
+    audio.play('launch');
+    return true;
+  }
+  toast(`Comms Dish capacity full (${drones.length}/${maxDrones}) · Build another Comms Dish!`);
+  audio.play('error');
+  return false;
+}
+
+function updateDrones(dt){
+  const isStorm = state.storm > .2;
+  const radar = buildings.find(b => b.type === 'radar');
+
+  for(const d of drones){
+    d.phase += dt * (d.active > 0 ? 1.25 : .45) * d.speed;
+    d.active = Math.max(0, d.active - dt);
+
+    if(d.charging){
+      d.battery = Math.min(100, d.battery + dt * 6);
+      d.task = 'Charging at Comms station';
+      if(d.battery >= 98){
+        d.charging = false;
+        d.task = d.type === 'cargo' ? 'Cargo logistics flight' : 'Perimeter survey';
+      }
+    } else {
+      d.battery = Math.max(0, d.battery - dt * 0.28);
+      if(d.battery < 20){
+        d.charging = true;
+        d.task = 'Low Battery · Returning to Dish';
+      }
+    }
+
+    if(isStorm) d.task = 'Ground sheltered (Dust Storm Alert)';
+
+    if(radar) d.center.set(radar.x, 0, radar.z);
+    const radius = isStorm ? 4 : (d.active > 0 ? 26 : 14);
+    const baseHeight = isStorm ? 2.5 : (d.active > 0 ? 15 : 9);
+    const bob = Math.sin(d.phase * 2) * .45;
+
+    const px = d.center.x + Math.cos(d.phase) * radius;
+    const pz = d.center.z + Math.sin(d.phase) * radius;
+    const py = terrainHeight(px, pz) + baseHeight + bob;
+
+    d.mesh.position.set(px, py, pz);
+    d.mesh.rotation.y = -d.phase;
+
+    // Spin carbon rotor blades
+    if(d.mesh.userData.rotors){
+      for(const r of d.mesh.userData.rotors) r.rotation.y += dt * 34;
+    }
+
+    // Align ground shadow disc with terrain
+    if(d.shadowMesh){
+      d.shadowMesh.position.set(px, terrainHeight(px, pz) + .06, pz);
+      d.shadowMesh.scale.setScalar(clamp(1.8 - baseHeight * .06, .6, 1.5));
+    }
+  }
+}
+
+function syncVehicles(){
+  const garages = buildings.filter(b => b.type === 'garage' && b.operational).length;
+  const maxRovers = Math.max(2, garages * 2);
+  while(rovers.length < maxRovers) createRover();
+  while(rovers.length > maxRovers && rovers.length > 2){
+    const r = rovers.pop();
+    scene.remove(r.mesh);
+    disposeGroup(r.mesh);
+  }
+
+  const radars = buildings.filter(b => b.type === 'radar' && b.operational).length;
+  const maxDrones = Math.max(2, radars * 2);
+  while(drones.length < maxDrones) createDrone();
+  while(drones.length > maxDrones && drones.length > 2){
+    const d = drones.pop();
+    scene.remove(d.mesh);
+    if(d.shadowMesh) scene.remove(d.shadowMesh);
+    disposeGroup(d.mesh);
+  }
+
+  const pad = buildings.find(b => b.type === 'landing');
+  if(pad && !rocket) createRocket(pad);
+  if(rocket && pad){
+    rocket.pad = pad;
+    if(rocket.state === 'pad') rocket.mesh.position.set(pad.x, terrainHeight(pad.x, pad.z) + .8, pad.z);
+  } else if(rocket && !pad){
+    scene.remove(rocket.mesh);
+    disposeGroup(rocket.mesh);
+    rocket = null;
+  }
+}
+
+function spawnPatrol(){
+  for(const r of rovers) r.patrol = 40;
+  toast('All available rovers dispatched on perimeter patrol');
+  logEvent('Surface fleet patrol initiated', 'ROVERS');
+  audio.play('select');
+  focusCamera(V3(-18, 2, 20), 42);
+}
+
 function rocketModel(){const g=new THREE.Group();cyl(g,MAT.white,0,4.5,0,1.25,7.5,24);const nose=mesh(new THREE.ConeGeometry(1.25,2.8,24),MAT.orange,g,0,9.6,0);cyl(g,MAT.dark,0,.7,0,1.35,.7,24);for(let i=0;i<4;i++){const a=i*Math.PI/2,x=Math.cos(a)*1.2,z=Math.sin(a)*1.2;const fin=box(g,MAT.orange,x,1.2,z,.18,2.3,1.3);fin.rotation.y=-a}ring(g,MAT.dark,0,5.4,0,1.27,.1);lightMesh(g,0,6.2,1.26,.5,.5,.05,MAT.window);return g}
 function createRocket(pad){const g=rocketModel();g.position.set(pad.x,terrainHeight(pad.x,pad.z)+.8,pad.z);scene.add(g);rocket={mesh:g,pad,state:'pad',t:0,v:0}}
 function launchRocket(auto=false){if(!rocket||rocket.state!=='pad'){toast('Supply rocket is already in flight');return}rocket.state='ignite';rocket.t=0;rocket.auto=auto;audio.play('launch');logEvent('Reusable cargo rocket ignition','FLIGHT');toast('Launch sequence started');focusCamera(rocket.mesh.position,45)}
@@ -1763,6 +2436,237 @@ function updateRocket(dt){if(!rocket)return;const r=rocket,p=r.mesh.position,pad
  else if(r.state==='descend'){r.t+=dt/10;const f=clamp(r.t,0,1);p.x=lerp(pad.x+18,pad.x,smooth(f));p.z=lerp(pad.z-15,pad.z,smooth(f));p.y=lerp(95,baseY,1-Math.pow(1-f,2));spawnParticle(p.x,p.y,p.z,0xffad55,.6,.45,V3(0,-8,0));if(f>=1){r.state='pad';p.set(pad.x,baseY,pad.z);const cap=capacities();state.res.materials=clamp(state.res.materials+85,0,cap.materials);state.res.food=clamp(state.res.food+45,0,cap.food);state.res.oxygen=clamp(state.res.oxygen+40,0,cap.oxygen);spawnDust(p.x,baseY,p.z,30,0xc88865);logEvent('Cargo delivered: +85 materials, food & oxygen','SUPPLY');toast('Supply rocket landed safely');audio.play('supply');updateHUD()}}
 }
 function focusCamera(pos,dist=55){if(walkMode)return;controls.target.copy(pos);controls.target.y+=2;const dir=tempV.copy(camera.position).sub(controls.target).normalize();camera.position.copy(controls.target).addScaledVector(dir,dist)}
+
+// ==================== UNIT INSPECTION & TELEMETRY SYSTEM ====================
+function pickEntity(clientX, clientY){
+  pointer.set(clientX / innerWidth * 2 - 1, -clientY / innerHeight * 2 + 1);
+  raycaster.setFromCamera(pointer, camera);
+
+  // 1. Raycast Colonists
+  const agentHits = raycaster.intersectObjects(agents.map(a => a.mesh), true);
+  if(agentHits.length > 0){
+    let root = agentHits[0].object;
+    while(root.parent && !root.userData.colonistId && root.parent !== scene) root = root.parent;
+    const cId = root.userData.colonistId;
+    const agent = agents.find(a => a.mesh.userData.colonistId === cId);
+    if(agent && agent.colonist) return { type: 'colonist', data: agent.colonist, agent, mesh: agent.mesh };
+  }
+
+  // 2. Raycast Rovers
+  const roverHits = raycaster.intersectObjects(rovers.map(r => r.mesh), true);
+  if(roverHits.length > 0){
+    let root = roverHits[0].object;
+    while(root.parent && !root.userData.roverId && root.parent !== scene) root = root.parent;
+    const rId = root.userData.roverId;
+    const rover = rovers.find(r => r.id === rId);
+    if(rover) return { type: 'rover', data: rover, mesh: rover.mesh };
+  }
+
+  // 3. Raycast Drones
+  const droneHits = raycaster.intersectObjects(drones.map(d => d.mesh), true);
+  if(droneHits.length > 0){
+    let root = droneHits[0].object;
+    while(root.parent && !root.userData.droneId && root.parent !== scene) root = root.parent;
+    const dId = root.userData.droneId;
+    const drone = drones.find(d => d.id === dId);
+    if(drone) return { type: 'drone', data: drone, mesh: drone.mesh };
+  }
+
+  // 4. Raycast Buildings
+  const bldgHits = raycaster.intersectObjects(buildings.map(b => b.mesh), true);
+  if(bldgHits.length > 0){
+    for(const h of bldgHits){
+      const id = h.object.userData.buildingId;
+      if(id){
+        const b = buildings.find(v => v.id === id);
+        if(b) return { type: 'building', data: b, mesh: b.mesh };
+      }
+    }
+  }
+
+  return null;
+}
+
+
+function updateLiveInspector(){
+  if(!selectedUnit || !$('unitInspector').classList.contains('show')) return;
+  const statsEl = $('unitStats');
+  const statusEl = $('unitStatusText');
+  if(!statsEl || !statusEl) return;
+
+  if(selectedUnit.type === 'colonist'){
+    const c = selectedUnit.data;
+    statsEl.innerHTML = '<div class="bar-row"><span>HP</span><div class="bar-track"><div class="bar-fill bar-health" style="width:' + Math.round(c.health) + '%"></div></div><strong>' + Math.round(c.health) + '%</strong></div>' +
+      '<div class="bar-row"><span>O₂</span><div class="bar-track"><div class="bar-fill bar-oxygen" style="width:' + Math.round(c.oxygen) + '%"></div></div><strong>' + Math.round(c.oxygen) + '%</strong></div>' +
+      '<div class="bar-row"><span>MOR</span><div class="bar-track"><div class="bar-fill bar-morale" style="width:' + Math.round(c.morale) + '%"></div></div><strong>' + Math.round(c.morale) + '%</strong></div>';
+    statusEl.textContent = '● ' + c.status;
+  } else if(selectedUnit.type === 'rover'){
+    const r = selectedUnit.data;
+    statsEl.innerHTML = '<div class="bar-row"><span>BAT</span><div class="bar-track"><div class="bar-fill" style="background:#ffd277;width:' + Math.round(r.battery) + '%"></div></div><strong>' + Math.round(r.battery) + '%</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px;">' +
+        '<span>Speed: <b>' + (r.type === 'scout' ? '24 km/h' : r.type === 'hauler' ? '14 km/h' : '18 km/h') + '</b></span>' +
+        '<span>Cargo: <b>' + r.cargo + '</b></span>' +
+      '</div>' +
+      '<div style="font-size:10px;color:var(--muted);">Home Station: <b>GARAGE-' + (r.home || '01') + '</b></div>';
+    statusEl.textContent = '● ' + r.task;
+  } else if(selectedUnit.type === 'drone'){
+    const d = selectedUnit.data;
+    statsEl.innerHTML = '<div class="bar-row"><span>BAT</span><div class="bar-track"><div class="bar-fill" style="background:#70d6c4;width:' + Math.round(d.battery) + '%"></div></div><strong>' + Math.round(d.battery) + '%</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px;">' +
+        '<span>Altitude: <b>' + Math.round(d.mesh.position.y) + 'm</b></span>' +
+        '<span>Speed: <b>36 km/h</b></span>' +
+      '</div>' +
+      '<div style="font-size:10px;color:var(--muted);">Cargo: <b>' + d.cargo + '</b> · Station: <b>RADAR-' + (d.home || '01') + '</b></div>';
+    statusEl.textContent = '● ' + d.task;
+  }
+}
+
+function inspectUnit(unit){
+  selectedUnit = unit;
+  const panel = $('unitInspector');
+  if(!panel) return;
+
+  if(!unit){
+    panel.classList.remove('show');
+    selectionRing.material.opacity = 0;
+    $('unitSpeechBubble').style.display = 'none';
+    trackingMode = null;
+    return;
+  }
+
+  // Deselect any selected building to prevent UI overlap
+  selectBuilding(null);
+  panel.classList.add('show');
+
+  const avatar = $('unitAvatar');
+  const eyebrow = $('unitEyebrow');
+  const nameEl = $('unitName');
+  const roleEl = $('unitRole');
+  const statsEl = $('unitStats');
+  const statusEl = $('unitStatusText');
+  const talkBtn = $('unitTalkBtn');
+
+  if(unit.type === 'colonist'){
+    const c = unit.data;
+    if(unit.agent) unit.agent.waving = 2.4;
+    avatar.textContent = '👤';
+    avatar.style.background = c.suitColor === 'orange' ? 'rgba(220,88,38,0.25)' : c.suitColor === 'cyan' ? 'rgba(106,224,204,0.25)' : 'rgba(242,166,90,0.2)';
+    avatar.style.borderColor = c.suitColor === 'orange' ? '#dc5826' : c.suitColor === 'cyan' ? '#6ae0cc' : '#f2a65a';
+    eyebrow.textContent = 'ARES-1 PIONEER TELEMETRY';
+    nameEl.textContent = c.name;
+    const sector = getPlotAt(unit.mesh.position.x, unit.mesh.position.z)?.id || 'B2';
+    roleEl.textContent = c.role + ' · Sector ' + sector;
+    statsEl.innerHTML = '<div class="bar-row"><span>HP</span><div class="bar-track"><div class="bar-fill bar-health" style="width:' + Math.round(c.health) + '%"></div></div><strong>' + Math.round(c.health) + '%</strong></div>' +
+      '<div class="bar-row"><span>O₂</span><div class="bar-track"><div class="bar-fill bar-oxygen" style="width:' + Math.round(c.oxygen) + '%"></div></div><strong>' + Math.round(c.oxygen) + '%</strong></div>' +
+      '<div class="bar-row"><span>MOR</span><div class="bar-track"><div class="bar-fill bar-morale" style="width:' + Math.round(c.morale) + '%"></div></div><strong>' + Math.round(c.morale) + '%</strong></div>';
+    statusEl.textContent = '● ' + c.status;
+    talkBtn.textContent = 'COMM LINK';
+    talkBtn.onclick = () => triggerColonistSpeech(c, unit.mesh.position);
+
+    selectionRing.scale.set(1, 1, 1);
+    selectionRing.material.color.setHex(0x55e2cf);
+    selectionRing.material.opacity = 0.85;
+  } else if(unit.type === 'rover'){
+    const r = unit.data;
+    avatar.textContent = '⛟';
+    avatar.style.background = 'rgba(242,166,90,0.2)';
+    avatar.style.borderColor = '#f2a65a';
+    eyebrow.textContent = 'SURFACE VEHICLE FLEET';
+    nameEl.textContent = r.name;
+    roleEl.textContent = r.type === 'scout' ? 'Reconnaissance & Perimeter Patrol' : r.type === 'hauler' ? 'Heavy Logistics & Ore Transport' : 'Spectral Geochemistry Survey';
+    statsEl.innerHTML = '<div class="bar-row"><span>BAT</span><div class="bar-track"><div class="bar-fill" style="background:#ffd277;width:' + Math.round(r.battery) + '%"></div></div><strong>' + Math.round(r.battery) + '%</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px;">' +
+        '<span>Speed: <b>' + (r.type === 'scout' ? '24 km/h' : r.type === 'hauler' ? '14 km/h' : '18 km/h') + '</b></span>' +
+        '<span>Cargo: <b>' + r.cargo + '</b></span>' +
+      '</div>' +
+      '<div style="font-size:10px;color:var(--muted);">Home Station: <b>GARAGE-' + (r.home || '01') + '</b></div>';
+    statusEl.textContent = '● ' + r.task;
+    talkBtn.textContent = 'PATROL';
+    talkBtn.onclick = () => {
+      r.patrol = 45;
+      r.battery = Math.min(100, r.battery + 8);
+      toast(r.name + ' dispatched on high-priority route');
+      audio.play('select');
+      inspectUnit(unit);
+    };
+
+    selectionRing.scale.set(1.9, 1.9, 1.9);
+    selectionRing.material.color.setHex(0xf2a65a);
+    selectionRing.material.opacity = 0.85;
+  } else if(unit.type === 'drone'){
+    const d = unit.data;
+    avatar.textContent = '⌖';
+    avatar.style.background = 'rgba(106,224,204,0.2)';
+    avatar.style.borderColor = '#6ae0cc';
+    eyebrow.textContent = 'AERIAL DRONE FLEET';
+    nameEl.textContent = d.name;
+    roleEl.textContent = d.type === 'cargo' ? 'Autonomous Supply Transport' : 'Atmospheric & Perimeter Survey';
+    statsEl.innerHTML = '<div class="bar-row"><span>BAT</span><div class="bar-track"><div class="bar-fill" style="background:#70d6c4;width:' + Math.round(d.battery) + '%"></div></div><strong>' + Math.round(d.battery) + '%</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px;">' +
+        '<span>Altitude: <b>' + Math.round(d.mesh.position.y) + 'm</b></span>' +
+        '<span>Speed: <b>36 km/h</b></span>' +
+      '</div>' +
+      '<div style="font-size:10px;color:var(--muted);">Cargo: <b>' + d.cargo + '</b> · Station: <b>RADAR-' + (d.home || '01') + '</b></div>';
+    statusEl.textContent = '● ' + d.task;
+    talkBtn.textContent = 'SCAN';
+    talkBtn.onclick = () => {
+      d.active = 35;
+      d.battery = Math.min(100, d.battery + 8);
+      toast(d.name + ' initiated wide-sweep scan');
+      audio.play('select');
+      inspectUnit(unit);
+    };
+
+    selectionRing.scale.set(1.4, 1.4, 1.4);
+    selectionRing.material.color.setHex(0x6ae0cc);
+    selectionRing.material.opacity = 0.85;
+  }
+
+  $('unitFollowBtn').onclick = () => {
+    trackingMode = 'follow';
+    toast('Camera following ' + unit.data.name);
+  };
+  $('unitCloseupBtn').onclick = () => {
+    trackingMode = 'closeup';
+    toast('Inspecting ' + unit.data.name + ' up close');
+    if(unit.type === 'colonist') triggerColonistSpeech(unit.data, unit.mesh.position);
+  };
+  $('unitExitBtn').onclick = () => {
+    inspectUnit(null);
+    resetView();
+  };
+  $('unitInspectorClose').onclick = () => {
+    inspectUnit(null);
+  };
+}
+
+function triggerColonistSpeech(colonist, pos){
+  const quote = pick(PROCEDURAL_SPEECH_LINES);
+  const bubble = $('unitSpeechBubble');
+  const sender = $('speechSender');
+  const text = $('speechText');
+  if(!bubble || !sender || !text) return;
+
+  sender.textContent = colonist.name + ' [' + colonist.role + ']';
+  text.textContent = '"' + quote + '"';
+
+  const sp = pos.clone().add(V3(0, 2.3, 0)).project(camera);
+  const sx = (sp.x + 1) * innerWidth / 2;
+  const sy = (-sp.y + 1) * innerHeight / 2;
+  bubble.style.left = clamp(sx, 140, innerWidth - 140) + 'px';
+  bubble.style.top = clamp(sy, 90, innerHeight - 80) + 'px';
+  bubble.style.display = 'block';
+
+  // Procedural radio chirp
+  audio.tone(480, 0.05, 'sine', 0.12, 140);
+  setTimeout(() => audio.tone(620, 0.07, 'sine', 0.1), 60);
+
+  clearTimeout(speechTimer);
+  speechTimer = setTimeout(() => {
+    bubble.style.display = 'none';
+  }, 5200);
+}
+
 
 // ---------- Bounded particle pool, meteors and weather ----------
 const MAX_PARTICLES=260,particleData=[],particleMesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72,depthWrite:false}),MAX_PARTICLES);particleMesh.frustumCulled=false;scene.add(particleMesh);
@@ -1834,9 +2738,51 @@ canvas.addEventListener('pointermove',e=>{
         updateMinimap();
       }
     }
+    // Hover over colonist, rover, drone, or building
+    const badge=$('unitHoverBadge');
+    if(!state.buildType&&badge){
+      const ent=pickEntity(e.clientX,e.clientY);
+      if(ent&&ent.type!=='building'){
+        canvas.style.cursor='pointer';
+        badge.textContent=(ent.type==='colonist'?'👤 ':'')+(ent.data.name||'Unit');
+        badge.style.left=e.clientX+'px';
+        badge.style.top=(e.clientY-10)+'px';
+        badge.style.display='block';
+        hoveredUnit=ent;
+      }else{
+        canvas.style.cursor='default';
+        badge.style.display='none';
+        hoveredUnit=null;
+      }
+    }
   }
 });
-canvas.addEventListener('pointerup',e=>{if(walkMode){walkDragging=false;return}const moved=Math.hypot(e.clientX-downX,e.clientY-downY);if(pointerButton===0&&moved<6&&performance.now()-downTime<600){if(state.buildType){updateGhost(e.clientX,e.clientY);placeGhost()}else{const b=pickBuilding(e.clientX,e.clientY);selectBuilding(b?b.id:null);if(b)audio.play('select')}}});
+canvas.addEventListener('pointerup',e=>{
+  if(walkMode){walkDragging=false;return}
+  const moved=Math.hypot(e.clientX-downX,e.clientY-downY);
+  if(pointerButton===0&&moved<8&&performance.now()-downTime<550){
+    if(state.buildType){
+      updateGhost(e.clientX,e.clientY);
+      placeGhost();
+    }else{
+      const entity=pickEntity(e.clientX,e.clientY);
+      if(entity){
+        if(entity.type==='building'){
+          inspectUnit(null);
+          selectBuilding(entity.data.id);
+          audio.play('select');
+        }else{
+          inspectUnit(entity);
+          audio.play('select');
+        }
+      }else{
+        // Clicked on empty terrain
+        if(selectedUnit)inspectUnit(null);
+        else selectBuilding(null);
+      }
+    }
+  }
+});
 canvas.addEventListener('pointercancel',()=>{walkDragging=false});canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('dblclick',e=>{if(!state.buildType){resetView();e.preventDefault()}});
 function togglePause(){if(state.mode!=='play'&&state.mode!=='paused')return;state.paused=!state.paused;state.mode=state.paused?'paused':'play';$('pauseBtn').textContent=state.paused?'RESUME':'PAUSE';$('pauseBtn').classList.toggle('on',state.paused);toast(state.paused?'Simulation paused':'Simulation resumed')}
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;keys[e.code]=true;if((e.ctrlKey||e.metaKey)&&e.code==='KeyZ'){e.preventDefault();e.shiftKey?redo():undo();return}if((e.ctrlKey||e.metaKey)&&e.code==='KeyY'){e.preventDefault();redo();return}if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='KeyR'&&state.buildType){state.buildRotation=(state.buildRotation+90)%360;if(ghost)ghost.rotation.y=THREE.MathUtils.degToRad(state.buildRotation);toast('Rotation '+state.buildRotation+'°')}else if(e.code==='KeyX'){if(state.selected)moduleAction('delete')}else if(e.code==='KeyF'){walkMode?exitWalk():enterWalk()}else if(e.key==='?'||e.code==='KeyF1')toggleHelp();
@@ -1885,6 +2831,8 @@ window.switchGuideTab=function(tab){
   if(plot)selectPlot(plot.id);
  };
 
+$('deployRoverBtn').onclick=deployRover;
+$('launchDroneBtn').onclick=launchDrone;
 $('saveBtn').onclick=saveGame;$('loadBtn').onclick=loadGame;$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;$('sandboxBtn').onclick=toggleSandbox;$('modeBtn').onclick=toggleSandbox;
 $('resetBtn').onclick=()=>{if(confirm('Reset ARES-1 and abandon the current base?'))resetGame()};$('cancelBuild').onclick=()=>{if(state.buildType)selectBuild(state.buildType)};$('infoClose').onclick=()=>selectBuilding(null);$('infoActions').onclick=e=>{const a=e.target.dataset.action;if(a)moduleAction(a)};
 $('toolsToggle').onclick=()=>$('tools').classList.toggle('expanded');
@@ -1914,8 +2862,34 @@ async function init(){
 }
 let lastTime=0,hudTimer=0,frameEMA=16,qualityTimer=0;
 function loop(now){requestAnimationFrame(loop);let dt=Math.min(.05,Math.max(0,(now-lastTime)/1000));lastTime=now;frameEMA=lerp(frameEMA,dt*1000,.025);qualityTimer+=dt;
- if(state.mode==='play'&&!state.paused){const sdt=dt*state.speed;state.simTime+=sdt;state.sol=1+Math.floor(state.simTime/DAY_SECONDS);if(state.autoCycle)state.phase=(state.phase+sdt/DAY_SECONDS)%1;state.solFraction=state.phase;simulate(sdt/DAY_SECONDS);for(const a of agents)updateAgent(a,sdt);updateRovers(sdt);updateDrones(sdt);updateRocket(sdt);updateMeteors(sdt);updateWeather(sdt);updateParticles(sdt);updateSun();audio.update();hudTimer+=dt;if(hudTimer>.25){hudTimer=0;updateHUD();updateMinimap()}}
- if(walkMode)updateWalk(dt);else controls.update();
+ if(state.mode==='play'&&!state.paused){const sdt=dt*state.speed;state.simTime+=sdt;state.sol=1+Math.floor(state.simTime/DAY_SECONDS);if(state.autoCycle)state.phase=(state.phase+sdt/DAY_SECONDS)%1;state.solFraction=state.phase;simulate(sdt/DAY_SECONDS);for(const a of agents)updateAgent(a,sdt);updateRovers(sdt);updateDrones(sdt);updateRocket(sdt);updateMeteors(sdt);updateWeather(sdt);updateParticles(sdt);updateSun();audio.update();hudTimer+=dt;if(hudTimer>.25){hudTimer=0;updateHUD();updateMinimap();updateLiveInspector()}}
+ // Unit selection ring pulse and tracking
+  if(selectedUnit && selectedUnit.mesh){
+    const up = selectedUnit.mesh.position;
+    selectionRing.position.set(up.x, terrainHeight(up.x, up.z) + 0.08, up.z);
+    selectionRing.rotation.z += dt * 0.8;
+    selectionRing.material.opacity = 0.65 + Math.sin(performance.now() * 0.005) * 0.25;
+
+    // Camera chase-cam and close-up views
+    if(trackingMode === 'follow'){
+      controls.target.lerp(V3(up.x, up.y + (selectedUnit.type === 'drone' ? 0.4 : 1.2), up.z), 0.08);
+    } else if(trackingMode === 'closeup'){
+      controls.target.lerp(V3(up.x, up.y + (selectedUnit.type === 'colonist' ? 1.4 : 0.8), up.z), 0.1);
+    }
+
+    // Keep speech bubble anchored above colonist head in 3D
+    const sb = $('unitSpeechBubble');
+    if(sb && sb.style.display !== 'none'){
+      const sp = up.clone().add(V3(0, 2.3, 0)).project(camera);
+      const sx = (sp.x + 1) * innerWidth / 2;
+      const sy = (-sp.y + 1) * innerHeight / 2;
+      sb.style.left = clamp(sx, 140, innerWidth - 140) + 'px';
+      sb.style.top = clamp(sy, 90, innerHeight - 80) + 'px';
+    }
+  } else {
+    selectionRing.material.opacity = 0;
+  }
+  if(walkMode)updateWalk(dt);else controls.update();
  // A single conservative quality step protects fill rate on dense mobile screens.
  if(qualityTimer>8&&frameEMA>31&&renderer.getPixelRatio()>1.3){renderer.setPixelRatio(1.25);composer.setPixelRatio(1.25);sun.shadow.mapSize.set(1024,1024);sun.shadow.map?.dispose();qualityTimer=-9999}
  if(state.bloom)composer.render();else renderer.render(scene,camera);
