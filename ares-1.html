@@ -114,9 +114,9 @@
 /* Universal Fullscreen UI Styles */
 .fullscreen-esc-pill {
   position: fixed !important;
-  top: 14px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
+  top: 66px !important;
+  left: 16px !important;
+  transform: none !important;
   z-index: 9999999 !important;
   display: none !important;
   align-items: center !important;
@@ -125,14 +125,15 @@
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
   border: 1px solid rgba(242, 166, 90, 0.55) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75), 0 0 20px rgba(242, 166, 90, 0.25) !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.75), 0 0 16px rgba(242, 166, 90, 0.25) !important;
   color: #f3e9d8 !important;
   font-family: inherit !important;
   font-size: 11px !important;
   font-weight: 700 !important;
-  letter-spacing: 1px !important;
+  letter-spacing: 1.2px !important;
   text-transform: uppercase !important;
-  padding: 6px 16px !important;
+  height: 38px !important;
+  padding: 0 14px !important;
   border-radius: 999px !important;
   cursor: pointer !important;
   pointer-events: auto !important;
@@ -145,8 +146,17 @@
 .fullscreen-esc-pill:hover {
   background: rgba(40, 30, 26, 0.98) !important;
   border-color: #f2a65a !important;
-  transform: translateX(-50%) translateY(2px) !important;
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(242, 166, 90, 0.4) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.85), 0 0 24px rgba(242, 166, 90, 0.4) !important;
+  color: #fff !important;
+}
+@media (max-width: 1050px) {
+  .fullscreen-esc-pill {
+    top: 56px !important;
+    height: 32px !important;
+    padding: 0 10px !important;
+    font-size: 10px !important;
+  }
 }
 .esc-badge {
   background: rgba(242, 166, 90, 0.2) !important;
@@ -385,16 +395,17 @@
 <button id="aresFsBtn" aria-label="Toggle Fullscreen" title="Toggle Fullscreen (ESC)">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
 </button>
-<button id="fullscreenEscPill" class="fullscreen-esc-pill" aria-label="Exit Fullscreen (ESC)" title="Click or press ESC to exit fullscreen">
-  <span class="esc-badge">ESC</span>
-  <span>Exit Fullscreen</span>
-</button>
-
 
 <a href="index.html" id="backCosmosBtn" aria-label="Back to Cosmos" onclick="window.location.href='index.html'; return false;">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
   <span>BACK TO COSMOS</span>
 </a>
+
+<button id="fullscreenEscPill" class="fullscreen-esc-pill" aria-label="Exit Fullscreen (ESC)" title="Click or press ESC to exit fullscreen">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+  <span>EXIT FULLSCREEN</span>
+  <span class="esc-badge">ESC</span>
+</button>
 
 <canvas id="scene" aria-label="Interactive 3D Mars base"></canvas>
 <header id="top" class="ui">
@@ -530,34 +541,34 @@ const canvas=$('scene');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.48;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xbd8067);scene.fog=new THREE.Fog(0xbd8067,115,330);
 const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.15,900);
 camera.position.set(68,57,76);
 const controls=new OrbitControls(camera,canvas);controls.target.set(0,3,0);controls.enableDamping=true;controls.dampingFactor=.075;
 controls.minDistance=12;controls.maxDistance=190;controls.maxPolarAngle=Math.PI*.485;controls.minPolarAngle=.12;controls.panSpeed=.65;controls.rotateSpeed=.55;
-const pmrem=new THREE.PMREMGenerator(renderer);const roomEnv=new RoomEnvironment();scene.environment=pmrem.fromScene(roomEnv,.04).texture;scene.environmentIntensity=.85;roomEnv.dispose();pmrem.dispose();
-const hemi=new THREE.HemisphereLight(0xffdfcb,0x68382c,1.85);scene.add(hemi);
-const sun=new THREE.DirectionalLight(0xfff3e2,4.2);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-72;sun.shadow.camera.right=72;sun.shadow.camera.top=64;sun.shadow.camera.bottom=-64;sun.shadow.camera.near=1;sun.shadow.camera.far=260;sun.shadow.bias=-.00025;sun.shadow.normalBias=.055;scene.add(sun,sun.target);
-const fill=new THREE.DirectionalLight(0xd4e2ff,.75);fill.position.set(-40,32,-50);scene.add(fill);
-const bounce=new THREE.DirectionalLight(0xde7a50,.45);bounce.position.set(20,-30,20);scene.add(bounce);
+const pmrem=new THREE.PMREMGenerator(renderer);const roomEnv=new RoomEnvironment();scene.environment=pmrem.fromScene(roomEnv,.04).texture;scene.environmentIntensity=.62;roomEnv.dispose();pmrem.dispose();
+const hemi=new THREE.HemisphereLight(0xffdfcb,0x68382c,1.55);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff3e2,3.5);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-72;sun.shadow.camera.right=72;sun.shadow.camera.top=64;sun.shadow.camera.bottom=-64;sun.shadow.camera.near=1;sun.shadow.camera.far=260;sun.shadow.bias=-.00025;sun.shadow.normalBias=.055;scene.add(sun,sun.target);
+const fill=new THREE.DirectionalLight(0xd4e2ff,.52);fill.position.set(-40,32,-50);scene.add(fill);
+const bounce=new THREE.DirectionalLight(0xde7a50,.28);bounce.position.set(20,-30,20);scene.add(bounce);
 const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
-const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.42,.55,.88);composer.addPass(bloomPass);composer.addPass(new OutputPass());
+const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.35,.55,.94);composer.addPass(bloomPass);composer.addPass(new OutputPass());
 const MAT={
- ivory:new THREE.MeshStandardMaterial({color:0xf4ede2,roughness:.38,metalness:.22}),
- white:new THREE.MeshStandardMaterial({color:0xfcf8f2,roughness:.32,metalness:.18}),
- orange:new THREE.MeshStandardMaterial({color:0xeb602b,roughness:.42,metalness:.24}),
- dark:new THREE.MeshStandardMaterial({color:0x2e3034,roughness:.55,metalness:.58}),
- metal:new THREE.MeshStandardMaterial({color:0x9da3a9,roughness:.32,metalness:.86}),
- panel:new THREE.MeshStandardMaterial({color:0xa5a9ae,roughness:.48,metalness:.38}),
- glass:new THREE.MeshStandardMaterial({color:0x7fd9ce,roughness:.12,metalness:.15,transparent:true,opacity:.55,side:THREE.DoubleSide}),
- solar:new THREE.MeshStandardMaterial({color:0x1b3c62,roughness:.18,metalness:.82}),
+ ivory:new THREE.MeshStandardMaterial({color:0xece5d8,roughness:.46,metalness:.22}),
+ white:new THREE.MeshStandardMaterial({color:0xf5f1e8,roughness:.40,metalness:.18}),
+ orange:new THREE.MeshStandardMaterial({color:0xdc5826,roughness:.46,metalness:.24}),
+ dark:new THREE.MeshStandardMaterial({color:0x282a2d,roughness:.58,metalness:.58}),
+ metal:new THREE.MeshStandardMaterial({color:0x8d949c,roughness:.36,metalness:.86}),
+ panel:new THREE.MeshStandardMaterial({color:0x9ca1a7,roughness:.52,metalness:.38}),
+ glass:new THREE.MeshStandardMaterial({color:0x7fd9ce,roughness:.14,metalness:.15,transparent:true,opacity:.55,side:THREE.DoubleSide}),
+ solar:new THREE.MeshStandardMaterial({color:0x1b3c62,roughness:.20,metalness:.82}),
  green:new THREE.MeshStandardMaterial({color:0x527742,roughness:.85}),
  soil:new THREE.MeshStandardMaterial({color:0x543226,roughness:.95}),
- window:new THREE.MeshStandardMaterial({color:0xa8ded8,emissive:0xffd18a,emissiveIntensity:2.2,roughness:.2,metalness:.2}),
- cyan:new THREE.MeshStandardMaterial({color:0x98e2d8,emissive:0x6ae0cc,emissiveIntensity:1.8,roughness:.3}),
- redLight:new THREE.MeshStandardMaterial({color:0xff7558,emissive:0xff3d20,emissiveIntensity:2.8}),
+ window:new THREE.MeshStandardMaterial({color:0xa8ded8,emissive:0xffd18a,emissiveIntensity:1.8,roughness:.22,metalness:.2}),
+ cyan:new THREE.MeshStandardMaterial({color:0x98e2d8,emissive:0x6ae0cc,emissiveIntensity:1.5,roughness:.32}),
+ redLight:new THREE.MeshStandardMaterial({color:0xff7558,emissive:0xff3d20,emissiveIntensity:2.4}),
  rock:new THREE.MeshStandardMaterial({color:0x965e45,roughness:1,vertexColors:true}),
  black:new THREE.MeshStandardMaterial({color:0x1c1f21,roughness:.65,metalness:.5})
 };
@@ -995,11 +1006,11 @@ class AudioEngine{
 const audio=new AudioEngine();
 
 // ---------- Lighting, time-of-day, camera presets and first-person surface mode ----------
-function applyLights(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.isLight)o.visible=state.lights&&b.lights});const night=1-smooth(daylight()*2);MAT.window.emissiveIntensity=state.lights?.85+night*2.6:0;MAT.cyan.emissiveIntensity=state.lights?.75+night*1.8:0;MAT.redLight.emissiveIntensity=state.lights?2.2+night*1.2:0}
+function applyLights(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.isLight)o.visible=state.lights&&b.lights});const night=1-smooth(daylight()*2);MAT.window.emissiveIntensity=state.lights?.7+night*2.2:0;MAT.cyan.emissiveIntensity=state.lights?.65+night*1.5:0;MAT.redLight.emissiveIntensity=state.lights?2.0+night*1.0:0}
 function updateSun(){
  const a=(state.phase-.25)*Math.PI*2,sunHeight=Math.sin(a),day=smooth(Math.max(0,sunHeight)*2.2),dust=state.storm;
- sunDirection.set(Math.cos(a),sunHeight,-.38).normalize();sun.position.copy(sunDirection).multiplyScalar(145);sun.position.y+=12;sun.target.position.set(0,0,0);sun.intensity=(.25+4.2*day)*(1-dust*.7);sun.color.setHex(day>.4?0xfff3e2:0xf5ad85);
- hemi.intensity=.45+1.75*day;hemi.color.setHex(day>.35?0xffdfcb:0x706888);hemi.groundColor.setHex(0x5a3126);fill.intensity=.3+.65*day;if(typeof bounce!=='undefined')bounce.intensity=.15+.35*day;
+ sunDirection.set(Math.cos(a),sunHeight,-.38).normalize();sun.position.copy(sunDirection).multiplyScalar(145);sun.position.y+=12;sun.target.position.set(0,0,0);sun.intensity=(.15+3.4*day)*(1-dust*.7);sun.color.setHex(day>.4?0xfff3e2:0xf5ad85);
+ hemi.intensity=.35+1.4*day;hemi.color.setHex(day>.35?0xffdfcb:0x706888);hemi.groundColor.setHex(0x5a3126);fill.intensity=.22+.48*day;if(typeof bounce!=='undefined')bounce.intensity=.1+.25*day;
  const top=new THREE.Color().lerpColors(new THREE.Color(0x171a2a),new THREE.Color(0x9c6d78),day),horizon=new THREE.Color().lerpColors(new THREE.Color(0x392734),new THREE.Color(0xd79773),day);if(dust>.1){horizon.lerp(new THREE.Color(0x9d5e41),dust*.75);top.lerp(new THREE.Color(0x6b443a),dust*.6)}
  sky.material.uniforms.topColor.value.copy(top);sky.material.uniforms.horizonColor.value.copy(horizon);sky.material.uniforms.sunDir.value.copy(sunDirection);sky.material.uniforms.night.value=1-day;scene.fog.color.copy(horizon);scene.background.copy(horizon);stars.material.opacity=(1-day)*.75;
  const total=state.phase*24,hh=Math.floor(total)%24,mm=Math.floor((total-Math.floor(total))*60);$('clock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');if(document.activeElement!==$('timeSlider'))$('timeSlider').value=Math.round(state.phase*1000);applyLights();
