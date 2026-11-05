@@ -872,6 +872,8 @@
   <button class="tool on" id="shadowsBtn">SHADOW</button><button class="tool" id="bloomBtn">BLOOM</button><button class="tool on" id="soundBtn">SOUND</button><button class="tool" id="helpBtn" title="Help (?)">HELP ?</button>
   <button class="tool" id="deployRoverBtn" title="Deploy Rover from Garage">⛟ ROVER</button><button class="tool" id="launchDroneBtn" title="Launch Drone from Radar">⌖ DRONE</button><button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
   <button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
+  <button class="tool danger" id="clearBaseBtn" title="Remove non-core buildings and start from scratch">CLEAR BASE</button>
+  <button class="tool" id="restorePrebuiltBtn" title="Restore pre-built base layout" style="display:none;background:rgba(106,224,204,0.18);border-color:var(--green);color:var(--green);">RESTORE PREBUILT</button>
 </nav>
 <aside id="objective" class="ui glass" style="display:none"><span class="eyebrow">Current directive</span><h2 id="directiveTitle">Establish a foothold</h2><p id="directiveText">Keep life support positive. Expand with connected habitats to grow the crew.</p><div class="netstatus"><span class="dot" id="netDot"></span><span id="networkLabel">2 / 2 HABITATS PRESSURIZED</span></div></aside>
 <aside id="info" class="ui glass" aria-live="polite"><button id="infoClose" aria-label="Close information">×</button><span class="eyebrow">Module telemetry</span><h2 id="infoName">Habitat</h2><div id="infoType">HAB-01 · ONLINE</div><div id="infoStatus"></div><div class="health"><i id="healthFill"></i></div><div id="infoActions"></div></aside>
@@ -1089,7 +1091,45 @@
   </div>
 </div>
 <div id="endOverlay" class="overlay" role="dialog" aria-modal="true"><div class="modal"><span class="eyebrow" id="endEyebrow">MISSION COMPLETE</span><h2 id="endTitle">A NEW WORLD, INHABITED.</h2><p id="endText"></p><button class="primary" id="continueBtn">Continue building</button><button class="secondary" id="restartBtn">New mission</button></div></div>
-<div id="loading" class="overlay show"><div class="loadbox"><h1>ARES-1</h1><div class="loadsub">MARS BASE BUILDER · TABLETOP DIORAMA</div><div class="loadline"><i id="loadFill"></i></div><div id="loadStatus">INITIALIZING ORBITAL LINK</div><button class="primary" id="beginBtn" disabled>Establish base</button><div class="loadmeta"><span>THREE.JS · PROCEDURAL WORLD</span><span>BUILD · BALANCE · SURVIVE</span></div></div></div>
+
+<!-- CLEAR BASE CONFIRMATION MODAL -->
+<div id="clearBaseModal" class="overlay" style="display:none;z-index:90;">
+  <div class="loadbox glass" style="max-width:460px;text-align:left;padding:24px 28px;border:1px solid rgba(240,128,112,0.5);box-shadow:0 14px 40px rgba(0,0,0,0.7);">
+    <h2 style="color:var(--red);margin:0 0 10px 0;font-size:17px;letter-spacing:0.14em;display:flex;align-items:center;gap:8px;">⚠️ CLEAR BASE CONFIRMATION</h2>
+    <p style="font-size:12px;line-height:1.6;color:var(--ink);margin:0 0 14px 0;">Remove all non-core buildings and start from scratch? The core Habitat, Landing Pad, 1 Solar Array and connecting Tunnel will be preserved.<br><br><b>50% of removed materials (+<span id="clearRefundEstimate">0</span> MAT)</b> will be refunded immediately into your inventory.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="tool" id="clearBaseCancel" style="padding:8px 18px;">CANCEL</button>
+      <button class="tool danger" id="clearBaseConfirm" style="padding:8px 20px;background:rgba(240,128,112,0.22);border-color:var(--red);color:var(--red);font-weight:700;">CONFIRM CLEAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROCKET LAUNCH CINEMATIC OVERLAY -->
+<div id="launchCinematicHUD" class="ui" style="display:none;position:fixed;inset:0;pointer-events:none;z-index:45;flex-direction:column;justify-content:space-between;padding:28px 36px;box-sizing:border-box;">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="glass" style="padding:10px 18px;border-left:3px solid var(--amber);font-size:12px;letter-spacing:0.18em;font-weight:700;color:var(--amber);">
+      🚀 ARES CARGO LAUNCH TELEMETRY · <span id="launchStageText" style="color:var(--ink);">PRE-LAUNCH</span>
+    </div>
+    <div class="glass" style="padding:8px 16px;font-size:11px;letter-spacing:0.15em;color:var(--muted);">
+      [ESC] SKIP CINEMATIC
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin-bottom:60px;">
+    <div id="launchCountdownBox" style="font-size:64px;font-weight:900;letter-spacing:0.1em;color:var(--amber);text-shadow:0 0 25px rgba(242,166,90,0.8);line-height:1;"></div>
+    <div id="launchSubText" style="font-size:13px;letter-spacing:0.25em;color:var(--ink);text-transform:uppercase;"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div class="glass" style="padding:10px 16px;font-size:11px;display:flex;gap:18px;letter-spacing:0.12em;">
+      <div>ALTITUDE: <b id="launchAlt" style="color:var(--amber);">0 m</b></div>
+      <div>VELOCITY: <b id="launchVel" style="color:var(--amber);">0 m/s</b></div>
+      <div>APEX TRAJECTORY: <b id="launchTraj" style="color:var(--green);">NOMINAL</b></div>
+    </div>
+  </div>
+</div>
+<div id="loading" class="overlay show"><div class="loadbox"><h1>ARES-1</h1><div class="loadsub">MARS BASE BUILDER · TABLETOP DIORAMA</div><div class="loadline"><i id="loadFill"></i></div><div id="loadStatus">INITIALIZING ORBITAL LINK</div><div style="display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
+  <button class="primary" id="beginBtn" disabled style="min-width:170px;">PRE-BUILT BASE</button>
+  <button class="tool" id="beginScratchBtn" disabled style="min-width:170px;padding:11px 20px;border:1px solid var(--amber);background:rgba(242,166,90,0.14);color:var(--amber);font-weight:700;letter-spacing:0.12em;cursor:pointer;border-radius:3px;">BUILD FROM SCRATCH</button>
+</div><div class="loadmeta"><span>THREE.JS · PROCEDURAL WORLD</span><span>BUILD · BALANCE · SURVIVE</span></div></div></div>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
@@ -1122,8 +1162,8 @@ const TYPES={
  solar:{name:'Solar array',short:'SOL',icon:'S≡≡',cost:25,w:8,d:8,powerGen:32,desc:'32 power · daylight dependent (drops in storm)'},
  reactor:{name:'Nuclear reactor',short:'NUC',icon:'N⊛',cost:150,w:12,d:12,powerGen:95,desc:'95 power · 24/7 continuous output immune to storms'},
  greenhouse:{name:'Greenhouse dome',short:'GRN',icon:'G◒',cost:75,w:12,d:8,power:6,food:24,waterUse:3,pressurized:true,desc:'24 food · consumes water & power'},
- isru:{name:'Oxygen / ISRU plant',short:'ISRU',icon:'O₂',cost:90,w:12,d:8,power:10,oxygen:32,waterUse:1,pressurized:true,desc:'32 oxygen · atmospheric processing'},
- miner:{name:'Water ice drill',short:'ICE',icon:'W↓',cost:80,w:12,d:8,power:8,water:20,waterIce:18,materials:2.5,desc:'Drills subsurface water ice (18/sol) & water'},
+ isru:{name:'Oxygen / ISRU plant',short:'ISRU',icon:'O₂',cost:90,w:12,d:8,power:10,oxygen:46,waterUse:1,pressurized:true,desc:'46 oxygen · atmospheric processing'},
+ miner:{name:'Water ice drill',short:'ICE',icon:'W↓',cost:80,w:12,d:8,power:8,water:46,waterIce:18,materials:2.5,desc:'Drills subsurface water ice (18/sol) & water'},
  drill_iron:{name:'Iron ore drill',short:'ORE',icon:'Fe↓',cost:85,w:12,d:8,power:8,ironOre:16,materials:6,desc:'Heavy excavation rig yields iron ore & structural materials'},
  drill_co2:{name:'CO₂ sublimator',short:'CO₂',icon:'CO₂',cost:75,w:10,d:8,power:6,co2:22,oxygen:8,desc:'Extracts regolith CO₂ to fuel greenhouses & ISRU'},
  battery:{name:'Battery station',short:'BAT',icon:'B▥',cost:55,w:8,d:8,power:1,powerCap:180,desc:'180 stored power reserve'},
@@ -1274,7 +1314,7 @@ let selectedUnit = null; // { type: 'colonist'|'rover'|'drone', data, mesh }
 let trackingMode = null; // null | 'follow' | 'closeup'
 let speechTimer = null;
 let hoveredUnit = null;
-const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.15,900);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.15,2400);
 camera.position.set(68,57,76);
 const controls=new OrbitControls(camera,canvas);controls.target.set(0,3,0);controls.enableDamping=true;controls.dampingFactor=.075;
 controls.minDistance=12;controls.maxDistance=360;
@@ -1580,7 +1620,7 @@ function computeNetwork(){
   connectionGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat));
  }
 }
-function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won,unlockedPlots:Array.from(state.unlockedPlots),selectedPlot:state.selectedPlot,COLONISTS:COLONISTS.map(c=>({...c})),rovers:rovers.map(r=>({id:r.id,type:r.type,battery:r.battery,task:r.task,cargo:r.cargo,home:r.home})),drones:drones.map(d=>({id:d.id,type:d.type,battery:d.battery,task:d.task,cargo:d.cargo,home:d.home}))},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
+function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won,unlockedPlots:Array.from(state.unlockedPlots),selectedPlot:state.selectedPlot,startMode:state.startMode||'prebuilt',COLONISTS:COLONISTS.map(c=>({...c})),rovers:rovers.map(r=>({id:r.id,type:r.type,battery:r.battery,task:r.task,cargo:r.cargo,home:r.home})),drones:drones.map(d=>({id:d.id,type:d.type,battery:d.battery,task:d.task,cargo:d.cargo,home:d.home}))},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
 function restore(s){
  if(!s||s.version!==2||!Array.isArray(s.buildings)||!s.state)throw new Error('Invalid ARES-1 save');
  clearBuildings();if(s.state.unlockedPlots&&Array.isArray(s.state.unlockedPlots))state.unlockedPlots=new Set(s.state.unlockedPlots);
@@ -1592,7 +1632,12 @@ function restore(s){
   buildPlotBorders();
   updateSectorCardUI();
   Object.assign(state,{sandbox:!!s.state.sandbox,phase:clamp(+s.state.phase||0,0,1),sol:Math.max(1,+s.state.sol||1),solFraction:clamp(+s.state.solFraction||0,0,1),simTime:Math.max(0,+s.state.simTime||0),pop:clamp(+s.state.pop||1,1,50),growth:0,stormUntil:0,nextEvent:55,won:!!s.state.won});Object.assign(state.res,s.state.res);for(const k of Object.keys(state.res))state.res[k]=clamp(+state.res[k]||0,0,99999);nextId=Math.max(1,+s.nextId||1);coreId=+s.coreId||0;
- for(const b of s.buildings){if(!TYPES[b.type]||!Number.isFinite(b.x)||!Number.isFinite(b.z))continue;addBuilding(b.type,clamp(b.x,-50,50),clamp(b.z,-42,42),+b.rotation||0,{...b,defer:true})}afterBaseChange();updateModeUI();updateSun();
+ for(const b of s.buildings){if(!TYPES[b.type]||!Number.isFinite(b.x)||!Number.isFinite(b.z))continue;addBuilding(b.type,clamp(b.x,-105,105),clamp(b.z,-90,90),+b.rotation||0,{...b,defer:true})}
+  state.startMode = s.state.startMode || (s.buildings.length > 15 ? 'prebuilt' : 'scratch');
+  if(state.startMode !== 'scratch') buildInfrastructure();
+  else if(infraGroup) { scene.remove(infraGroup); disposeGroup(infraGroup); infraGroup = null; }
+  if($('restorePrebuiltBtn')) $('restorePrebuiltBtn').style.display = (state.startMode === 'scratch') ? 'inline-block' : 'none';
+  afterBaseChange();applyLights();updateModeUI();updateSun();
 }
 function pushUndo(){undoStack.push(snapshot());if(undoStack.length>35)undoStack.shift();redoStack=[]}
 function undo(){if(!undoStack.length){toast('Nothing to undo');return}redoStack.push(snapshot());restore(undoStack.pop());toast('Action undone');audio.play('select')}
@@ -1987,18 +2032,52 @@ function updateObjectivesUI(){
 function astronautModel(suitColorName='orange', cId='c1'){
   const g = new THREE.Group();
   const accent = suitColorName==='ivory'?MAT.ivory:suitColorName==='white'?MAT.white:suitColorName==='panel'?MAT.panel:suitColorName==='dark'?MAT.dark:suitColorName==='cyan'?MAT.cyan:MAT.orange;
+
+  // Torso with hermetic suit seams
   box(g, MAT.white, 0, 1.12, 0, .62, .75, .42);
+  // Chest accent panel & Mission patch
   box(g, accent, 0, 1.22, .23, .5, .18, .06);
-  const helmet = mesh(new THREE.SphereGeometry(.34, 12, 8), MAT.white, g, 0, 1.78, 0);
-  const visor = mesh(new THREE.SphereGeometry(.29, 12, 8, 0, Math.PI * 2, 0, Math.PI * .55), MAT.solar, g, 0, 1.8, .07);
+  // Dual-tone ARES expedition mission crest on chest
+  box(g, MAT.redLight, -0.14, 1.25, 0.25, 0.08, 0.08, 0.03);
+  box(g, MAT.cyan, -0.06, 1.25, 0.25, 0.06, 0.08, 0.03);
+  // Waist utility equipment belt with side pouches
+  box(g, MAT.dark, 0, 0.82, 0, 0.64, 0.1, 0.44);
+  box(g, MAT.panel, 0.18, 0.82, 0.24, 0.12, 0.12, 0.08);
+  box(g, MAT.panel, -0.18, 0.82, 0.24, 0.12, 0.12, 0.08);
+
+  // Helmet with High-Gloss Gold/Amber Reflective Visor
+  const helmet = mesh(new THREE.SphereGeometry(.34, 14, 10), MAT.white, g, 0, 1.78, 0);
+  const visorMat = new THREE.MeshStandardMaterial({color: 0xffcb6b, roughness: 0.06, metalness: 0.94, emissive: 0x332200, emissiveIntensity: 0.25});
+  const visor = mesh(new THREE.SphereGeometry(.29, 14, 10, 0, Math.PI * 2, 0, Math.PI * .55), visorMat, g, 0, 1.8, .07);
   visor.rotation.x = Math.PI * .45;
-  box(g, MAT.panel, 0, 1.18, -.32, .52, .68, .28);
+
+  // Primary Life Support System (PLSS) Backpack
+  box(g, MAT.panel, 0, 1.18, -.32, .54, .72, .3);
+  // Dual Oxygen Tanks
+  cyl(g, MAT.white, -0.15, 1.22, -0.42, 0.09, 0.58, 10);
+  cyl(g, MAT.white, 0.15, 1.22, -0.42, 0.09, 0.58, 10);
+  // Regulator caps
+  cyl(g, MAT.window, -0.15, 1.54, -0.42, 0.06, 0.08, 8);
+  cyl(g, MAT.window, 0.15, 1.54, -0.42, 0.06, 0.08, 8);
+  // Cold-gas micro-thrusters on upper backpack corners
+  box(g, MAT.dark, -0.26, 1.48, -0.32, 0.06, 0.08, 0.06);
+  box(g, MAT.dark, 0.26, 1.48, -0.32, 0.06, 0.08, 0.06);
+
   const limbs = [];
+  // Legs and Arms with Heavy Utility Boots and Pressurized Gloves
   for(const [x, z, isArm] of [[-.22, 0, false], [.22, 0, false], [-.43, 0, true], [.43, 0, true]]){
     const pivot = new THREE.Group();
     pivot.position.set(x, isArm ? 1.43 : .78, z);
     g.add(pivot);
     box(pivot, isArm ? accent : MAT.white, 0, -(isArm ? .27 : .36), 0, isArm ? .2 : .24, isArm ? .62 : .75, isArm ? .2 : .25);
+    if(!isArm){
+      // Magnetic tread utility boots
+      box(pivot, MAT.dark, 0, -0.76, 0.04, 0.26, 0.14, 0.32);
+      box(pivot, MAT.panel, 0, -0.72, 0.04, 0.28, 0.05, 0.34);
+    } else {
+      // Seal cuff and EVA glove
+      box(pivot, MAT.dark, 0, -0.58, 0, 0.22, 0.12, 0.22);
+    }
     limbs.push(pivot);
   }
   g.userData.limbs = limbs;
@@ -2007,7 +2086,6 @@ function astronautModel(suitColorName='orange', cId='c1'){
   g.traverse(o => { o.userData.colonistId = cId; });
   return g;
 }
-
 function spawnAgent(cIdx){
   ensureColonistsRoster();
   const colonist = COLONISTS[cIdx] || COLONISTS[0];
@@ -2424,15 +2502,367 @@ function spawnPatrol(){
   focusCamera(V3(-18, 2, 20), 42);
 }
 
-function rocketModel(){const g=new THREE.Group();cyl(g,MAT.white,0,4.5,0,1.25,7.5,24);const nose=mesh(new THREE.ConeGeometry(1.25,2.8,24),MAT.orange,g,0,9.6,0);cyl(g,MAT.dark,0,.7,0,1.35,.7,24);for(let i=0;i<4;i++){const a=i*Math.PI/2,x=Math.cos(a)*1.2,z=Math.sin(a)*1.2;const fin=box(g,MAT.orange,x,1.2,z,.18,2.3,1.3);fin.rotation.y=-a}ring(g,MAT.dark,0,5.4,0,1.27,.1);lightMesh(g,0,6.2,1.26,.5,.5,.05,MAT.window);return g}
-function createRocket(pad){const g=rocketModel();g.position.set(pad.x,terrainHeight(pad.x,pad.z)+.8,pad.z);scene.add(g);rocket={mesh:g,pad,state:'pad',t:0,v:0}}
-function launchRocket(auto=false){if(!rocket||rocket.state!=='pad'){toast('Supply rocket is already in flight');return}rocket.state='ignite';rocket.t=0;rocket.auto=auto;audio.play('launch');logEvent('Reusable cargo rocket ignition','FLIGHT');toast('Launch sequence started');focusCamera(rocket.mesh.position,45)}
-function updateRocket(dt){if(!rocket)return;const r=rocket,p=r.mesh.position,pad=r.pad;if(!pad)return;const baseY=terrainHeight(pad.x,pad.z)+.8;
- if(r.state==='ignite'){r.t+=dt;spawnDust(p.x,baseY,p.z,2,0xd29a72);if(r.t>2){r.state='ascend';r.v=0}}
- else if(r.state==='ascend'){r.v+=dt*8;p.y+=r.v*dt;spawnParticle(p.x+rr(-.4,.4),p.y,p.z+rr(-.4,.4),0xffc26b,.7,rr(.3,.7),V3(rr(-1,1),-8,rr(-1,1)));if(p.y>95){r.state='orbit';r.t=0;r.mesh.visible=false}}
- else if(r.state==='orbit'){r.t+=dt;if(r.t>5){r.state='descend';r.t=0;r.mesh.visible=true;p.set(pad.x+18,95,pad.z-15)}}
- else if(r.state==='descend'){r.t+=dt/10;const f=clamp(r.t,0,1);p.x=lerp(pad.x+18,pad.x,smooth(f));p.z=lerp(pad.z-15,pad.z,smooth(f));p.y=lerp(95,baseY,1-Math.pow(1-f,2));spawnParticle(p.x,p.y,p.z,0xffad55,.6,.45,V3(0,-8,0));if(f>=1){r.state='pad';p.set(pad.x,baseY,pad.z);const cap=capacities();state.res.materials=clamp(state.res.materials+85,0,cap.materials);state.res.food=clamp(state.res.food+45,0,cap.food);state.res.oxygen=clamp(state.res.oxygen+40,0,cap.oxygen);spawnDust(p.x,baseY,p.z,30,0xc88865);logEvent('Cargo delivered: +85 materials, food & oxygen','SUPPLY');toast('Supply rocket landed safely');audio.play('supply');updateHUD()}}
+
+let fallingBooster = null;
+function spawnFallingBooster(pos, vel, pitch){
+  const bg = new THREE.Group();
+  cyl(bg, MAT.white, 0, 2.5, 0, 1.25, 5.0, 16);
+  cyl(bg, MAT.dark, 0, 0.35, 0, 1.35, 0.7, 16);
+  for(let i=0; i<4; i++){
+    const a = i * Math.PI / 2;
+    const fin = box(bg, MAT.orange, Math.cos(a) * 1.2, 1.0, Math.sin(a) * 1.2, 0.18, 2.0, 1.2);
+    fin.rotation.y = -a;
+  }
+  bg.position.copy(pos);
+  scene.add(bg);
+  fallingBooster = {
+    mesh: bg,
+    v: vel * 0.82,
+    pitch: pitch,
+    rotX: (Math.random() - 0.5) * 1.8,
+    rotY: (Math.random() - 0.5) * 2.2,
+    rotZ: (Math.random() - 0.5) * 1.5,
+    t: 0
+  };
 }
+
+function updateFallingBooster(dt){
+  if(!fallingBooster) return;
+  const b = fallingBooster;
+  b.t += dt;
+  b.v -= dt * 9.8;
+  b.mesh.position.y += b.v * dt;
+  b.mesh.position.x += Math.sin(b.pitch) * 12 * dt;
+  b.mesh.rotation.x += b.rotX * dt;
+  b.mesh.rotation.y += b.rotY * dt;
+  b.mesh.rotation.z += b.rotZ * dt;
+  if(b.mesh.position.y <= terrainHeight(b.mesh.position.x, b.mesh.position.z) + 1 || b.t > 15){
+    spawnDust(b.mesh.position.x, terrainHeight(b.mesh.position.x, b.mesh.position.z), b.mesh.position.z, 20, 0xd29a72);
+    scene.remove(b.mesh);
+    disposeGroup(b.mesh);
+    fallingBooster = null;
+  }
+}
+
+
+function rocketModel(){
+  const g = new THREE.Group();
+
+  // Booster Stage Group
+  const booster = new THREE.Group();
+  cyl(booster, MAT.white, 0, 2.8, 0, 1.25, 5.0, 24);
+  ring(booster, MAT.dark, 0, 5.3, 0, 1.27, 0.14);
+  cyl(booster, MAT.dark, 0, 0.35, 0, 1.35, 0.7, 24);
+  for(let i=0; i<4; i++){
+    const a = i * Math.PI / 2;
+    const fin = box(booster, MAT.orange, Math.cos(a) * 1.2, 1.2, Math.sin(a) * 1.2, 0.18, 2.3, 1.3);
+    fin.rotation.y = -a;
+  }
+  g.add(booster);
+  g.userData.booster = booster;
+
+  // Upper Stage Group
+  const upper = new THREE.Group();
+  cyl(upper, MAT.white, 0, 6.8, 0, 1.22, 3.2, 24);
+  mesh(new THREE.ConeGeometry(1.22, 2.8, 24), MAT.orange, upper, 0, 9.8, 0);
+  lightMesh(upper, 0, 7.8, 1.24, 0.45, 0.45, 0.05, MAT.window);
+  g.add(upper);
+  g.userData.upper = upper;
+
+  // Primary Flame Plume (Inner white cone + Outer orange glowing cone)
+  const plumeGroup = new THREE.Group();
+  const outerCone = mesh(new THREE.ConeGeometry(1.4, 4.8, 16), MAT.redLight, plumeGroup, 0, -2.4, 0);
+  outerCone.rotation.x = Math.PI;
+  const innerCone = mesh(new THREE.ConeGeometry(0.8, 3.8, 16), MAT.white, plumeGroup, 0, -1.9, 0);
+  innerCone.rotation.x = Math.PI;
+  plumeGroup.position.set(0, 0, 0);
+  plumeGroup.visible = false;
+  g.add(plumeGroup);
+  g.userData.plume = plumeGroup;
+
+  // Upper Stage Vacuum Plume (Cyan / Blue Vacuum Expansive Flame)
+  const upperPlume = mesh(new THREE.ConeGeometry(0.95, 3.6, 16), MAT.cyan, upper, 0, 3.4, 0);
+  upperPlume.rotation.x = Math.PI;
+  upperPlume.visible = false;
+  g.userData.upperPlume = upperPlume;
+
+  // Max-Q Condensation Shock Ring
+  const shockRingMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
+  const shockRing = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.08, 8, 24), shockRingMat);
+  shockRing.rotation.x = Math.PI / 2;
+  shockRing.position.set(0, 8.5, 0);
+  shockRing.visible = false;
+  g.add(shockRing);
+  g.userData.shockRing = shockRing;
+
+  return g;
+}
+
+function createRocket(pad){
+  const g = rocketModel();
+  g.position.set(pad.x, terrainHeight(pad.x, pad.z) + 0.8, pad.z);
+  scene.add(g);
+  rocket = {
+    mesh: g,
+    pad,
+    state: 'pad',
+    t: 0,
+    v: 0,
+    p_y: 0,
+    pitch: 0,
+    apexHold: 0,
+    separated: false,
+    boosterGroup: g.userData.booster,
+    upperGroup: g.userData.upper,
+    plume: g.userData.plume,
+    upperPlume: g.userData.upperPlume,
+    shockRing: g.userData.shockRing
+  };
+}
+
+function finishLaunchCinematic(skipped = false){
+  controls.enabled = true;
+  if($('launchCinematicHUD')) $('launchCinematicHUD').style.display = 'none';
+  if(savedLaunchView){
+    smoothCameraTo(savedLaunchView.target, savedLaunchView.pos, skipped ? 0.45 : 1.2, () => {
+      savedLaunchView = null;
+    });
+  }
+}
+
+function launchRocket(auto = false){
+  if(!rocket || (rocket.state !== 'pad' && rocket.state !== 'idle')){
+    toast('Cargo rocket is already in flight');
+    return;
+  }
+  if(state.storm > 0.45){
+    toast('Launch scrubbed: Severe Martian dust storm (atmospheric turbulence & zero visibility)');
+    audio.play('error');
+    return;
+  }
+
+  savedLaunchView = { pos: camera.position.clone(), target: controls.target.clone() };
+  rocket.state = 'prelaunch';
+  rocket.t = 0;
+  rocket.v = 0;
+  rocket.p_y = 0;
+  rocket.pitch = 0;
+  rocket.apexHold = 0;
+  rocket.separated = false;
+  rocket.boosterGroup.visible = true;
+  rocket.upperGroup.visible = true;
+  rocket.plume.visible = false;
+  rocket.upperPlume.visible = false;
+  rocket.shockRing.visible = false;
+  rocket.shockRing.scale.set(1, 1, 1);
+  rocket.shockRing.material.opacity = 0;
+
+  controls.enabled = false;
+  trackingMode = 'rocket';
+
+  if($('launchCinematicHUD')) $('launchCinematicHUD').style.display = 'flex';
+  if($('launchStageText')) $('launchStageText').textContent = 'PRE-LAUNCH · T-3 SEC';
+  if($('launchCountdownBox')) $('launchCountdownBox').textContent = '3';
+  if($('launchSubText')) $('launchSubText').textContent = 'Cryogenic LOX Venting · Pad Clear';
+
+  audio.play('select');
+  logEvent('Reusable cargo rocket pre-launch sequence confirmed', 'FLIGHT');
+  toast('Pre-launch countdown initiated');
+}
+
+function updateRocket(dt){
+  if(!rocket) return;
+  const r = rocket, p = r.mesh.position, pad = r.pad;
+  if(!pad) return;
+  const baseY = terrainHeight(pad.x, pad.z) + 0.8;
+
+  if(r.state === 'prelaunch'){
+    r.t += dt;
+    // 3-2-1 countdown
+    if(r.t < 1.0){
+      $('launchCountdownBox').textContent = '3';
+      $('launchSubText').textContent = 'Cryogenic LOX Venting · Pad Clear';
+    } else if(r.t < 2.0){
+      $('launchCountdownBox').textContent = '2';
+      $('launchSubText').textContent = 'Avionics Aligned · Pressurizing Core Tanks';
+    } else if(r.t < 3.0){
+      $('launchCountdownBox').textContent = '1';
+      $('launchSubText').textContent = 'Terminal Count · Ignition Sequence Armed';
+    }
+
+    // Venting particles (white vapor from mid-stage vents)
+    spawnParticle(pad.x + rr(-0.5, 0.5), baseY + 5.2, pad.z + rr(-0.5, 0.5), 0xffffff, 0.6, 0.35, V3(rr(-0.8, 0.8), rr(0.2, 0.6), rr(-0.8, 0.8)));
+
+    // Red pad warning lights flashing
+    MAT.redLight.emissiveIntensity = (Math.sin(r.t * 12) > 0) ? 3.0 : 0.2;
+
+    // Pad tracking camera
+    const padCamPos = V3(pad.x - 18, baseY + 2.8, pad.z + 18);
+    camera.position.lerp(padCamPos, 0.08);
+    controls.target.lerp(V3(pad.x, baseY + 4.5, pad.z), 0.12);
+
+    if(r.t >= 3.0){
+      r.state = 'ignition';
+      r.t_state = 0;
+      r.plume.visible = true;
+      audio.play('launch');
+      $('launchStageText').textContent = 'MAIN ENGINE IGNITION';
+      $('launchCountdownBox').textContent = 'IGNITION';
+      $('launchSubText').textContent = 'Main Raptor Cluster At Full Thrust';
+    }
+  }
+  else if(r.state === 'ignition'){
+    r.t_state += dt;
+    camShake = 0.25;
+    spawnDust(pad.x, baseY, pad.z, 6, 0xe0a880);
+
+    const padCamPos = V3(pad.x - 18, baseY + 2.8, pad.z + 18);
+    camera.position.lerp(padCamPos, 0.08);
+    controls.target.lerp(V3(pad.x, baseY + 4.5, pad.z), 0.12);
+
+    if(r.t_state > 1.2){
+      r.state = 'liftoff';
+      r.t_state = 0;
+      $('launchStageText').textContent = 'LIFTOFF · TOWER CLEARED';
+      $('launchCountdownBox').textContent = 'LIFTOFF';
+    }
+  }
+  else if(r.state === 'liftoff' || r.state === 'ascent'){
+    r.v += dt * (r.p_y < 70 ? 8.5 : 14.5);
+    r.p_y += r.v * dt;
+
+    if(r.p_y > 35){
+      r.state = 'ascent';
+      r.pitch = Math.min(Math.PI * 0.38, r.pitch + dt * 0.12);
+      $('launchStageText').textContent = 'ASCENT · GRAVITY TURN';
+      $('launchCountdownBox').textContent = '';
+      $('launchSubText').textContent = 'Ascending To Martian Low Orbit';
+    }
+
+    p.x = pad.x + Math.sin(r.pitch) * (r.p_y - 35) * 0.85;
+    p.y = baseY + r.p_y;
+    p.z = pad.z + Math.sin(r.pitch) * (r.p_y - 35) * 0.42;
+
+    r.mesh.rotation.z = -r.pitch;
+    r.mesh.rotation.x = r.pitch * 0.28;
+
+    spawnParticle(p.x, p.y - 1.2, p.z, 0xffa044, 0.85, 0.55, V3(rr(-2, 2), -18, rr(-2, 2)));
+
+    $('launchAlt').textContent = Math.round(r.p_y * 12) + ' m';
+    $('launchVel').textContent = Math.round(r.v * 36) + ' m/s';
+
+    // Max-Q Condensation shock collar
+    if(r.p_y > 115 && r.p_y < 165){
+      r.shockRing.visible = true;
+      r.shockRing.scale.addScalar(dt * 7.5);
+      r.shockRing.material.opacity = Math.max(0, 1 - (r.p_y - 115) / 45);
+      $('launchStageText').textContent = 'MAX-Q · CONDENSATION SHOCK COLLAR';
+    }
+
+    // Stage Separation
+    if(r.p_y > 175 && !r.separated){
+      r.separated = true;
+      $('launchStageText').textContent = 'STAGE SEPARATION';
+      audio.play('impact');
+      if(r.boosterGroup){
+        r.boosterGroup.visible = false;
+        spawnFallingBooster(p, r.v, r.pitch);
+      }
+      r.plume.visible = false;
+      r.upperPlume.visible = true;
+    }
+
+    // Coast to Apex
+    if(r.p_y > 380 && r.state !== 'apex' && r.state !== 'leave'){
+      r.state = 'apex';
+      r.apexHold = 0;
+      r.upperPlume.visible = false;
+      $('launchStageText').textContent = 'APEX REACHED · ORBITAL VELOCITY';
+      $('launchSubText').textContent = 'Spacecraft Coasting At Apex · 450 km';
+    }
+
+    // Cinematic chase camera climbing behind rocket
+    const camDist = 26 + Math.min(r.p_y * 0.35, 95);
+    const camLookAt = p.clone();
+    const camPos = p.clone().add(V3(
+      -Math.sin(r.pitch) * camDist * 0.85 - 16,
+      -Math.min(r.p_y * 0.4, 75) + 6,
+      -Math.cos(r.pitch) * camDist * 0.5 - 16
+    ));
+    camera.position.lerp(camPos, 0.08);
+    controls.target.lerp(camLookAt, 0.12);
+
+    const altFactor = clamp(r.p_y / 350, 0, 1);
+    stars.material.opacity = Math.max(stars.material.opacity, altFactor * 0.95);
+    scene.fog.far = lerp(330, 2200, altFactor);
+  }
+  else if(r.state === 'apex'){
+    r.apexHold += dt;
+    p.x += Math.sin(r.pitch) * r.v * dt * 0.45;
+    p.y += r.v * dt * 0.15;
+    r.v = Math.max(2, r.v - dt * 8);
+
+    const camDist = 26 + Math.min(r.p_y * 0.35, 95);
+    const camLookAt = p.clone();
+    const camPos = p.clone().add(V3(
+      -Math.sin(r.pitch) * camDist * 0.85 - 16,
+      -Math.min(r.p_y * 0.4, 75) + 6,
+      -Math.cos(r.pitch) * camDist * 0.5 - 16
+    ));
+    camera.position.lerp(camPos, 0.08);
+    controls.target.lerp(camLookAt, 0.12);
+
+    if(r.apexHold > 2.8){
+      r.state = 'leave';
+      r.upperPlume.visible = true;
+      r.mesh.visible = false;
+      finishLaunchCinematic();
+      toast('Cargo rocket reached Mars orbit · Supply return scheduled');
+      logEvent('Cargo rocket reached Mars orbit. Supply delivery scheduled', 'FLIGHT');
+      r.orbitTimer = 14;
+    }
+  }
+  else if(r.state === 'leave'){
+    r.orbitTimer -= dt;
+    if(r.orbitTimer <= 0){
+      r.state = 'descend';
+      r.mesh.visible = true;
+      r.boosterGroup.visible = true;
+      r.upperPlume.visible = false;
+      r.plume.visible = true;
+      r.p_y = 380;
+      r.descendT = 0;
+      toast('Inbound supply rocket detected on entry trajectory');
+      logEvent('Supply rocket atmospheric entry burn active', 'FLIGHT');
+    }
+  }
+  else if(r.state === 'descend'){
+    r.descendT += dt / 9;
+    const f = clamp(r.descendT, 0, 1);
+    const ease = smooth(f);
+    p.x = lerp(pad.x + 24, pad.x, ease);
+    p.z = lerp(pad.z - 18, pad.z, ease);
+    p.y = lerp(baseY + 380, baseY, 1 - Math.pow(1 - f, 2.2));
+    r.mesh.rotation.z = (1 - f) * 0.35;
+    spawnParticle(p.x, p.y, p.z, 0xffad55, 0.7, 0.5, V3(0, -9, 0));
+    if(f >= 1){
+      r.state = 'pad';
+      p.set(pad.x, baseY, pad.z);
+      r.mesh.rotation.set(0, 0, 0);
+      r.plume.visible = false;
+      const cap = capacities();
+      state.res.materials = clamp(state.res.materials + 85, 0, cap.materials);
+      state.res.food = clamp(state.res.food + 45, 0, cap.food);
+      state.res.oxygen = clamp(state.res.oxygen + 40, 0, cap.oxygen);
+      spawnDust(p.x, baseY, pad.z, 30, 0xc88865);
+      toast('Supply rocket touched down safely: +85 MAT, food & oxygen delivered');
+      logEvent('Cargo delivery complete: +85 materials, +45 food, +40 O2', 'SUPPLY');
+      audio.play('supply');
+      updateHUD();
+    }
+  }
+}
+
 function focusCamera(pos,dist=55){if(walkMode)return;controls.target.copy(pos);controls.target.y+=2;const dir=tempV.copy(camera.position).sub(controls.target).normalize();camera.position.copy(controls.target).addScaledVector(dir,dist)}
 
 // ==================== UNIT INSPECTION & TELEMETRY SYSTEM ====================
@@ -2519,6 +2949,37 @@ function updateLiveInspector(){
   }
 }
 
+
+// ==================== SMOOTH CAMERA TRANSITIONS & CLOSE-UP VIEW ====================
+let camTransition = null;
+let savedCameraView = null;
+let savedLaunchView = null;
+let camShake = 0;
+
+function smoothCameraTo(targetPos, camPos, duration = 0.8, onComplete = null){
+  camTransition = {
+    startPos: camera.position.clone(),
+    endPos: camPos.clone(),
+    startTarget: controls.target.clone(),
+    endTarget: targetPos.clone(),
+    duration: Math.max(0.1, duration),
+    elapsed: 0,
+    onComplete
+  };
+}
+
+function exitUnitInspection(){
+  if(selectedUnit && selectedUnit.agent){
+    selectedUnit.agent.pausedWalking = false;
+  }
+  inspectUnit(null);
+  if(savedCameraView){
+    smoothCameraTo(savedCameraView.target, savedCameraView.pos, 0.75, () => {
+      savedCameraView = null;
+    });
+  }
+}
+
 function inspectUnit(unit){
   selectedUnit = unit;
   const panel = $('unitInspector');
@@ -2532,7 +2993,7 @@ function inspectUnit(unit){
     return;
   }
 
-  // Deselect any selected building to prevent UI overlap
+  // Deselect building to prevent UI overlap
   selectBuilding(null);
   panel.classList.add('show');
 
@@ -2546,18 +3007,59 @@ function inspectUnit(unit){
 
   if(unit.type === 'colonist'){
     const c = unit.data;
-    if(unit.agent) unit.agent.waving = 2.4;
+    if(!savedCameraView){
+      savedCameraView = { pos: camera.position.clone(), target: controls.target.clone() };
+    }
+
+    if(unit.agent){
+      unit.agent.pausedWalking = true;
+      unit.agent.waving = 3.5;
+    }
+
+    // Turn colonist smoothly toward camera
+    if(unit.mesh){
+      const dx = camera.position.x - unit.mesh.position.x;
+      const dz = camera.position.z - unit.mesh.position.z;
+      unit.mesh.rotation.y = Math.atan2(dx, dz);
+    }
+
+    // Smooth camera ease to close-up orbit around colonist's head (~3.2 units away, low angle)
+    trackingMode = 'closeup';
+    const headPos = unit.mesh.position.clone().add(V3(0, 1.45, 0));
+    const yaw = unit.mesh.rotation.y;
+    const camOffset = V3(Math.sin(yaw + 0.35) * 3.2, 0.35, Math.cos(yaw + 0.35) * 3.2);
+    const camPos = headPos.clone().add(camOffset);
+    smoothCameraTo(headPos, camPos, 0.8);
+
     avatar.textContent = '👤';
     avatar.style.background = c.suitColor === 'orange' ? 'rgba(220,88,38,0.25)' : c.suitColor === 'cyan' ? 'rgba(106,224,204,0.25)' : 'rgba(242,166,90,0.2)';
     avatar.style.borderColor = c.suitColor === 'orange' ? '#dc5826' : c.suitColor === 'cyan' ? '#6ae0cc' : '#f2a65a';
     eyebrow.textContent = 'ARES-1 PIONEER TELEMETRY';
     nameEl.textContent = c.name;
+
     const sector = getPlotAt(unit.mesh.position.x, unit.mesh.position.z)?.id || 'B2';
     roleEl.textContent = c.role + ' · Sector ' + sector;
-    statsEl.innerHTML = '<div class="bar-row"><span>HP</span><div class="bar-track"><div class="bar-fill bar-health" style="width:' + Math.round(c.health) + '%"></div></div><strong>' + Math.round(c.health) + '%</strong></div>' +
-      '<div class="bar-row"><span>O₂</span><div class="bar-track"><div class="bar-fill bar-oxygen" style="width:' + Math.round(c.oxygen) + '%"></div></div><strong>' + Math.round(c.oxygen) + '%</strong></div>' +
-      '<div class="bar-row"><span>MOR</span><div class="bar-track"><div class="bar-fill bar-morale" style="width:' + Math.round(c.morale) + '%"></div></div><strong>' + Math.round(c.morale) + '%</strong></div>';
-    statusEl.textContent = '● ' + c.status;
+
+    statsEl.innerHTML = '<div class="bar-row"><span>HP</span><div class="bar-track"><div class="bar-fill bar-health" style="width:' + Math.round(c.health) + '%"></div></div><strong>' + Math.round(c.health) + '/100</strong></div>' +
+      '<div class="bar-row"><span>O₂</span><div class="bar-track"><div class="bar-fill bar-oxygen" style="width:' + Math.round(c.oxygen) + '%"></div></div><strong>' + Math.round(c.oxygen) + '/100</strong></div>' +
+      '<div class="bar-row"><span>MOR</span><div class="bar-track"><div class="bar-fill bar-morale" style="width:' + Math.round(c.morale) + '%"></div></div><strong>' + Math.round(c.morale) + '/100</strong></div>';
+
+    const activities = [
+      'Inspecting greenhouse atmospheric seals',
+      'Calibrating rover navigation array',
+      'Analyzing water ice core drill samples',
+      'Monitoring nuclear reactor thermal coolant',
+      'Assessing regolith structural density',
+      'Resting in pressurized habitat quarters',
+      'Reviewing life-support telemetry'
+    ];
+    const actHash = Math.abs((c.name.charCodeAt(0) * 11 + c.name.charCodeAt(c.name.length - 1)) % activities.length);
+    const activityText = c.status || activities[actHash];
+    const homeModule = buildings.find(b => b.id === unit.agent?.at) || buildings.find(b => b.type === 'habitat');
+    const moduleName = homeModule ? (TYPES[homeModule.type].name + ' #' + homeModule.id) : 'Central Habitat Hub';
+
+    statusEl.innerHTML = '● <b>' + activityText + '</b><div style="font-size:10px;color:var(--muted);margin-top:3px;">Assigned: <b>' + moduleName + '</b> · Suit: <b style="text-transform:capitalize;">' + c.suitColor + '</b></div>';
+
     talkBtn.textContent = 'COMM LINK';
     talkBtn.onclick = () => triggerColonistSpeech(c, unit.mesh.position);
 
@@ -2629,13 +3131,8 @@ function inspectUnit(unit){
     toast('Inspecting ' + unit.data.name + ' up close');
     if(unit.type === 'colonist') triggerColonistSpeech(unit.data, unit.mesh.position);
   };
-  $('unitExitBtn').onclick = () => {
-    inspectUnit(null);
-    resetView();
-  };
-  $('unitInspectorClose').onclick = () => {
-    inspectUnit(null);
-  };
+  $('unitExitBtn').onclick = exitUnitInspection;
+  $('unitInspectorClose').onclick = exitUnitInspection;
 }
 
 function triggerColonistSpeech(colonist, pos){
@@ -2691,7 +3188,14 @@ class AudioEngine{
 const audio=new AudioEngine();
 
 // ---------- Lighting, time-of-day, camera presets and first-person surface mode ----------
-function applyLights(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.isLight)o.visible=state.lights&&b.lights});const night=1-smooth(daylight()*2);MAT.window.emissiveIntensity=state.lights?.7+night*2.2:0;MAT.cyan.emissiveIntensity=state.lights?.65+night*1.5:0;MAT.redLight.emissiveIntensity=state.lights?2.0+night*1.0:0}
+function applyLights(){
+  for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.isLight)o.visible=state.lights&&b.lights});
+  if(infraGroup)infraGroup.traverse(o=>{if(o.userData.isLight)o.visible=state.lights});
+  const night=1-smooth(daylight()*2);
+  MAT.window.emissiveIntensity=state.lights?.7+night*2.2:0;
+  MAT.cyan.emissiveIntensity=state.lights?.65+night*1.5:0;
+  MAT.redLight.emissiveIntensity=state.lights?2.0+night*1.0:0;
+}
 function updateSun(){
  const a=(state.phase-.25)*Math.PI*2,sunHeight=Math.sin(a),day=smooth(Math.max(0,sunHeight)*2.2),dust=state.storm;
  sunDirection.set(Math.cos(a),sunHeight,-.38).normalize();sun.position.copy(sunDirection).multiplyScalar(145);sun.position.y+=12;sun.target.position.set(0,0,0);sun.intensity=(.15+3.4*day)*(1-dust*.7);sun.color.setHex(day>.4?0xfff3e2:0xf5ad85);
@@ -2834,16 +3338,343 @@ $('launchDroneBtn').onclick=launchDrone;
 $('saveBtn').onclick=saveGame;$('loadBtn').onclick=loadGame;$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;$('sandboxBtn').onclick=toggleSandbox;$('modeBtn').onclick=toggleSandbox;
 $('resetBtn').onclick=()=>{if(confirm('Reset ARES-1 and abandon the current base?'))resetGame()};$('cancelBuild').onclick=()=>{if(state.buildType)selectBuild(state.buildType)};$('infoClose').onclick=()=>selectBuilding(null);$('infoActions').onclick=e=>{const a=e.target.dataset.action;if(a)moduleAction(a)};
 $('toolsToggle').onclick=()=>$('tools').classList.toggle('expanded');
-$('beginBtn').onclick=()=>{audio.init();state.mode='play';state.paused=false;$('loading').classList.remove('show');toast('ARES-1 online · select a module to expand');logEvent('Mission clock started','ARES-1');audio.play('grow')};
+$('beginBtn').onclick=()=>{
+  audio.init();
+  state.mode='play';
+  state.paused=false;
+  state.startMode='prebuilt';
+  $('loading').classList.remove('show');
+  toast('ARES-1 pre-built colony online · 32 berths occupied');
+  logEvent('ARES-1 pre-built base initialization sequence confirmed','SYSTEM');
+  audio.play('grow');
+};
+if($('beginScratchBtn')){
+  $('beginScratchBtn').onclick=()=>{
+    audio.init();
+    state.mode='play';
+    state.paused=false;
+    state.startMode='scratch';
+    clearBase(true, false);
+    $('loading').classList.remove('show');
+    toast('ARES-1 scratch base initialized · build your colony');
+    logEvent('ARES-1 scratch base initialization confirmed','SYSTEM');
+    audio.play('grow');
+  };
+}
+
+// Clear Base Modal & Button Wiring
+if($('clearBaseBtn')){
+  $('clearBaseBtn').onclick=()=>{
+    let est = 0;
+    const coreHab = buildings.find(b => b.core || b.id === coreId) || buildings.find(b => b.type === 'habitat');
+    const pad = buildings.find(b => b.type === 'landing');
+    const oneSolar = buildings.find(b => b.type === 'solar' && b.x === -36 && b.z === 4) || buildings.find(b => b.type === 'solar');
+    const tunnel = buildings.find(b => b.type === 'tunnel' && Math.hypot(b.x - (coreHab ? coreHab.x : -8), b.z - (coreHab ? coreHab.z : 4)) < 8);
+    const keptIds = new Set([coreHab?.id, pad?.id, oneSolar?.id, tunnel?.id].filter(Boolean));
+    for(const b of buildings){
+      if(!keptIds.has(b.id)) est += (TYPES[b.type]?.cost || 20) * 0.5;
+    }
+    if($('clearRefundEstimate')) $('clearRefundEstimate').textContent = Math.round(est);
+    $('clearBaseModal').style.display = 'flex';
+  };
+}
+if($('clearBaseCancel')){
+  $('clearBaseCancel').onclick=()=>{ $('clearBaseModal').style.display = 'none'; };
+}
+if($('clearBaseConfirm')){
+  $('clearBaseConfirm').onclick=()=>{
+    $('clearBaseModal').style.display = 'none';
+    clearBase(true, true);
+  };
+}
+if($('restorePrebuiltBtn')){
+  $('restorePrebuiltBtn').onclick=()=>{ restorePrebuiltBase(); };
+}
+
 $('continueBtn').onclick=()=>{$('endOverlay').classList.remove('show');state.mode='play';state.paused=false};$('restartBtn').onclick=()=>{$('endOverlay').classList.remove('show');resetGame()};
 function endGame(win){state.won=win;state.mode=win?'victory':'gameover';state.paused=true;$('endEyebrow').textContent=win?'MISSION COMPLETE':'MISSION LOST';$('endTitle').textContent=win?'A NEW WORLD, INHABITED.':'THE SIGNAL WENT QUIET.';$('endText').textContent=win?`Fifty colonists now call ARES-1 home. The settlement reached independence on sol ${state.sol}, with ${buildings.length} modules and a functioning pressure network. Continue in sandbox-style free play, or begin a new mission.`:'Life support could no longer sustain the crew. Rebalance oxygen, food and water, keep batteries charged for dust storms, and connect every habitat to the core.';$('continueBtn').textContent=win?'Continue building':'Retry from autosave';$('continueBtn').style.display=win?'inline-block':'none';$('endOverlay').classList.add('show');audio.play(win?'grow':'alarm')}
 
 // ---------- Initial base and main loop ----------
 function makeBuildMenu(){const menu=$('buildMenu');for(const [key,t] of Object.entries(TYPES)){const b=document.createElement('button');b.className='buildCard';b.dataset.type=key;b.title=t.desc;b.innerHTML=`<span class="ico">${t.icon}</span><span class="name">${t.name}</span><span class="cost">${t.cost} MAT</span>`;b.onclick=()=>selectBuild(key);menu.appendChild(b)}}
+
+// ==================== PREBUILT BASE & INFRASTRUCTURE SYSTEM ====================
+const PREBUILT_BASE = [
+  // 4 Habitats (32 total berths)
+  ['habitat', -8, 4, 0, { core: true }],
+  ['habitat', 4, 4, 0],
+  ['habitat', -8, 16, 0],
+  ['habitat', 4, 16, 0],
+
+  // Pressurized Connecting Tunnels linking all modules
+  ['tunnel', -2, 4, 0],
+  ['tunnel', -8, 10, 0],
+  ['tunnel', 4, 10, 0],
+  ['tunnel', -2, 16, 0],
+  ['tunnel', -14, 4, 0],
+  ['tunnel', -14, 16, 0],
+  ['tunnel', 10, 4, 0],
+  ['tunnel', 10, 16, 0],
+
+  // 2 Greenhouses (yielding 48 food/sol)
+  ['greenhouse', -20, 4, 0],
+  ['greenhouse', -20, 16, 0],
+
+  // 1 Research Lab
+  ['lab', 16, 4, 0],
+
+  // 1 Oxygen ISRU Plant (yielding 46 oxygen/sol)
+  ['isru', 16, 16, 0],
+
+  // Power Generation & Storage
+  ['reactor', -24, -8, 0],
+  ['solar', -36, -8, 0],
+  ['solar', -36, 4, 0],
+  ['solar', -36, 16, 0],
+  ['battery', -12, -6, 0],
+  ['battery', 0, -6, 0],
+
+  // Logistics & Operations
+  ['storage', 12, -6, 0],
+  ['storage', 24, -6, 0],
+  ['radar', -6, 26, 0],
+  ['garage', -22, 26, 0],
+  ['landing', 32, 22, 0],
+
+  // Resource Drills (on or near deposits)
+  ['miner', 28, 4, 0],        // Water ice drill (yielding 46 water/sol)
+  ['drill_iron', 28, -6, 0],   // Iron ore drill
+  ['drill_co2', 16, 26, 0],    // CO2 sublimator
+
+  // Power Pylons (relaying grid to all outposts)
+  ['pylon', -10, -1, 0],
+  ['pylon', 24, 10, 0],
+  ['pylon', 20, 22, 0]
+];
+
+const KEEP_TYPES = ['habitat', 'landing', 'solar', 'tunnel'];
+let infraGroup = null;
+
+function buildInfrastructure(){
+  if(infraGroup){
+    scene.remove(infraGroup);
+    disposeGroup(infraGroup);
+  }
+  infraGroup = new THREE.Group();
+  infraGroup.name = 'infrastructure';
+
+  // 1. Gravel Road Network: dark planar strips conforming to terrainHeight
+  const roadWaypoints = [
+    // Landing Pad (32, 22) -> Storage (24, -6)
+    [ [32, 22], [28, 12], [24, -6] ],
+    // Storage (24, -6) -> Habitats (4, 4) -> (-8, 4)
+    [ [24, -6], [12, -4], [4, 4], [-8, 4] ],
+    // Core Hab (-8, 4) -> Rover Garage (-22, 26)
+    [ [-8, 4], [-14, 16], [-22, 26] ],
+    // Core Hab (-8, 4) -> Nuclear Core (-24, -8) -> Solar field (-36, 4)
+    [ [-8, 4], [-16, -2], [-24, -8], [-36, 4] ],
+    // Storage (24, -6) -> Iron Drill (28, -6) -> Water Drill (28, 4)
+    [ [24, -6], [28, -6], [28, 4] ],
+    // Habitats (4, 16) -> CO2 Sublimator (16, 26)
+    [ [4, 16], [10, 22], [16, 26] ]
+  ];
+
+  const roadMat = new THREE.MeshStandardMaterial({
+    color: 0x2e231e, roughness: 0.94, metalness: 0.05
+  });
+
+  const roadWidth = 2.6;
+  for(const path of roadWaypoints){
+    for(let i = 0; i < path.length - 1; i++){
+      const p1 = path[i], p2 = path[i+1];
+      const dx = p2[0] - p1[0], dz = p2[1] - p1[1];
+      const len = Math.hypot(dx, dz);
+      const angle = Math.atan2(dz, dx);
+      const steps = Math.max(2, Math.ceil(len / 4.5));
+      for(let s = 0; s < steps; s++){
+        const t1 = s / steps, t2 = (s + 1) / steps;
+        const mx = p1[0] + dx * (t1 + t2) * 0.5;
+        const mz = p1[1] + dz * (t1 + t2) * 0.5;
+        const segLen = len / steps;
+        const y = terrainHeight(mx, mz) + 0.038;
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(segLen, roadWidth), roadMat);
+        plane.rotation.x = -Math.PI / 2;
+        plane.rotation.z = -angle;
+        plane.position.set(mx, y, mz);
+        plane.receiveShadow = true;
+        infraGroup.add(plane);
+      }
+    }
+  }
+
+  // 2. Floodlight Poles along roadways and near modules
+  const polePositions = [
+    [-18, 22], [-14, 10], [-6, -4], [6, -4], [18, -4],
+    [26, 6], [28, 18], [-28, 0], [-20, -12], [8, 20]
+  ];
+  for(const [px, pz] of polePositions){
+    const py = terrainHeight(px, pz);
+    cyl(infraGroup, MAT.dark, px, py + 1.6, pz, 0.07, 3.2, 8);
+    box(infraGroup, MAT.dark, px + 0.25, py + 3.15, pz, 0.55, 0.06, 0.06);
+    box(infraGroup, MAT.panel, px + 0.5, py + 3.1, pz, 0.22, 0.1, 0.18);
+    const lens = mesh(new THREE.BoxGeometry(0.18, 0.04, 0.14), MAT.window, infraGroup, px + 0.5, py + 3.03, pz);
+    lens.userData.isLight = true;
+  }
+
+  // 3. Pipelines & Conduit Network between drills, ISRU and habitats
+  const pipeMat = new THREE.MeshStandardMaterial({
+    color: 0x9fa5ad, roughness: 0.32, metalness: 0.85
+  });
+  const pipeRoutes = [
+    [ [28, 4], [24, 12], [16, 16] ],
+    [ [16, 26], [16, 16], [0, 16], [-20, 16] ]
+  ];
+  for(const route of pipeRoutes){
+    for(let i = 0; i < route.length - 1; i++){
+      const a = route[i], b = route[i+1];
+      const ay = terrainHeight(a[0], a[1]) + 0.42;
+      const by = terrainHeight(b[0], b[1]) + 0.42;
+      cylinderBetween(infraGroup, pipeMat, V3(a[0], ay, a[1]), V3(b[0], by, b[1]), 0.16);
+      const dist = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      const stanchions = Math.max(1, Math.floor(dist / 7));
+      for(let s = 1; s <= stanchions; s++){
+        const f = s / (stanchions + 1);
+        const sx = lerp(a[0], b[0], f), sz = lerp(a[1], b[1], f);
+        const sy = terrainHeight(sx, sz);
+        cyl(infraGroup, MAT.dark, sx, sy + 0.22, sz, 0.06, 0.44, 8);
+      }
+    }
+  }
+
+  // 4. Landing Pad Perimeter Beacon Lights
+  const padCenterX = 32, padCenterZ = 22, padRadius = 7.4;
+  for(let i = 0; i < 8; i++){
+    const ang = (i / 8) * Math.PI * 2;
+    const lx = padCenterX + Math.cos(ang) * padRadius;
+    const lz = padCenterZ + Math.sin(ang) * padRadius;
+    const ly = terrainHeight(lx, lz) + 0.18;
+    cyl(infraGroup, MAT.dark, lx, ly + 0.15, lz, 0.12, 0.3, 8);
+    const bulbMat = (i % 2 === 0) ? MAT.cyan : MAT.window;
+    const bulb = mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.14, 8), bulbMat, infraGroup, lx, ly + 0.35, lz);
+    bulb.userData.isLight = true;
+  }
+
+  scene.add(infraGroup);
+}
+
+function clearBase(keepCoreOnly = true, playSound = true){
+  pushUndo();
+  let refundTotal = 0;
+  const toRemove = [];
+
+  const coreHab = buildings.find(b => b.core || b.id === coreId) || buildings.find(b => b.type === 'habitat');
+  const pad = buildings.find(b => b.type === 'landing');
+  const oneSolar = buildings.find(b => b.type === 'solar' && b.x === -36 && b.z === 4) || buildings.find(b => b.type === 'solar');
+  const tunnel = buildings.find(b => b.type === 'tunnel' && Math.hypot(b.x - (coreHab ? coreHab.x : -8), b.z - (coreHab ? coreHab.z : 4)) < 8);
+
+  const keptIds = new Set([
+    coreHab ? coreHab.id : null,
+    pad ? pad.id : null,
+    oneSolar ? oneSolar.id : null,
+    tunnel ? tunnel.id : null
+  ].filter(Boolean));
+
+  for(const b of buildings){
+    if(keepCoreOnly && keptIds.has(b.id)) continue;
+    toRemove.push(b);
+  }
+
+  for(const b of toRemove){
+    refundTotal += (TYPES[b.type]?.cost || 20) * 0.5;
+    spawnDust(b.x, terrainHeight(b.x, b.z), b.z, 8, 0xd29a72);
+    scene.remove(b.mesh);
+    disposeGroup(b.mesh);
+  }
+
+  buildings = buildings.filter(b => !toRemove.includes(b));
+
+  if(infraGroup){
+    scene.remove(infraGroup);
+    disposeGroup(infraGroup);
+    infraGroup = null;
+  }
+
+  state.pop = 6;
+  state.startMode = 'scratch';
+  state.res.materials = 320 + Math.round(refundTotal);
+  state.res.power = 130;
+  state.res.oxygen = 180;
+  state.res.water = 140;
+  state.res.food = 150;
+
+  syncColonistsRoster();
+  updateAgents();
+
+  computeNetwork();
+  calculateRates();
+  afterBaseChange();
+  applyLights();
+  updateHUD();
+
+  $('restorePrebuiltBtn').style.display = 'inline-block';
+  if(playSound) audio.play('delete');
+  toast('Base cleared. +' + Math.round(refundTotal) + ' MAT refunded. Core habitat, pad & solar preserved.');
+  logEvent('Base cleared to core layout. Refunded ' + Math.round(refundTotal) + ' MAT', 'SYSTEM');
+}
+
+function restorePrebuiltBase(){
+  pushUndo();
+  clearBuildings();
+  for(const r of rovers){ scene.remove(r.mesh); disposeGroup(r.mesh); }
+  rovers = [];
+  for(const d of drones){ scene.remove(d.mesh); disposeGroup(d.mesh); }
+  drones = [];
+  for(const a of agents){ scene.remove(a.mesh); disposeGroup(a.mesh); }
+  agents = [];
+  if(rocket){ scene.remove(rocket.mesh); disposeGroup(rocket.mesh); rocket = null; }
+  nextId = 1; coreId = 0;
+
+  for(const [type, x, z, rot, opt] of PREBUILT_BASE){
+    addBuilding(type, x, z, rot, { ...opt, defer: true });
+  }
+
+  buildInfrastructure();
+
+  state.startMode = 'prebuilt';
+  state.pop = 32;
+  Object.assign(state.res, {
+    materials: 400, power: 240, oxygen: 220, water: 200, food: 200,
+    waterIce: 80, ironOre: 80, co2: 80
+  });
+
+  syncColonistsRoster();
+  updateAgents();
+
+  roverRoute = new THREE.CatmullRomCurve3([
+    V3(-65,0,25), V3(-45,0,-55), V3(15,0,-65), V3(75,0,-20),
+    V3(80,0,35), V3(35,0,65), V3(-25,0,55)
+  ], true, 'catmullrom', 0.35);
+
+  computeNetwork();
+  calculateRates();
+  afterBaseChange();
+  applyLights();
+  updateSun();
+  updateHUD();
+
+  $('restorePrebuiltBtn').style.display = 'none';
+  audio.play('place');
+  toast('Full pre-built ARES-1 base restored!');
+  logEvent('Pre-built layout restored', 'SYSTEM');
+}
+
 function initialBase(){
  clearBuildings();for(const r of rovers){scene.remove(r.mesh);disposeGroup(r.mesh)}rovers=[];for(const d of drones){scene.remove(d.mesh);disposeGroup(d.mesh)}drones=[];for(const a of agents){scene.remove(a.mesh);disposeGroup(a.mesh)}agents=[];if(rocket){scene.remove(rocket.mesh);disposeGroup(rocket.mesh);rocket=null}nextId=1;coreId=0;undoStack=[];redoStack=[];
- const initial=[['habitat',-8,4,0,{core:true}],['habitat',4,4,0],['tunnel',-2,4,0],['greenhouse',16,4,0],['isru',-4,-14,0],['battery',10,-14,0],['solar',-24,-10,0],['solar',-24,-20,0],['garage',-32,22,0],['landing',30,24,0],['storage',20,-16,0],['radar',-2,26,0]];
- for(const [type,x,z,rot,opt]of initial)addBuilding(type,x,z,rot,{...opt,defer:true});
+ for(const [type,x,z,rot,opt] of PREBUILT_BASE) addBuilding(type,x,z,rot,{...opt,defer:true});
+ buildInfrastructure();
+ state.startMode = state.startMode || 'prebuilt';
+ state.pop = 32;
+ Object.assign(state.res, { materials: 400, power: 240, oxygen: 220, water: 200, food: 200, waterIce: 80, ironOre: 80, co2: 80 });
+ syncColonistsRoster();
  roverRoute=new THREE.CatmullRomCurve3([V3(-65,0,25),V3(-45,0,-55),V3(15,0,-65),V3(75,0,-20),V3(80,0,35),V3(35,0,65),V3(-25,0,55)],true,'catmullrom',.35);
  afterBaseChange();applyLights();updateSun();
 }
@@ -2854,13 +3685,29 @@ async function init(){
   $('loadStatus').textContent='ASSEMBLING PRESSURE NETWORK';$('loadFill').style.width='42%';await frame();makeBuildMenu();initialBase();
   $('loadStatus').textContent='WAKING CREW & AUTONOMOUS VEHICLES';$('loadFill').style.width='72%';await frame();syncAgents();syncVehicles();
   for(let i=0;i<40;i++)updateDrones(.03);updateRovers(.1);updateHUD();updateSectorCardUI();updateMinimap();
-  $('loadStatus').textContent='ALL SYSTEMS NOMINAL';$('loadFill').style.width='100%';$('beginBtn').disabled=false;
+  $('loadStatus').textContent='ALL SYSTEMS NOMINAL';$('loadFill').style.width='100%';$('beginBtn').disabled=false;if($('beginScratchBtn'))$('beginScratchBtn').disabled=false;
   window.__SCENE_READY__=true;window.__GAME_READY__=true;lastTime=performance.now();requestAnimationFrame(loop);
  }catch(e){console.error(e);$('loadStatus').textContent='STARTUP FAULT · '+e.message;$('beginBtn').textContent='Reload to retry';$('beginBtn').disabled=false;$('beginBtn').onclick=()=>location.reload()}
 }
 let lastTime=0,hudTimer=0,frameEMA=16,qualityTimer=0;
 function loop(now){requestAnimationFrame(loop);let dt=Math.min(.05,Math.max(0,(now-lastTime)/1000));lastTime=now;frameEMA=lerp(frameEMA,dt*1000,.025);qualityTimer+=dt;
- if(state.mode==='play'&&!state.paused){const sdt=dt*state.speed;state.simTime+=sdt;state.sol=1+Math.floor(state.simTime/DAY_SECONDS);if(state.autoCycle)state.phase=(state.phase+sdt/DAY_SECONDS)%1;state.solFraction=state.phase;simulate(sdt/DAY_SECONDS);for(const a of agents)updateAgent(a,sdt);updateRovers(sdt);updateDrones(sdt);updateRocket(sdt);updateMeteors(sdt);updateWeather(sdt);updateParticles(sdt);updateSun();audio.update();hudTimer+=dt;if(hudTimer>.25){hudTimer=0;updateHUD();updateMinimap();updateLiveInspector()}}
+ if(camTransition){
+   camTransition.elapsed += dt;
+   const t = Math.min(1, camTransition.elapsed / camTransition.duration);
+   const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+   camera.position.lerpVectors(camTransition.startPos, camTransition.endPos, ease);
+   controls.target.lerpVectors(camTransition.startTarget, camTransition.endTarget, ease);
+   if(t >= 1){
+     if(camTransition.onComplete) camTransition.onComplete();
+     camTransition = null;
+   }
+ }
+ if(camShake > 0){
+   camShake = Math.max(0, camShake - dt * 0.35);
+   camera.position.x += (Math.random() - 0.5) * camShake;
+   camera.position.y += (Math.random() - 0.5) * camShake;
+ }
+ if(state.mode==='play'&&!state.paused){const sdt=dt*state.speed;state.simTime+=sdt;state.sol=1+Math.floor(state.simTime/DAY_SECONDS);if(state.autoCycle)state.phase=(state.phase+sdt/DAY_SECONDS)%1;state.solFraction=state.phase;simulate(sdt/DAY_SECONDS);for(const a of agents)updateAgent(a,sdt);updateRovers(sdt);updateDrones(sdt);updateRocket(sdt);updateFallingBooster(sdt);updateMeteors(sdt);updateWeather(sdt);updateParticles(sdt);updateSun();audio.update();hudTimer+=dt;if(hudTimer>.25){hudTimer=0;updateHUD();updateMinimap();updateLiveInspector()}}
  // Unit selection ring pulse and tracking
   if(selectedUnit && selectedUnit.mesh){
     const up = selectedUnit.mesh.position;
@@ -2872,7 +3719,8 @@ function loop(now){requestAnimationFrame(loop);let dt=Math.min(.05,Math.max(0,(n
     if(trackingMode === 'follow'){
       controls.target.lerp(V3(up.x, up.y + (selectedUnit.type === 'drone' ? 0.4 : 1.2), up.z), 0.08);
     } else if(trackingMode === 'closeup'){
-      controls.target.lerp(V3(up.x, up.y + (selectedUnit.type === 'colonist' ? 1.4 : 0.8), up.z), 0.1);
+      const headPos = V3(up.x, up.y + (selectedUnit.type === 'colonist' ? 1.45 : 0.8), up.z);
+      controls.target.lerp(headPos, 0.12);
     }
 
     // Keep speech bubble anchored above colonist head in 3D
