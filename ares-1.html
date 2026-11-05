@@ -873,7 +873,7 @@
   <button class="tool" id="deployRoverBtn" title="Deploy Rover from Garage">⛟ ROVER</button><button class="tool" id="launchDroneBtn" title="Launch Drone from Radar">⌖ DRONE</button><button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
   <button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
   <button class="tool danger" id="clearBaseBtn" title="Remove non-core buildings and start from scratch">CLEAR BASE</button>
-  <button class="tool" id="restorePrebuiltBtn" title="Restore pre-built base layout" style="display:none;background:rgba(106,224,204,0.18);border-color:var(--green);color:var(--green);">RESTORE PREBUILT</button>
+  <button class="tool" id="restoreMasterPlanBtn" title="Restore pre-built base layout" style="display:none;background:rgba(106,224,204,0.18);border-color:var(--green);color:var(--green);">RESTORE MASTER PLAN</button>
 </nav>
 <aside id="objective" class="ui glass" style="display:none"><span class="eyebrow">Current directive</span><h2 id="directiveTitle">Establish a foothold</h2><p id="directiveText">Keep life support positive. Expand with connected habitats to grow the crew.</p><div class="netstatus"><span class="dot" id="netDot"></span><span id="networkLabel">2 / 2 HABITATS PRESSURIZED</span></div></aside>
 <aside id="info" class="ui glass" aria-live="polite"><button id="infoClose" aria-label="Close information">×</button><span class="eyebrow">Module telemetry</span><h2 id="infoName">Habitat</h2><div id="infoType">HAB-01 · ONLINE</div><div id="infoStatus"></div><div class="health"><i id="healthFill"></i></div><div id="infoActions"></div></aside>
@@ -1174,7 +1174,7 @@ const TYPES={
  storage:{name:'Storage depot',short:'STO',icon:'S▦',cost:45,w:8,d:8,power:1,storage:180,desc:'Expands resource capacity'},
  tunnel:{name:'Connecting tunnel',short:'TUN',icon:'T═',cost:12,w:4,d:4,power:.2,pressurized:true,desc:'Links pressurized modules'}
 };
-const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false,unlockedPlots:new Set(['B2','B3','C2','C3']),heatmap:false,showMinimap:true,selectedPlot:'B2'};
+const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false,unlockedPlots:new Set(['B1','B2','B3','B4','C1','C2','C3','C4']),heatmap:false,showMinimap:true,selectedPlot:'B2'};
 
 // ==================== EXPANDED COLONIST POPULATION ROSTER ====================
 const COLONIST_FIRST_NAMES = ['Dr. Maya', 'Eng. Leo', 'Cmdr. James', 'Tech Nadia', 'Dr. Soren', 'Specialist Liam', 'Dr. Zara', 'Tech Kenji', 'Eng. Clara', 'Dr. Mateo', 'Pilot Sam', 'Botanist Nina', 'Dr. Tariq', 'Tech Jin'];
@@ -1345,7 +1345,13 @@ const MAT={
  cyan:new THREE.MeshStandardMaterial({color:0x98e2d8,emissive:0x6ae0cc,emissiveIntensity:1.5,roughness:.32}),
  redLight:new THREE.MeshStandardMaterial({color:0xff7558,emissive:0xff3d20,emissiveIntensity:2.4}),
  rock:new THREE.MeshStandardMaterial({color:0x965e45,roughness:1,vertexColors:true}),
- black:new THREE.MeshStandardMaterial({color:0x1c1f21,roughness:.65,metalness:.5})
+ black:new THREE.MeshStandardMaterial({color:0x1c1f21,roughness:.65,metalness:.5}),
+ amberLight:new THREE.MeshStandardMaterial({color:0xffd18a,emissive:0xf2a65a,emissiveIntensity:2.4,roughness:.18,metalness:.2}),
+ asphalt:new THREE.MeshStandardMaterial({color:0x221c19,roughness:0.92,metalness:0.08,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),
+ curb:new THREE.MeshStandardMaterial({color:0x7a6e64,roughness:0.85,metalness:0.12,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3}),
+ marking:new THREE.MeshStandardMaterial({color:0xf2a65a,emissive:0x663311,emissiveIntensity:0.6,roughness:0.6,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4}),
+ walkway:new THREE.MeshStandardMaterial({color:0xded6c8,roughness:0.75,metalness:0.15,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3}),
+ glow:new THREE.MeshBasicMaterial({color:0xf2a65a,transparent:true,opacity:0.28,depthWrite:false,blending:THREE.AdditiveBlending})
 };
 const unitBox=new THREE.BoxGeometry(1,1,1),unitCylinder=new THREE.CylinderGeometry(1,1,1,20),tempObj=new THREE.Object3D(),tempV=V3(),tempV2=V3();
 function disposeGroup(root){root?.traverse(o=>{if(o.isSprite){o.material.map?.dispose();o.material.dispose()}else if(o.isMesh&&o.geometry&&o.geometry!==unitBox&&o.geometry!==unitCylinder)o.geometry.dispose()})}
@@ -1358,7 +1364,7 @@ function lightMesh(parent,x,y,z,w=.3,h=.15,d=.12,mat=MAT.window){const m=box(par
 function antenna(parent,x,y,z,h=2){cyl(parent,MAT.metal,x,y+h/2,z,.06,h,8);lightMesh(parent,x,y+h,z,.13,.13,.13,MAT.redLight);box(parent,MAT.dark,x,y+.12,z,.55,.22,.55)}
 
 // ---------- Procedural terrain: dunes, fBm regolith, crater and rear ridge ----------
-function terrainHeight(x,z){
+function rawTerrainHeight(x,z){
  let h=(fbm(x*.035+4,z*.035-3)-.48)*2.4+(noise(x*.12,z*.12)-.5)*.28;
  h+=Math.sin(x*.08+z*.025)*.28*smooth((Math.abs(x)-25)/20);
  const cd=Math.hypot(x-30,z+23)/16;
@@ -1369,6 +1375,51 @@ function terrainHeight(x,z){
  if(cd2>.75&&cd2<1.3)h+=1.1*(1-Math.abs(cd2-1.02)/.28);
  if(z<-70)h+=Math.pow((-70-z)/14,1.7)*(3.2+2.2*fbm(x*.08,z*.08));
  return h;
+}
+
+function terrainHeight(x,z){
+ const raw = rawTerrainHeight(x, z);
+ // Outside city limits, return natural undulating Martian dunes
+ if(x < -80 || x > 72 || z < -54 || z > 54) return raw;
+
+ let fw = 0;
+ // Main North-South Boulevard (x in [-4.5, 4.5], z in [-52, 52])
+ const dBlvd = Math.max(0, Math.abs(x) - 4.2);
+ if(dBlvd < 4.0 && z >= -52 && z <= 52) fw = Math.max(fw, 1 - dBlvd / 4.0);
+
+ // North Avenue (z = -24, x in [-46, 46])
+ const dNorth = Math.max(0, Math.abs(z - (-24)) - 2.6);
+ if(dNorth < 3.5 && x >= -46 && x <= 46) fw = Math.max(fw, 1 - dNorth / 3.5);
+
+ // South Avenue (z = 24, x in [-46, 46])
+ const dSouth = Math.max(0, Math.abs(z - 24) - 2.6);
+ if(dSouth < 3.5 && x >= -46 && x <= 46) fw = Math.max(fw, 1 - dSouth / 3.5);
+
+ // Spaceport Expressway (z = 8, x in [0, 68])
+ const dSp = Math.max(0, Math.abs(z - 8) - 3.2);
+ if(dSp < 3.5 && x >= 0 && x <= 68) fw = Math.max(fw, 1 - dSp / 3.5);
+
+ // Service Loops (x = -44 and x = 44, z in [-24, 24])
+ const dWSvc = Math.max(0, Math.abs(x - (-44)) - 2.2);
+ if(dWSvc < 3.0 && z >= -24 && z <= 24) fw = Math.max(fw, 1 - dWSvc / 3.0);
+ const dESvc = Math.max(0, Math.abs(x - 44) - 2.2);
+ if(dESvc < 3.0 && z >= -24 && z <= 24) fw = Math.max(fw, 1 - dESvc / 3.0);
+
+ // Flattening for Master-Planned Building Pads
+ for(let i = 0; i < PREBUILT_BASE.length; i++){
+  const b = PREBUILT_BASE[i];
+  const t = TYPES[b[0]];
+  if(!t) continue;
+  const hw = (t.w || 8) * 0.5 + 1.2;
+  const hd = (t.d || 8) * 0.5 + 1.2;
+  const dx = Math.max(0, Math.abs(x - b[1]) - hw);
+  const dz = Math.max(0, Math.abs(z - b[2]) - hd);
+  const dist = Math.hypot(dx, dz);
+  if(dist < 3.5) fw = Math.max(fw, 1 - dist / 3.5);
+ }
+
+ fw = smooth(clamp(fw, 0, 1));
+ return lerp(raw, 0.0, fw * 0.94);
 }
 function regolithTexture(){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d'),im=g.createImageData(256,256);for(let y=0;y<256;y++)for(let x=0;x<256;x++){const n=fbm(x*.045,y*.045,4),grain=hash(x,y)*18,i=(y*256+x)*4;im.data[i]=126+n*62+grain;im.data[i+1]=59+n*40+grain*.45;im.data[i+2]=35+n*25+grain*.25;im.data[i+3]=255}g.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(8,8);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return t}
 let plotBordersGroup=null,heatmapGroup=null;
@@ -1640,7 +1691,7 @@ function restore(s){
   state.startMode = s.state.startMode || (s.buildings.length > 15 ? 'prebuilt' : 'scratch');
   if(state.startMode !== 'scratch') buildInfrastructure();
   else if(infraGroup) { scene.remove(infraGroup); disposeGroup(infraGroup); infraGroup = null; }
-  if($('restorePrebuiltBtn')) $('restorePrebuiltBtn').style.display = (state.startMode === 'scratch') ? 'inline-block' : 'none';
+  if($('restoreMasterPlanBtn')) $('restoreMasterPlanBtn').style.display = (state.startMode === 'scratch') ? 'inline-block' : 'none';
   afterBaseChange();applyLights();updateModeUI();updateSun();
 }
 function pushUndo(){undoStack.push(snapshot());if(undoStack.length>35)undoStack.shift();redoStack=[]}
@@ -1855,6 +1906,19 @@ function updateMinimap(){
   ctx.font='8px monospace';
   ctx.fillText(p.id,x0+4,y0+10);
  }
+
+
+ // Render Master-Plan Road Grid on Satellite Radar
+ ctx.strokeStyle='rgba(242,166,90,0.35)';
+ ctx.lineWidth=1.5;
+ ctx.beginPath();
+ ctx.moveTo(toX(0),toY(-52));ctx.lineTo(toX(0),toY(52)); // Main Blvd
+ ctx.moveTo(toX(-48),toY(-24));ctx.lineTo(toX(44),toY(-24)); // North Ave
+ ctx.moveTo(toX(-48),toY(24));ctx.lineTo(toX(44),toY(24)); // South Ave
+ ctx.moveTo(toX(0),toY(8));ctx.lineTo(toX(56),toY(8)); // Spaceport Expy
+ ctx.moveTo(toX(-44),toY(-24));ctx.lineTo(toX(-44),toY(24));ctx.lineTo(toX(-64),toY(20)); // West Loop
+ ctx.moveTo(toX(44),toY(-24));ctx.lineTo(toX(44),toY(24)); // East Loop
+ ctx.stroke();
 
  // 2. Render Ore Deposits
  for(const dep of ORE_DEPOSITS){
@@ -3199,6 +3263,12 @@ function applyLights(){
   MAT.window.emissiveIntensity=state.lights?.7+night*2.2:0;
   MAT.cyan.emissiveIntensity=state.lights?.65+night*1.5:0;
   MAT.redLight.emissiveIntensity=state.lights?2.0+night*1.0:0;
+  if(MAT.amberLight) MAT.amberLight.emissiveIntensity=state.lights?.8+night*2.8:0;
+  if(MAT.glow) MAT.glow.opacity=state.lights?.08+night*0.32:0;
+  for(const pl of cityPointLights){
+    pl.intensity = state.lights ? (0.25 + night * 1.8) : 0;
+  }
+  if(districtLabelsGroup) districtLabelsGroup.visible = !!state.labels;
 }
 function updateSun(){
  const a=(state.phase-.25)*Math.PI*2,sunHeight=Math.sin(a),day=smooth(Math.max(0,sunHeight)*2.2),dust=state.storm;
@@ -3302,7 +3372,7 @@ function toggleHelp(show){const open=show===undefined?!$('help').classList.conta
 $('pauseBtn').onclick=togglePause;$('speedBtn').onclick=()=>{const speeds=[1,2,4],i=(speeds.indexOf(state.speed)+1)%speeds.length;state.speed=speeds[i];$('speedBtn').textContent=state.speed+'×';toast('Simulation speed '+state.speed+'×')};
 $('cycleBtn').onclick=()=>{state.autoCycle=!state.autoCycle;$('cycleBtn').classList.toggle('on',state.autoCycle)};$('timeSlider').oninput=e=>{state.phase=+e.target.value/1000;updateSun()};
 $('walkBtn').onclick=()=>walkMode?exitWalk():enterWalk();$('stormBtn').onclick=triggerStorm;$('meteorBtn').onclick=triggerMeteor;
-$('lightsBtn').onclick=()=>{state.lights=!state.lights;$('lightsBtn').classList.toggle('on',state.lights);applyLights()};$('labelsBtn').onclick=()=>{state.labels=!state.labels;$('labelsBtn').classList.toggle('on',state.labels);updateLabels()};
+$('lightsBtn').onclick=()=>{state.lights=!state.lights;$('lightsBtn').classList.toggle('on',state.lights);applyLights()};$('labelsBtn').onclick=()=>{state.labels=!state.labels;$('labelsBtn').classList.toggle('on',state.labels);if(districtLabelsGroup)districtLabelsGroup.visible=state.labels;updateLabels()};
 $('shadowsBtn').onclick=()=>{state.shadows=!state.shadows;renderer.shadowMap.enabled=state.shadows;$('shadowsBtn').classList.toggle('on',state.shadows)};$('bloomBtn').onclick=()=>{state.bloom=!state.bloom;$('bloomBtn').classList.toggle('on',state.bloom)};
 $('soundBtn').onclick=()=>{state.sound=!state.sound;audio.set(state.sound);$('soundBtn').classList.toggle('on',state.sound);toast(state.sound?'Procedural audio on':'Audio muted')};
 $('helpBtn').onclick=()=>toggleHelp();$('helpClose').onclick=()=>toggleHelp(false);$('help').addEventListener('click',e=>{if(e.target===$('help'))toggleHelp(false)});
@@ -3372,8 +3442,8 @@ if($('clearBaseBtn')){
     let est = 0;
     const coreHab = buildings.find(b => b.core || b.id === coreId) || buildings.find(b => b.type === 'habitat');
     const pad = buildings.find(b => b.type === 'landing');
-    const oneSolar = buildings.find(b => b.type === 'solar' && b.x === -36 && b.z === 4) || buildings.find(b => b.type === 'solar');
-    const tunnel = buildings.find(b => b.type === 'tunnel' && Math.hypot(b.x - (coreHab ? coreHab.x : -8), b.z - (coreHab ? coreHab.z : 4)) < 8);
+    const oneSolar = buildings.find(b => b.type === 'solar' && b.x === -48 && b.z === 8) || buildings.find(b => b.type === 'solar');
+    const tunnel = buildings.find(b => b.type === 'tunnel' && Math.hypot(b.x - (coreHab ? coreHab.x : -16), b.z - (coreHab ? coreHab.z : -8)) < 9);
     const keptIds = new Set([coreHab?.id, pad?.id, oneSolar?.id, tunnel?.id].filter(Boolean));
     for(const b of buildings){
       if(!keptIds.has(b.id)) est += (TYPES[b.type]?.cost || 20) * 0.5;
@@ -3391,8 +3461,8 @@ if($('clearBaseConfirm')){
     clearBase(true, true);
   };
 }
-if($('restorePrebuiltBtn')){
-  $('restorePrebuiltBtn').onclick=()=>{ restorePrebuiltBase(); };
+if($('restoreMasterPlanBtn')){
+  $('restoreMasterPlanBtn').onclick=()=>{ restorePrebuiltBase(); };
 }
 
 $('continueBtn').onclick=()=>{$('endOverlay').classList.remove('show');state.mode='play';state.paused=false};$('restartBtn').onclick=()=>{$('endOverlay').classList.remove('show');resetGame()};
@@ -3403,60 +3473,141 @@ function makeBuildMenu(){const menu=$('buildMenu');for(const [key,t] of Object.e
 
 // ==================== PREBUILT BASE & INFRASTRUCTURE SYSTEM ====================
 const PREBUILT_BASE = [
-  // 4 Habitats (32 total berths)
-  ['habitat', -8, 4, 0, { core: true }],
-  ['habitat', 4, 4, 0],
-  ['habitat', -8, 16, 0],
-  ['habitat', 4, 16, 0],
+  // ==================== 1. CORE / RESIDENTIAL DISTRICT (Center Spine) ====================
+  // 4 Habitats (8x8) in symmetrical blocks along Main Boulevard
+  ['habitat', -16, -8, 0, { core: true, district: 'RESIDENTIAL' }],
+  ['habitat', -16, 8, 0, { district: 'RESIDENTIAL' }],
+  ['habitat', 16, -8, 0, { district: 'RESIDENTIAL' }],
+  ['habitat', 16, 8, 0, { district: 'RESIDENTIAL' }],
 
-  // Pressurized Connecting Tunnels linking all modules
-  ['tunnel', -2, 4, 0],
-  ['tunnel', -8, 10, 0],
-  ['tunnel', 4, 10, 0],
-  ['tunnel', -2, 16, 0],
-  ['tunnel', -14, 4, 0],
-  ['tunnel', -14, 16, 0],
-  ['tunnel', 10, 4, 0],
-  ['tunnel', 10, 16, 0],
+  // Straight Hermetic Connecting Tunnels
+  ['tunnel', -16, 0, 0, { district: 'RESIDENTIAL' }], // West Hab link
+  ['tunnel', 16, 0, 0, { district: 'RESIDENTIAL' }],  // East Hab link
 
-  // 2 Greenhouses (yielding 48 food/sol)
-  ['greenhouse', -20, 4, 0],
-  ['greenhouse', -20, 16, 0],
+  // Cross-Boulevard Plaza Hermetic Walkway
+  ['tunnel', -8, 0, 0, { district: 'RESIDENTIAL' }],
+  ['tunnel', 0, 0, 0, { district: 'RESIDENTIAL' }],
+  ['tunnel', 8, 0, 0, { district: 'RESIDENTIAL' }],
 
-  // 1 Research Lab
-  ['lab', 16, 4, 0],
+  // ==================== 2. LIFE SUPPORT DISTRICT (North Avenue) ====================
+  // 2 Greenhouses (12x8) in parallel row
+  ['greenhouse', -16, -24, 0, { district: 'LIFE SUPPORT' }],
+  ['greenhouse', 16, -24, 0, { district: 'LIFE SUPPORT' }],
 
-  // 1 Oxygen ISRU Plant (yielding 46 oxygen/sol)
-  ['isru', 16, 16, 0],
+  // Hermetic Tunnels linking Residential Core to Greenhouses
+  ['tunnel', -16, -16, 0, { district: 'LIFE SUPPORT' }],
+  ['tunnel', 16, -16, 0, { district: 'LIFE SUPPORT' }],
 
-  // Power Generation & Storage
-  ['reactor', -24, -8, 0],
-  ['solar', -36, -8, 0],
-  ['solar', -36, 4, 0],
-  ['solar', -36, 16, 0],
-  ['battery', -12, -6, 0],
-  ['battery', 0, -6, 0],
+  // 1 Oxygen ISRU Plant (12x8) & connecting tunnel
+  ['isru', -32, -24, 0, { district: 'LIFE SUPPORT' }],
+  ['tunnel', -24, -24, 0, { district: 'LIFE SUPPORT' }],
 
-  // Logistics & Operations
-  ['storage', 12, -6, 0],
-  ['storage', 24, -6, 0],
-  ['radar', -6, 26, 0],
-  ['garage', -22, 26, 0],
-  ['landing', 32, 22, 0],
+  // 1 CO2 Sublimator (10x8) near Thermal Vent deposit
+  ['drill_co2', -20, -40, 0, { district: 'LIFE SUPPORT' }],
 
-  // Resource Drills (on or near deposits)
-  ['miner', 28, 4, 0],        // Water ice drill (yielding 46 water/sol)
-  ['drill_iron', 28, -6, 0],   // Iron ore drill
-  ['drill_co2', 16, 26, 0],    // CO2 sublimator
+  // ==================== 3. COMMS & RESEARCH DISTRICT (East Flank) ====================
+  // 1 Research Lab (12x8) & connecting tunnel
+  ['lab', 32, -8, 0, { district: 'RESEARCH' }],
+  ['tunnel', 24, -8, 0, { district: 'RESEARCH' }],
 
-  // Power Pylons (relaying grid to all outposts)
-  ['pylon', -10, -1, 0],
-  ['pylon', 24, 10, 0],
-  ['pylon', 20, 22, 0]
+  // 1 Radar / Comms Dish (8x8) on elevated survey rise
+  ['radar', 32, -24, 0, { district: 'RESEARCH' }],
+
+  // ==================== 4. POWER FIELD DISTRICT (South-West Quadrant) ====================
+  // 3 Solar Arrays (8x8) in strict column grid (4m equal gap)
+  ['solar', -48, 8, 0, { district: 'POWER FIELD' }],
+  ['solar', -48, 20, 0, { district: 'POWER FIELD' }],
+  ['solar', -48, 32, 0, { district: 'POWER FIELD' }],
+
+  // 1 Nuclear Reactor (12x12) isolated with safety perimeter buffer
+  ['reactor', -68, 20, 0, { district: 'POWER FIELD' }],
+
+  // 2 Battery Banks (8x8)
+  ['battery', -32, 12, 0, { district: 'POWER FIELD' }],
+  ['battery', -32, 24, 0, { district: 'POWER FIELD' }],
+
+  // Power Corridor Pylons linking Nuclear & Solar to Core
+  ['pylon', -24, 8, 0, { district: 'POWER FIELD' }],
+  ['pylon', -40, 20, 0, { district: 'POWER FIELD' }],
+  ['pylon', -56, 20, 0, { district: 'POWER FIELD' }],
+
+  // ==================== 5. INDUSTRIAL & MINING DISTRICT (South Sector) ====================
+  // 1 Rover Garage (12x12) at district entrance
+  ['garage', -16, 28, 0, { district: 'INDUSTRIAL' }],
+
+  // 2 Storage Hubs (8x8)
+  ['storage', 16, 24, 0, { district: 'INDUSTRIAL' }],
+  ['storage', 16, 36, 0, { district: 'INDUSTRIAL' }],
+
+  // Resource Drills on deposits
+  ['miner', 32, -40, 0, { district: 'INDUSTRIAL' }],     // Water Ice Drill on Permafrost Glade beta
+  ['drill_iron', -36, 44, 0, { district: 'INDUSTRIAL' }], // Iron Ore Drill on Basalt Ridge Fe-1
+
+  // Industrial Substation Pylons
+  ['pylon', -28, 36, 0, { district: 'INDUSTRIAL' }],
+  ['pylon', -20, -32, 0, { district: 'INDUSTRIAL' }],
+  ['pylon', 32, -32, 0, { district: 'INDUSTRIAL' }],
+
+  // ==================== 6. SPACEPORT DISTRICT (East Expressway Terminus) ====================
+  // 1 Landing Pad (16x16) with approach clearway
+  ['landing', 56, 8, 0, { district: 'SPACEPORT' }],
+
+  // Spaceport Power Pylons
+  ['pylon', 32, 8, 0, { district: 'SPACEPORT' }],
+  ['pylon', 44, 8, 0, { district: 'SPACEPORT' }]
 ];
 
 const KEEP_TYPES = ['habitat', 'landing', 'solar', 'tunnel'];
 let infraGroup = null;
+
+// ==================== MASTER-PLANNED CITY INFRASTRUCTURE ====================
+let cityPointLights = [];
+let districtLabelsGroup = null;
+
+function validateMasterPlan(layout = PREBUILT_BASE){
+  console.log('%c[ARES-1 MASTER PLAN VALIDATOR] Inspecting master-planned city layout...', 'color:#f2a65a;font-weight:bold;');
+  let errors = 0;
+  for(let i=0; i<layout.length; i++){
+    const a = layout[i];
+    const ta = TYPES[a[0]];
+    if(!ta) continue;
+    const da = dims({ type: a[0], rotation: a[3] || 0 });
+
+    if(a[1] % GRID !== 0 || a[2] % GRID !== 0){
+      console.warn('[GRID WARNING] Module ' + a[0] + '#' + i + ' at (' + a[1] + ', ' + a[2] + ') is not aligned to 4-unit grid.');
+      errors++;
+    }
+
+    const h = terrainHeight(a[1], a[2]);
+    const maxSlope = Math.max(
+      Math.abs(terrainHeight(a[1] - da.w*0.45, a[2]) - h),
+      Math.abs(terrainHeight(a[1] + da.w*0.45, a[2]) - h),
+      Math.abs(terrainHeight(a[1], a[2] - da.d*0.45) - h),
+      Math.abs(terrainHeight(a[1], a[2] + da.d*0.45) - h)
+    );
+    if(maxSlope > 0.75){
+      console.error('[SLOPE ERROR] Module ' + a[0] + '#' + i + ' at (' + a[1] + ', ' + a[2] + ') sits on slope: ' + maxSlope.toFixed(2) + 'm!');
+      errors++;
+    }
+
+    for(let j=i+1; j<layout.length; j++){
+      const b = layout[j];
+      const tb = TYPES[b[0]];
+      if(!tb) continue;
+      const db = dims({ type: b[0], rotation: b[3] || 0 });
+      const ox = (da.w + db.w)/2 - Math.abs(a[1] - b[1]);
+      const oz = (da.d + db.d)/2 - Math.abs(a[2] - b[2]);
+      if(ox > 0.05 && oz > 0.05){
+        console.error('[OVERLAP ERROR] ' + a[0] + '#' + i + ' at (' + a[1] + ',' + a[2] + ') overlaps with ' + b[0] + '#' + j + ' at (' + b[1] + ',' + b[2] + ')! Overlap: [' + ox.toFixed(2) + ', ' + oz.toFixed(2) + ']');
+        errors++;
+      }
+    }
+  }
+
+  if(errors === 0){
+    console.log('%c[ARES-1 MASTER PLAN VALIDATOR] ✓ Verified ' + layout.length + ' modules: 0 overlaps, 0 steep slopes, all footprints strictly grid-aligned.', 'color:#77e5aa;font-weight:bold;');
+  }
+}
 
 function buildInfrastructure(){
   if(infraGroup){
@@ -3464,82 +3615,234 @@ function buildInfrastructure(){
     disposeGroup(infraGroup);
   }
   infraGroup = new THREE.Group();
-  infraGroup.name = 'infrastructure';
+  infraGroup.name = 'city_infrastructure';
+  cityPointLights = [];
 
-  // 1. Gravel Road Network: dark planar strips conforming to terrainHeight
-  const roadWaypoints = [
-    // Landing Pad (32, 22) -> Storage (24, -6)
-    [ [32, 22], [28, 12], [24, -6] ],
-    // Storage (24, -6) -> Habitats (4, 4) -> (-8, 4)
-    [ [24, -6], [12, -4], [4, 4], [-8, 4] ],
-    // Core Hab (-8, 4) -> Rover Garage (-22, 26)
-    [ [-8, 4], [-14, 16], [-22, 26] ],
-    // Core Hab (-8, 4) -> Nuclear Core (-24, -8) -> Solar field (-36, 4)
-    [ [-8, 4], [-16, -2], [-24, -8], [-36, 4] ],
-    // Storage (24, -6) -> Iron Drill (28, -6) -> Water Drill (28, 4)
-    [ [24, -6], [28, -6], [28, 4] ],
-    // Habitats (4, 16) -> CO2 Sublimator (16, 26)
-    [ [4, 16], [10, 22], [16, 26] ]
+  // -------------------------------------------------------------
+  // 1. MASTER-PLANNED ROAD RIBBONS WITH CURBS & DASHED MARKINGS
+  // -------------------------------------------------------------
+  const roadSegments = [
+    // Main Boulevard (North-South central spine, 7.6m wide)
+    { x0: 0, z0: -52, x1: 0, z1: 52, w: 7.6, type: 'boulevard' },
+    // North Avenue (East-West Life Support & Comms corridor, 4.6m wide)
+    { x0: -48, z0: -24, x1: 44, z1: -24, w: 4.6, type: 'avenue' },
+    // South Avenue (East-West Industrial & Mining corridor, 4.6m wide)
+    { x0: -48, z0: 24, x1: 44, z1: 24, w: 4.6, type: 'avenue' },
+    // Spaceport Expressway (5.6m wide)
+    { x0: 0, z0: 8, x1: 56, z1: 8, w: 5.6, type: 'expressway' },
+    // West Service Loop (Servicing Solar & Power corridor, 3.8m wide)
+    { x0: -44, z0: -24, x1: -44, z1: 24, w: 3.8, type: 'service' },
+    // Reactor Access Spur
+    { x0: -44, z0: 20, x1: -64, z1: 20, w: 3.8, type: 'service' },
+    // East Service Loop (Servicing Research & Storage, 3.8m wide)
+    { x0: 44, z0: -24, x1: 44, z1: 24, w: 3.8, type: 'service' },
+    // Mining Access Roads
+    { x0: 32, z0: -24, x1: 32, z1: -40, w: 3.8, type: 'service' },
+    { x0: -36, z0: 24, x1: -36, z1: 44, w: 3.8, type: 'service' }
   ];
 
-  const roadMat = new THREE.MeshStandardMaterial({
-    color: 0x2e231e, roughness: 0.94, metalness: 0.05
-  });
+  for(const seg of roadSegments){
+    const dx = seg.x1 - seg.x0, dz = seg.z1 - seg.z0;
+    const len = Math.hypot(dx, dz);
+    const angle = Math.atan2(dz, dx);
+    const steps = Math.max(2, Math.ceil(len / 4.0));
 
-  const roadWidth = 2.6;
-  for(const path of roadWaypoints){
-    for(let i = 0; i < path.length - 1; i++){
-      const p1 = path[i], p2 = path[i+1];
-      const dx = p2[0] - p1[0], dz = p2[1] - p1[1];
-      const len = Math.hypot(dx, dz);
-      const angle = Math.atan2(dz, dx);
-      const steps = Math.max(2, Math.ceil(len / 4.5));
-      for(let s = 0; s < steps; s++){
-        const t1 = s / steps, t2 = (s + 1) / steps;
-        const mx = p1[0] + dx * (t1 + t2) * 0.5;
-        const mz = p1[1] + dz * (t1 + t2) * 0.5;
-        const segLen = len / steps;
-        const y = terrainHeight(mx, mz) + 0.038;
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(segLen, roadWidth), roadMat);
-        plane.rotation.x = -Math.PI / 2;
-        plane.rotation.z = -angle;
-        plane.position.set(mx, y, mz);
-        plane.receiveShadow = true;
-        infraGroup.add(plane);
+    for(let s = 0; s < steps; s++){
+      const t1 = s / steps, t2 = (s + 1) / steps;
+      const mx = seg.x0 + dx * (t1 + t2) * 0.5;
+      const mz = seg.z0 + dz * (t1 + t2) * 0.5;
+      const segLen = len / steps;
+      const y = terrainHeight(mx, mz) + 0.04;
+
+      // Main Road Asphalt Slab
+      const roadPlane = new THREE.Mesh(new THREE.PlaneGeometry(segLen, seg.w), MAT.asphalt);
+      roadPlane.rotation.x = -Math.PI / 2;
+      roadPlane.rotation.z = -angle;
+      roadPlane.position.set(mx, y, mz);
+      roadPlane.receiveShadow = true;
+      infraGroup.add(roadPlane);
+
+      // Outer Curb Stripes (left & right)
+      const curbWidth = 0.22;
+      const perpX = -Math.sin(angle) * (seg.w * 0.5 - curbWidth * 0.5);
+      const perpZ = Math.cos(angle) * (seg.w * 0.5 - curbWidth * 0.5);
+
+      const curbL = new THREE.Mesh(new THREE.PlaneGeometry(segLen, curbWidth), MAT.curb);
+      curbL.rotation.x = -Math.PI / 2;
+      curbL.rotation.z = -angle;
+      curbL.position.set(mx + perpX, y + 0.005, mz + perpZ);
+      infraGroup.add(curbL);
+
+      const curbR = new THREE.Mesh(new THREE.PlaneGeometry(segLen, curbWidth), MAT.curb);
+      curbR.rotation.x = -Math.PI / 2;
+      curbR.rotation.z = -angle;
+      curbR.position.set(mx - perpX, y + 0.005, mz - perpZ);
+      infraGroup.add(curbR);
+
+      // Center Lane Dashed Marking (for Boulevard & Expressway)
+      if((seg.type === 'boulevard' || seg.type === 'expressway') && s % 2 === 0){
+        const mark = new THREE.Mesh(new THREE.PlaneGeometry(segLen * 0.65, 0.22), MAT.marking);
+        mark.rotation.x = -Math.PI / 2;
+        mark.rotation.z = -angle;
+        mark.position.set(mx, y + 0.008, mz);
+        infraGroup.add(mark);
       }
     }
   }
 
-  // 2. Floodlight Poles along roadways and near modules
-  const polePositions = [
-    [-18, 22], [-14, 10], [-6, -4], [6, -4], [18, -4],
-    [26, 6], [28, 18], [-28, 0], [-20, -12], [8, 20]
+  // -------------------------------------------------------------
+  // 2. PEDESTRIAN WALKWAYS (Connecting Hermetic Quarters & Domes)
+  // -------------------------------------------------------------
+  const walkways = [
+    // West Habs to Central Plaza
+    { x0: -16, z0: -8, x1: 0, z1: 0 },
+    { x0: -16, z0: 8, x1: 0, z1: 0 },
+    // East Habs to Central Plaza
+    { x0: 16, z0: -8, x1: 0, z1: 0 },
+    { x0: 16, z0: 8, x1: 0, z1: 0 },
+    // Hab to Greenhouses
+    { x0: -16, z0: -8, x1: -16, z1: -24 },
+    { x0: 16, z0: -8, x1: 16, z1: -24 },
+    // East Hab to Research Lab
+    { x0: 16, z0: -8, x1: 32, z1: -8 }
   ];
-  for(const [px, pz] of polePositions){
-    const py = terrainHeight(px, pz);
-    cyl(infraGroup, MAT.dark, px, py + 1.6, pz, 0.07, 3.2, 8);
-    box(infraGroup, MAT.dark, px + 0.25, py + 3.15, pz, 0.55, 0.06, 0.06);
-    box(infraGroup, MAT.panel, px + 0.5, py + 3.1, pz, 0.22, 0.1, 0.18);
-    const lens = mesh(new THREE.BoxGeometry(0.18, 0.04, 0.14), MAT.window, infraGroup, px + 0.5, py + 3.03, pz);
-    lens.userData.isLight = true;
+
+  for(const walk of walkways){
+    const dx = walk.x1 - walk.x0, dz = walk.y1 || (walk.z1 - walk.z0);
+    const len = Math.hypot(dx, dz);
+    const angle = Math.atan2(dz, dx);
+    const mx = (walk.x0 + walk.x1) * 0.5;
+    const mz = (walk.z0 + walk.z1) * 0.5;
+    const y = terrainHeight(mx, mz) + 0.055;
+    const walkMesh = new THREE.Mesh(new THREE.PlaneGeometry(len, 1.3), MAT.walkway);
+    walkMesh.rotation.x = -Math.PI / 2;
+    walkMesh.rotation.z = -angle;
+    walkMesh.position.set(mx, y, mz);
+    infraGroup.add(walkMesh);
   }
 
-  // 3. Pipelines & Conduit Network between drills, ISRU and habitats
-  const pipeMat = new THREE.MeshStandardMaterial({
-    color: 0x9fa5ad, roughness: 0.32, metalness: 0.85
-  });
-  const pipeRoutes = [
-    [ [28, 4], [24, 12], [16, 16] ],
-    [ [16, 26], [16, 16], [0, 16], [-20, 16] ]
+  // -------------------------------------------------------------
+  // 3. INSTANCED STREETLIGHTS & PROJECTED GROUND GLOW POOLS
+  // -------------------------------------------------------------
+  const streetLightCoords = [];
+  // Along Boulevard (left & right sides every 12 units)
+  for(let z = -48; z <= 48; z += 12){
+    streetLightCoords.push({ x: -4.4, z: z, rot: Math.PI * 0.5 });
+    streetLightCoords.push({ x: 4.4, z: z, rot: -Math.PI * 0.5 });
+  }
+  // Along North Avenue
+  for(const x of [-40, -28, -16, 16, 28, 40]){
+    streetLightCoords.push({ x: x, z: -26.8, rot: 0 });
+    streetLightCoords.push({ x: x, z: -21.2, rot: Math.PI });
+  }
+  // Along South Avenue
+  for(const x of [-40, -28, -16, 16, 28, 40]){
+    streetLightCoords.push({ x: x, z: 21.2, rot: 0 });
+    streetLightCoords.push({ x: x, z: 26.8, rot: Math.PI });
+  }
+  // Along Spaceport Expressway
+  for(const x of [12, 24, 36, 48]){
+    streetLightCoords.push({ x: x, z: 5.2, rot: 0 });
+    streetLightCoords.push({ x: x, z: 10.8, rot: Math.PI });
+  }
+  // Spaceport Landing Pad Corner Floodlights
+  const padLights = [
+    { x: 48, z: 0, rot: Math.PI * 0.25, mast: true },
+    { x: 64, z: 0, rot: Math.PI * 0.75, mast: true },
+    { x: 48, z: 16, rot: -Math.PI * 0.25, mast: true },
+    { x: 64, z: 16, rot: -Math.PI * 0.75, mast: true }
   ];
-  for(const route of pipeRoutes){
-    for(let i = 0; i < route.length - 1; i++){
-      const a = route[i], b = route[i+1];
+  streetLightCoords.push(...padLights);
+
+  const numLights = streetLightCoords.length;
+  const poleGeo = new THREE.CylinderGeometry(0.08, 0.1, 3.4, 8);
+  const lampGeo = new THREE.BoxGeometry(0.32, 0.12, 0.22);
+  const glowGeo = new THREE.PlaneGeometry(6.0, 6.0);
+
+  const poleInstanced = new THREE.InstancedMesh(poleGeo, MAT.dark, numLights);
+  const lampInstanced = new THREE.InstancedMesh(lampGeo, MAT.amberLight, numLights);
+  const glowInstanced = new THREE.InstancedMesh(glowGeo, MAT.glow, numLights);
+
+  poleInstanced.userData.isLight = true;
+  lampInstanced.userData.isLight = true;
+  glowInstanced.userData.isLight = true;
+
+  const dummy = new THREE.Object3D();
+
+  for(let i = 0; i < numLights; i++){
+    const sl = streetLightCoords[i];
+    const y = terrainHeight(sl.x, sl.z);
+    const mastScale = sl.mast ? 1.45 : 1.0;
+
+    // Pole transform
+    dummy.position.set(sl.x, y + 1.7 * mastScale, sl.z);
+    dummy.scale.set(1, mastScale, 1);
+    dummy.rotation.set(0, sl.rot, 0);
+    dummy.updateMatrix();
+    poleInstanced.setMatrixAt(i, dummy.matrix);
+
+    // Lamp fixture transform
+    const armX = sl.x + Math.sin(sl.rot) * 0.45;
+    const armZ = sl.z + Math.cos(sl.rot) * 0.45;
+    dummy.position.set(armX, y + 3.35 * mastScale, armZ);
+    dummy.scale.set(1, 1, 1);
+    dummy.rotation.set(0, sl.rot, 0);
+    dummy.updateMatrix();
+    lampInstanced.setMatrixAt(i, dummy.matrix);
+
+    // Projected ground glow pool
+    dummy.position.set(armX, y + 0.05, armZ);
+    dummy.scale.set(mastScale, mastScale, mastScale);
+    dummy.rotation.set(-Math.PI / 2, 0, 0);
+    dummy.updateMatrix();
+    glowInstanced.setMatrixAt(i, dummy.matrix);
+  }
+
+  poleInstanced.instanceMatrix.needsUpdate = true;
+  lampInstanced.instanceMatrix.needsUpdate = true;
+  glowInstanced.instanceMatrix.needsUpdate = true;
+
+  infraGroup.add(poleInstanced);
+  infraGroup.add(lampInstanced);
+  infraGroup.add(glowInstanced);
+
+  // -------------------------------------------------------------
+  // 4. REAL POINT LIGHTS AT KEY BOULEVARD INTERSECTIONS
+  // -------------------------------------------------------------
+  const keyIntersections = [
+    { x: 0, z: 0, color: 0xffe2a4, intensity: 1.8 },      // Central Plaza
+    { x: 0, z: -24, color: 0xffd18a, intensity: 1.5 },    // North Avenue
+    { x: 0, z: 24, color: 0xffd18a, intensity: 1.5 },     // South Avenue
+    { x: 56, z: 8, color: 0x7fd9ce, intensity: 2.2 }      // Spaceport Terminal
+  ];
+
+  for(const pt of keyIntersections){
+    const pl = new THREE.PointLight(pt.color, pt.intensity, 28, 1.8);
+    pl.position.set(pt.x, terrainHeight(pt.x, pt.z) + 4.2, pt.z);
+    pl.userData.isLight = true;
+    infraGroup.add(pl);
+    cityPointLights.push(pl);
+  }
+
+  // -------------------------------------------------------------
+  // 5. INDUSTRIAL PIPELINES & ROAD CONDUITS
+  // -------------------------------------------------------------
+  const pipeMat = new THREE.MeshStandardMaterial({ color: 0x9fa5ad, roughness: 0.32, metalness: 0.85 });
+  const pipeRuns = [
+    // Water Ice Drill (32, -40) -> North Avenue to Greenhouses
+    [ [32, -40], [32, -26], [16, -26], [0, -26], [-16, -26], [-32, -26] ],
+    // CO2 Sublimator (-20, -40) -> Oxygen ISRU (-32, -24)
+    [ [-20, -40], [-20, -26], [-32, -26] ]
+  ];
+
+  for(const run of pipeRuns){
+    for(let i = 0; i < run.length - 1; i++){
+      const a = run[i], b = run[i+1];
       const ay = terrainHeight(a[0], a[1]) + 0.42;
       const by = terrainHeight(b[0], b[1]) + 0.42;
       cylinderBetween(infraGroup, pipeMat, V3(a[0], ay, a[1]), V3(b[0], by, b[1]), 0.16);
       const dist = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      const stanchions = Math.max(1, Math.floor(dist / 7));
+      const stanchions = Math.max(1, Math.floor(dist / 6.5));
       for(let s = 1; s <= stanchions; s++){
         const f = s / (stanchions + 1);
         const sx = lerp(a[0], b[0], f), sz = lerp(a[1], b[1], f);
@@ -3549,20 +3852,67 @@ function buildInfrastructure(){
     }
   }
 
-  // 4. Landing Pad Perimeter Beacon Lights
-  const padCenterX = 32, padCenterZ = 22, padRadius = 7.4;
-  for(let i = 0; i < 8; i++){
-    const ang = (i / 8) * Math.PI * 2;
-    const lx = padCenterX + Math.cos(ang) * padRadius;
-    const lz = padCenterZ + Math.sin(ang) * padRadius;
-    const ly = terrainHeight(lx, lz) + 0.18;
-    cyl(infraGroup, MAT.dark, lx, ly + 0.15, lz, 0.12, 0.3, 8);
-    const bulbMat = (i % 2 === 0) ? MAT.cyan : MAT.window;
-    const bulb = mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.14, 8), bulbMat, infraGroup, lx, ly + 0.35, lz);
+  // -------------------------------------------------------------
+  // 6. SPACEPORT SECURITY PERIMETER & PAD TARGET MARKING
+  // -------------------------------------------------------------
+  const padX = 56, padZ = 8, padH = terrainHeight(padX, padZ) + 0.18;
+  // Landing Pad Helipad Decal Ring & Target Cross
+  const targetRing = new THREE.Mesh(new THREE.RingGeometry(4.2, 4.6, 32), MAT.marking);
+  targetRing.rotation.x = -Math.PI / 2;
+  targetRing.position.set(padX, padH + 0.02, padZ);
+  infraGroup.add(targetRing);
+
+  // Perimeter barrier bollards around landing pad
+  for(let i = 0; i < 16; i++){
+    const ang = (i / 16) * Math.PI * 2;
+    const bx = padX + Math.cos(ang) * 8.6;
+    const bz = padZ + Math.sin(ang) * 8.6;
+    const by = terrainHeight(bx, bz);
+    cyl(infraGroup, MAT.panel, bx, by + 0.35, bz, 0.12, 0.7, 8);
+    const bulb = mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.15, 8), (i % 2 === 0 ? MAT.cyan : MAT.amberLight), infraGroup, bx, by + 0.75, bz);
     bulb.userData.isLight = true;
   }
 
+  // -------------------------------------------------------------
+  // 7. DISTRICT HOLOGRAPHIC LABELS (Shown with LABELS toggle)
+  // -------------------------------------------------------------
+  districtLabelsGroup = new THREE.Group();
+  districtLabelsGroup.name = 'district_labels';
+  const districtMarkers = [
+    { text: 'CORE RESIDENTIAL DISTRICT', x: 0, z: 0, color: '#55e2cf' },
+    { text: 'LIFE SUPPORT COMPLEX', x: 0, z: -24, color: '#8ed6ad' },
+    { text: 'POWER GENERATION FIELD', x: -48, z: 20, color: '#f2a65a' },
+    { text: 'INDUSTRIAL & MINING PARK', x: 0, z: 24, color: '#ffd277' },
+    { text: 'ARES SPACEPORT TERMINAL', x: 56, z: 8, color: '#6ad5ff' },
+    { text: 'COMMS & ADVANCED RESEARCH', x: 32, z: -16, color: '#c988e8' }
+  ];
+
+  for(const dm of districtMarkers){
+    const canvas = document.createElement('canvas');
+    canvas.width = 320; canvas.height = 48;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'rgba(20, 16, 14, 0.75)';
+    ctx.strokeStyle = dm.color;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(2, 2, 316, 44);
+    ctx.fillRect(2, 2, 316, 44);
+    ctx.fillStyle = dm.color;
+    ctx.font = 'bold 14px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('⬡ ' + dm.text, 160, 28);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    const sprMat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.9 });
+    const sprite = new THREE.Sprite(sprMat);
+    sprite.scale.set(16, 2.4, 1);
+    sprite.position.set(dm.x, terrainHeight(dm.x, dm.z) + 7.5, dm.z);
+    districtLabelsGroup.add(sprite);
+  }
+  districtLabelsGroup.visible = !!state.labels;
+  infraGroup.add(districtLabelsGroup);
+
   scene.add(infraGroup);
+  validateMasterPlan();
 }
 
 function clearBase(keepCoreOnly = true, playSound = true){
@@ -3619,7 +3969,7 @@ function clearBase(keepCoreOnly = true, playSound = true){
   applyLights();
   updateHUD();
 
-  $('restorePrebuiltBtn').style.display = 'inline-block';
+  $('restoreMasterPlanBtn').style.display = 'inline-block';
   if(playSound) audio.play('delete');
   toast('Base cleared. +' + Math.round(refundTotal) + ' MAT refunded. Core habitat, pad & solar preserved.');
   logEvent('Base cleared to core layout. Refunded ' + Math.round(refundTotal) + ' MAT', 'SYSTEM');
@@ -3654,9 +4004,12 @@ function restorePrebuiltBase(){
   syncAgents();
 
   roverRoute = new THREE.CatmullRomCurve3([
-    V3(-65,0,25), V3(-45,0,-55), V3(15,0,-65), V3(75,0,-20),
-    V3(80,0,35), V3(35,0,65), V3(-25,0,55)
-  ], true, 'catmullrom', 0.35);
+    V3(-16, 0.15, 24), V3(0, 0.15, 24), V3(0, 0.15, 8), V3(44, 0.15, 8),
+    V3(56, 0.15, 8), V3(44, 0.15, 8), V3(0, 0.15, 8), V3(0, 0.15, -24),
+    V3(32, 0.15, -24), V3(32, 0.15, -36), V3(16, 0.15, -24), V3(0, 0.15, -24),
+    V3(-32, 0.15, -24), V3(-44, 0.15, -24), V3(-44, 0.15, 0), V3(-44, 0.15, 24),
+    V3(-32, 0.15, 24), V3(-16, 0.15, 24)
+  ], true, 'catmullrom', 0.25);
 
   computeNetwork();
   calculateRates();
@@ -3665,7 +4018,7 @@ function restorePrebuiltBase(){
   updateSun();
   updateHUD();
 
-  $('restorePrebuiltBtn').style.display = 'none';
+  $('restoreMasterPlanBtn').style.display = 'none';
   audio.play('place');
   toast('Full pre-built ARES-1 base restored!');
   logEvent('Pre-built layout restored', 'SYSTEM');
@@ -3679,10 +4032,16 @@ function initialBase(){
  state.pop = 32;
  Object.assign(state.res, { materials: 400, power: 240, oxygen: 220, water: 200, food: 200, waterIce: 80, ironOre: 80, co2: 80 });
  ensureColonistsRoster();
- roverRoute=new THREE.CatmullRomCurve3([V3(-65,0,25),V3(-45,0,-55),V3(15,0,-65),V3(75,0,-20),V3(80,0,35),V3(35,0,65),V3(-25,0,55)],true,'catmullrom',.35);
+ roverRoute = new THREE.CatmullRomCurve3([
+    V3(-16, 0.15, 24), V3(0, 0.15, 24), V3(0, 0.15, 8), V3(44, 0.15, 8),
+    V3(56, 0.15, 8), V3(44, 0.15, 8), V3(0, 0.15, 8), V3(0, 0.15, -24),
+    V3(32, 0.15, -24), V3(32, 0.15, -36), V3(16, 0.15, -24), V3(0, 0.15, -24),
+    V3(-32, 0.15, -24), V3(-44, 0.15, -24), V3(-44, 0.15, 0), V3(-44, 0.15, 24),
+    V3(-32, 0.15, 24), V3(-16, 0.15, 24)
+  ], true, 'catmullrom', 0.25);
  afterBaseChange();applyLights();updateSun();
 }
-function resetGame(){Object.assign(state,{mode:'play',sandbox:false,paused:false,speed:1,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,selected:null,buildType:null,critical:0,won:false});Object.assign(state.res,{power:130,oxygen:180,water:140,food:150,materials:320});state.unlockedPlots=new Set(['B2','B3','C2','C3']);state.selectedPlot='B2';buildPlotBorders();updateSectorCardUI();updateMinimap();if(ghost){scene.remove(ghost);disposeGroup(ghost);ghost.userData.ghostMat.dispose();ghost=null}selectBuilding(null);selectBuild(null);initialBase();$('speedBtn').textContent='1×';$('pauseBtn').textContent='PAUSE';$('pauseBtn').classList.remove('on');updateModeUI();resetView();toast('New ARES-1 mission established');logEvent('Base systems restarted','SYSTEM')}
+function resetGame(){Object.assign(state,{mode:'play',sandbox:false,paused:false,speed:1,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,selected:null,buildType:null,critical:0,won:false});Object.assign(state.res,{power:130,oxygen:180,water:140,food:150,materials:320});state.unlockedPlots=new Set(['B1','B2','B3','B4','C1','C2','C3','C4']);state.selectedPlot='B2';buildPlotBorders();updateSectorCardUI();updateMinimap();if(ghost){scene.remove(ghost);disposeGroup(ghost);ghost.userData.ghostMat.dispose();ghost=null}selectBuilding(null);selectBuild(null);initialBase();$('speedBtn').textContent='1×';$('pauseBtn').textContent='PAUSE';$('pauseBtn').classList.remove('on');updateModeUI();resetView();toast('New ARES-1 mission established');logEvent('Base systems restarted','SYSTEM')}
 async function init(){
  try{
   $('loadStatus').textContent='SCULPTING UTOPIA PLANITIA';$('loadFill').style.width='14%';await frame();buildTerrain();
