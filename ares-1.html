@@ -388,6 +388,163 @@
 }
 .obj-item.done .obj-prog-fill { background: var(--green); }
 
+/* Guidance & Field Manual Button & Modal */
+.guidance-btn {
+  position: fixed !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  z-index: 1000 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  height: 42px !important;
+  padding: 0 16px !important;
+  background: rgba(24, 20, 19, 0.94) !important;
+  border: 1px solid rgba(242, 166, 90, 0.5) !important;
+  border-radius: 999px !important;
+  color: #f2a65a !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.4px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 14px rgba(242, 166, 90, 0.25) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.guidance-btn:hover {
+  background: rgba(40, 30, 26, 0.98) !important;
+  border-color: #f2a65a !important;
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.85), 0 0 22px rgba(242, 166, 90, 0.45) !important;
+  transform: translateY(-2px) !important;
+  color: #fff !important;
+}
+.guide-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(242, 166, 90, 0.2);
+  border: 1px solid rgba(242, 166, 90, 0.6);
+  color: var(--amber);
+  font-weight: 800;
+  font-size: 11px;
+}
+.guide-modal {
+  width: min(780px, 94vw) !important;
+  max-height: 86vh !important;
+}
+.guide-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 20px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+.guide-tab {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.guide-tab:hover {
+  color: var(--ink);
+  border-color: var(--amber);
+}
+.guide-tab.on {
+  background: rgba(242, 166, 90, 0.15);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+.guide-block {
+  margin-bottom: 20px;
+}
+.guide-block h3 {
+  font-size: 11px;
+  color: var(--amber);
+  letter-spacing: 0.14em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+.guide-grid-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 8px;
+  padding-left: 0 !important;
+  list-style: none;
+}
+.guide-grid-list li {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.mission-step {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--amber);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.mission-step-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.mission-step-head .step-num {
+  font-family: "Arial Narrow", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--amber);
+}
+.mission-step-head strong {
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+.mission-step-head .step-tag {
+  margin-left: auto;
+  font-size: 9px;
+  padding: 2px 8px;
+  background: rgba(242, 166, 90, 0.12);
+  border: 1px solid rgba(242, 166, 90, 0.35);
+  color: var(--amber);
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+}
+.mission-step p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #d1c4b5;
+}
+@media (max-width: 768px) {
+  .guidance-btn {
+    right: 12px !important;
+    bottom: 86px !important;
+    height: 36px !important;
+    padding: 0 12px !important;
+    font-size: 10px !important;
+  }
+}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
 </head>
@@ -468,7 +625,133 @@
 <div id="events" class="ui" aria-live="polite"></div><div id="toast" class="ui" role="status"></div>
 <section id="buildArea" class="ui"><div id="buildHint" class="glass"><span id="hintText"><b>SELECT A MODULE</b> · click the terrain to deploy</span><span class="keys">R ROTATE · X DELETE · F WALK</span><button class="miniBtn" id="cancelBuild" hidden>CANCEL</button></div><div id="buildMenu" class="glass" aria-label="Building categories"></div></section>
 <div id="crosshair" class="ui"></div><div id="walkHint" class="ui">WASD MOVE · DRAG TO LOOK · SHIFT SPRINT · F EXIT</div><div id="mobileMove" class="ui"><span></span><button data-move="forward" aria-label="Walk forward">▲</button><span></span><button data-move="left" aria-label="Walk left">◀</button><button data-move="back" aria-label="Walk backward">▼</button><button data-move="right" aria-label="Walk right">▶</button></div>
-<div id="help" class="overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal"><button class="modalClose" id="helpClose" aria-label="Close help">×</button><h2 id="helpTitle">FIELD MANUAL</h2><div class="sub">ARES-1 · BASE OPERATIONS</div><p>Grow a self-sufficient settlement to <b>50 colonists</b>. Habitats only provide berths when connected to the core by airlocks or tunnels. In Sandbox, construction is free and the crew cannot be lost.</p><h3>Construction</h3><ul><li>Choose a module below. Move the ghost over the slab; green means valid, red means blocked. Click or tap to deploy.</li><li><kbd>R</kbd> rotates · <kbd>X</kbd> deletes the selected module · <kbd>Ctrl Z</kbd> / <kbd>Ctrl Y</kbd> undo / redo.</li><li>Connect living modules with short airlocks or tunnel pieces. Watch oxygen, food, water, and stored power.</li></ul><h3>Camera & surface</h3><ul><li>Left-drag orbits, right-drag pans, wheel zooms. Double-click resets. Number keys <kbd>1–5</kbd> select viewpoints.</li><li><kbd>F</kbd> enters surface walk. Use <kbd>WASD</kbd>, drag to look, and <kbd>Shift</kbd> to sprint. Touch devices get direction buttons.</li></ul><h3>Operations</h3><ul><li>Click any module for telemetry and actions. Landing pads call supply rockets; garages dispatch rovers; radar stations launch survey drones.</li><li>Dust storms suppress solar output. Batteries keep life support alive. Meteors and failures damage modules; repair them from their info panel.</li><li><kbd>Space</kbd> pauses. Save / load uses this browser’s localStorage only; it does not sync between devices.</li></ul></div></div>
+<!-- FLOATING RIGHT-BOTTOM GUIDANCE BUTTON -->
+<button id="guidanceBtn" class="ui glass guidance-btn" aria-label="Open Field Manual and Mission Directives Guide" title="Field Manual & Mission Walkthrough">
+  <span class="guide-icon">?</span>
+  <span class="guide-label">GUIDE & MISSIONS</span>
+</button>
+
+<div id="help" class="overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal guide-modal">
+    <button class="modalClose" id="helpClose" aria-label="Close help">×</button>
+    <div class="guide-header">
+      <h2 id="helpTitle">ARES-1 MISSION MANUAL</h2>
+      <div class="sub">SURFACE OPERATIONS · COLONY SIMULATION · DIRECTIVES GUIDE</div>
+    </div>
+    
+    <!-- Tab Controls -->
+    <div class="guide-tabs">
+      <button class="guide-tab on" id="tabHowToPlay" onclick="switchGuideTab('play')">HOW TO PLAY</button>
+      <button class="guide-tab" id="tabMissions" onclick="switchGuideTab('missions')">MISSION WALKTHROUGH</button>
+    </div>
+
+    <!-- Section 1: How to play -->
+    <div id="guideSectionPlay" class="guide-section active">
+      <div class="guide-block">
+        <h3>COLONY OBJECTIVE</h3>
+        <p>Grow a resilient, self-sufficient Martian settlement from <b>6 initial crew up to 50 colonists</b>. Maintain positive reserves of <b>Power, Oxygen, Water, Food, and Materials</b> while defending against harsh Martian weather events.</p>
+      </div>
+
+      <div class="guide-block">
+        <h3>CONTROLS & SHORTCUTS</h3>
+        <ul class="guide-grid-list">
+          <li><kbd>Left Drag</kbd> Orbit camera diorama</li>
+          <li><kbd>Right Drag</kbd> Pan across Utopia Planitia</li>
+          <li><kbd>Mouse Wheel</kbd> Zoom camera in / out</li>
+          <li><kbd>Click Module</kbd> Select module for info & telemetry</li>
+          <li><kbd>R</kbd> Rotate deployment ghost by 90°</li>
+          <li><kbd>X</kbd> Delete selected module (50% refund)</li>
+          <li><kbd>Ctrl + Z / Y</kbd> Undo / Redo base edits</li>
+          <li><kbd>F</kbd> First-person Surface Walk (WASD + mouse)</li>
+          <li><kbd>Space</kbd> Pause / resume simulation</li>
+          <li><kbd>1 – 5</kbd> Camera viewpoint presets</li>
+        </ul>
+      </div>
+
+      <div class="guide-block">
+        <h3>POWER GRID & DUST STORMS</h3>
+        <ul>
+          <li><b>Solar Arrays (<code>S≡≡</code>):</b> Generate 32 power during sunlight, 0 at night. Output drops by <b>60% during Martian Dust Storms</b>.</li>
+          <li><b>Nuclear Reactor (<code>N⊛</code>):</b> Generates a massive <b>95 continuous power</b> 24/7, immune to daylight loss and dust storms.</li>
+          <li><b>Battery Station (<code>B▥</code>):</b> Stores 180 units of emergency power to keep life support humming overnight.</li>
+          <li><b>Disconnected Warning:</b> Buildings without power or unlinked from the grid will flash warning red lights.</li>
+        </ul>
+      </div>
+
+      <div class="guide-block">
+        <h3>RESOURCE EXTRACTION DRILLS</h3>
+        <ul>
+          <li><b>Water Ice Drill (<code>W↓</code>):</b> Extracts subsurface polar permafrost (+18 ice/sol & +20 liquid water).</li>
+          <li><b>Iron Ore Drill (<code>Fe↓</code>):</b> Excavates regolith deposits for smelting into structural construction materials (+16 ore/sol & +6 materials).</li>
+          <li><b>CO₂ Sublimator (<code>CO₂</code>):</b> Compresses Martian atmosphere (+22 CO₂/sol & +8 oxygen) to feed greenhouses and life support.</li>
+        </ul>
+      </div>
+
+      <div class="guide-block">
+        <h3>COLONIST AI & CREW MANIFEST</h3>
+        <p>Monitor your 4 expedition pioneers in the bottom-left panel (Elena Vance, Dr. Marcus Chen, Tarek Rossi, Dr. Aiko Tanaka). Keep their <b>Health (HP), Oxygen (O₂), and Morale (MOR)</b> full. Click on any colonist card to dynamically follow them in real-time 3D as they walk between habitats and workstations.</p>
+      </div>
+    </div>
+
+    <!-- Section 2: How to complete missions -->
+    <div id="guideSectionMissions" class="guide-section" style="display:none">
+      <div class="guide-block">
+        <h3>STEP-BY-STEP MISSION OBJECTIVES</h3>
+        <p>Complete all 5 core directives to establish permanent human presence on Mars:</p>
+      </div>
+
+      <div class="mission-step">
+        <div class="mission-step-head">
+          <span class="step-num">01</span>
+          <strong>ESTABLISH INITIAL COLONY</strong>
+          <span class="step-tag">FOUNDATION</span>
+        </div>
+        <p><b>Task:</b> Deploy at least 1 Habitat Module (<code>H–01</code>) and 1 Solar Array (<code>S≡≡</code>).</p>
+        <p><b>Walkthrough:</b> Click the <code>Habitat module</code> card (60 materials) in the bottom build tray, position it on the flat slab, and click to place. Then select <code>Solar array</code> (25 materials) and place it nearby. Connect them using a short <code>Connecting tunnel (T═)</code> or place them adjacent so pressure and power link.</p>
+      </div>
+
+      <div class="mission-step">
+        <div class="mission-step-head">
+          <span class="step-num">02</span>
+          <strong>SUBSURFACE DRILLING RIG</strong>
+          <span class="step-tag">EXTRACTION</span>
+        </div>
+        <p><b>Task:</b> Deploy a Water Ice Drill (<code>W↓</code>) or Iron Ore Drill (<code>Fe↓</code>).</p>
+        <p><b>Walkthrough:</b> Select the <code>Water ice drill</code> (80 materials) in the build bar and deploy it on the red terrain. It consumes 8 power to extract 18 water ice per Sol, securing foundational fluids for life support.</p>
+      </div>
+
+      <div class="mission-step">
+        <div class="mission-step-head">
+          <span class="step-num">03</span>
+          <strong>LIFE SUPPORT SYNTHESIS</strong>
+          <span class="step-tag">ATMOSPHERE & FOOD</span>
+        </div>
+        <p><b>Task:</b> Build an Oxygen ISRU Plant (<code>O₂</code>) and a Greenhouse Dome (<code>G◒</code>).</p>
+        <p><b>Walkthrough:</b> Deploy the <code>Oxygen / ISRU plant</code> (90 materials) to generate 32 breathable oxygen from the atmosphere. Next, deploy the <code>Greenhouse dome</code> (75 materials) which uses water and power to grow 24 fresh rations per Sol, ensuring colonists do not starve.</p>
+      </div>
+
+      <div class="mission-step">
+        <div class="mission-step-head">
+          <span class="step-num">04</span>
+          <strong>NUCLEAR POWER GRID</strong>
+          <span class="step-tag">ENERGY INDEPENDENCE</span>
+        </div>
+        <p><b>Task:</b> Deploy a Nuclear Fission Reactor (<code>N⊛</code>).</p>
+        <p><b>Walkthrough:</b> Accumulate 150 materials (manufactured by mining drills or supply rockets). Select <code>Nuclear reactor</code> and position the heavy dual-tower fission core. Once deployed, it provides 95 reliable power 24 hours a day, shielding your base from dust storm blackouts.</p>
+      </div>
+
+      <div class="mission-step">
+        <div class="mission-step-head">
+          <span class="step-num">05</span>
+          <strong>DEEP SPACE COMMUNICATIONS & EXPANSION</strong>
+          <span class="step-tag">MISSION ACCOMPLISHED</span>
+        </div>
+        <p><b>Task:</b> Deploy a Radar / Comms Dish (<code>C◝</code>) and grow base berths to reach 20+ colonists.</p>
+        <p><b>Walkthrough:</b> Build the <code>Radar / comms dish</code> (70 materials) to initiate interplanetary beacon synchronization with Earth. Expand living space by adding 2–3 more Habitat Modules. With life support, food, and power secured, new colonists will arrive via supply rockets until you reach full colonization!</p>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="endOverlay" class="overlay" role="dialog" aria-modal="true"><div class="modal"><span class="eyebrow" id="endEyebrow">MISSION COMPLETE</span><h2 id="endTitle">A NEW WORLD, INHABITED.</h2><p id="endText"></p><button class="primary" id="continueBtn">Continue building</button><button class="secondary" id="restartBtn">New mission</button></div></div>
 <div id="loading" class="overlay show"><div class="loadbox"><h1>ARES-1</h1><div class="loadsub">MARS BASE BUILDER · TABLETOP DIORAMA</div><div class="loadline"><i id="loadFill"></i></div><div id="loadStatus">INITIALIZING ORBITAL LINK</div><button class="primary" id="beginBtn" disabled>Establish base</button><div class="loadmeta"><span>THREE.JS · PROCEDURAL WORLD</span><span>BUILD · BALANCE · SURVIVE</span></div></div></div>
 <script type="module">
@@ -1052,6 +1335,13 @@ $('lightsBtn').onclick=()=>{state.lights=!state.lights;$('lightsBtn').classList.
 $('shadowsBtn').onclick=()=>{state.shadows=!state.shadows;renderer.shadowMap.enabled=state.shadows;$('shadowsBtn').classList.toggle('on',state.shadows)};$('bloomBtn').onclick=()=>{state.bloom=!state.bloom;$('bloomBtn').classList.toggle('on',state.bloom)};
 $('soundBtn').onclick=()=>{state.sound=!state.sound;audio.set(state.sound);$('soundBtn').classList.toggle('on',state.sound);toast(state.sound?'Procedural audio on':'Audio muted')};
 $('helpBtn').onclick=()=>toggleHelp();$('helpClose').onclick=()=>toggleHelp(false);$('help').addEventListener('click',e=>{if(e.target===$('help'))toggleHelp(false)});
+if($('guidanceBtn'))$('guidanceBtn').onclick=()=>toggleHelp(true);
+window.switchGuideTab=function(tab){
+ const p=$('guideSectionPlay'),m=$('guideSectionMissions'),tbP=$('tabHowToPlay'),tbM=$('tabMissions');
+ if(!p||!m)return;
+ if(tab==='missions'){p.style.display='none';m.style.display='block';tbP.classList.remove('on');tbM.classList.add('on');}
+ else{p.style.display='block';m.style.display='none';tbP.classList.add('on');tbM.classList.remove('on');}
+};
 $('saveBtn').onclick=saveGame;$('loadBtn').onclick=loadGame;$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;$('sandboxBtn').onclick=toggleSandbox;$('modeBtn').onclick=toggleSandbox;
 $('resetBtn').onclick=()=>{if(confirm('Reset ARES-1 and abandon the current base?'))resetGame()};$('cancelBuild').onclick=()=>{if(state.buildType)selectBuild(state.buildType)};$('infoClose').onclick=()=>selectBuilding(null);$('infoActions').onclick=e=>{const a=e.target.dataset.action;if(a)moduleAction(a)};
 $('toolsToggle').onclick=()=>$('tools').classList.toggle('expanded');
