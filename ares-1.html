@@ -545,6 +545,131 @@
   }
 }
 
+/* Satellite Radar Minimap & Sector HUD */
+#minimapCard {
+  position: fixed;
+  bottom: 72px;
+  right: 16px;
+  z-index: 25;
+  width: 216px;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(24, 20, 19, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(242, 166, 90, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  transition: transform 0.2s, opacity 0.2s;
+}
+#minimapCard.hidden {
+  display: none;
+}
+.minimap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--amber);
+  letter-spacing: .08em;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+}
+#minimapCanvas {
+  width: 100%;
+  height: 140px;
+  background: #141110;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  cursor: crosshair;
+}
+.minimap-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 8px;
+  color: var(--muted);
+}
+.minimap-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.minimap-legend i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+}
+.sector-info-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sector-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sector-title-row strong {
+  font-size: 10px;
+  color: #fff;
+  letter-spacing: .06em;
+}
+.sector-badge {
+  font-size: 8px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.sector-badge.unlocked {
+  background: rgba(142, 214, 173, 0.2);
+  color: var(--green);
+}
+.sector-badge.locked {
+  background: rgba(240, 128, 112, 0.2);
+  color: var(--red);
+}
+.sector-details {
+  font-size: 8.5px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.sector-unlock-btn {
+  margin-top: 3px;
+  background: var(--amber);
+  border: none;
+  color: #1a1412;
+  font-weight: bold;
+  font-size: 9px;
+  letter-spacing: .08em;
+  padding: 5px;
+  border-radius: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+.sector-unlock-btn:hover {
+  background: #ffc78b;
+}
+.sector-unlock-btn:disabled {
+  background: #443731;
+  color: #887870;
+  cursor: not-allowed;
+}
+@media(max-width: 1050px) {
+  #minimapCard {
+    display: none;
+  }
+}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
 </head>
@@ -590,7 +715,7 @@
   <button class="tool wide on" id="toolsToggle" style="display:none">CONTROLS</button>
   <button class="tool" id="pauseBtn" title="Pause / resume (Space)">PAUSE</button><button class="tool" id="speedBtn" title="Simulation speed">1×</button><button class="tool on" id="cycleBtn" title="Automatic day cycle">CYCLE</button><button class="tool" id="walkBtn" title="First-person walk (F)">WALK</button>
   <div id="timeWrap"><span>TIME</span><input id="timeSlider" aria-label="Time of day" type="range" min="0" max="1000" value="320"><span id="clock">07:40</span></div>
-  <button class="tool" id="stormBtn">STORM</button><button class="tool" id="meteorBtn">METEOR</button><button class="tool on" id="lightsBtn">LIGHTS</button><button class="tool" id="labelsBtn">LABELS</button>
+  <button class="tool on" id="mapBtn" title="Toggle Radar Minimap (M)">MAP</button><button class="tool" id="heatmapBtn" title="Toggle Ore Heatmap (H)">HEATMAP</button><button class="tool" id="stormBtn">STORM</button><button class="tool" id="meteorBtn">METEOR</button><button class="tool on" id="lightsBtn">LIGHTS</button><button class="tool" id="labelsBtn">LABELS</button>
   <button class="tool on" id="shadowsBtn">SHADOW</button><button class="tool" id="bloomBtn">BLOOM</button><button class="tool on" id="soundBtn">SOUND</button><button class="tool" id="helpBtn" title="Help (?)">HELP ?</button>
   <button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
   <button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
@@ -603,6 +728,35 @@
   <span style="font-weight:bold;letter-spacing:0.1em;color:#ffdd88">[ ALERT ]</span>
   <span>MARTIAN DUST STORM · SOLAR POWER -60% · TAKE COVER</span>
 </div>
+
+<!-- SATELLITE RADAR MINIMAP & SECTOR HUD -->
+<aside id="minimapCard" class="ui glass" aria-label="Satellite Radar Minimap">
+  <div class="minimap-header">
+    <span>SATELLITE RADAR</span>
+    <span id="stormDirIndicator" style="font-size:8px;color:var(--amber);">STORM: W→E</span>
+  </div>
+  <canvas id="minimapCanvas" width="200" height="135"></canvas>
+  <div class="minimap-legend">
+    <span><i style="background:#55e2cf"></i>Core</span>
+    <span><i style="background:#77e5aa"></i>Plot</span>
+    <span><i style="background:#f07062"></i>Lock</span>
+    <span><i style="background:#6ad5ff"></i>Ice</span>
+    <span><i style="background:#e88548"></i>Iron</span>
+    <span><i style="background:#c988e8"></i>CO₂</span>
+  </div>
+  <div id="sectorInfoBox" class="sector-info-box">
+    <div class="sector-title-row">
+      <strong id="secName">SECTOR B2 (CORE)</strong>
+      <span id="secBadge" class="sector-badge unlocked">UNLOCKED</span>
+    </div>
+    <div id="secDetails" class="sector-details">
+      Slope: Gentle (0.2m)<br>
+      Ice: Low | Fe: Med | CO₂: Low<br>
+      Hazard: Minimal
+    </div>
+    <button id="secUnlockBtn" class="sector-unlock-btn" style="display:none">UNLOCK SECTOR</button>
+  </div>
+</aside>
 
 <!-- COLONIST MANIFEST UI -->
 <aside id="colonistPanel" class="ui glass" aria-label="Colonist Status">
@@ -779,8 +933,9 @@ function fbm(x,z,oct=4){let v=0,a=.5;for(let i=0;i<oct;i++){v+=noise(x,z)*a;x=x*
 const V3=(x=0,y=0,z=0)=>new THREE.Vector3(x,y,z);
 const frame=()=>new Promise(r=>requestAnimationFrame(r));
 const GRID=4,DAY_SECONDS=150,SAVE_KEY='ares1-save-v2';
-const WORLD={w:112,d:96,minX:-52,maxX:52,minZ:-44,maxZ:44};
+const WORLD={w:224,d:192,minX:-108,maxX:108,minZ:-92,maxZ:92};
 const TYPES={
+ pylon:{name:'Power Pylon',short:'PYL',icon:'P⚡',cost:8,w:4,d:4,power:0,desc:'Relays electrical power across 32m to outposts'},
  habitat:{name:'Habitat module',short:'HAB',icon:'H–01',cost:60,w:8,d:8,power:4,housing:8,pressurized:true,desc:'8 berths · requires network pressure'},
  solar:{name:'Solar array',short:'SOL',icon:'S≡≡',cost:25,w:8,d:8,powerGen:32,desc:'32 power · daylight dependent (drops in storm)'},
  reactor:{name:'Nuclear reactor',short:'NUC',icon:'N⊛',cost:150,w:12,d:12,powerGen:95,desc:'95 power · 24/7 continuous output immune to storms'},
@@ -797,7 +952,7 @@ const TYPES={
  storage:{name:'Storage depot',short:'STO',icon:'S▦',cost:45,w:8,d:8,power:1,storage:180,desc:'Expands resource capacity'},
  tunnel:{name:'Connecting tunnel',short:'TUN',icon:'T═',cost:12,w:4,d:4,power:.2,pressurized:true,desc:'Links pressurized modules'}
 };
-const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false};
+const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false,unlockedPlots:new Set(['B2','B3','C2','C3']),heatmap:false,showMinimap:true,selectedPlot:'B2'};
 
 // Named Colonists Manifest
 const COLONISTS = [
@@ -815,6 +970,68 @@ const OBJECTIVES = [
   { id: 'power', title: '4. Nuclear Power Grid', desc: 'Deploy a Nuclear Fission Reactor', check: () => buildings.some(b=>b.type==='reactor'&&b.operational), prog: () => buildings.some(b=>b.type==='reactor') ? 1 : 0, label: () => buildings.some(b=>b.type==='reactor') ? '1/1 Reactor' : '0/1 Reactor' },
   { id: 'beacon', title: '5. Deep Space Beacon', desc: 'Build Comms Dish & reach 15 Crew', check: () => buildings.some(b=>b.type==='radar') && state.pop >= 15, prog: () => Math.min(1, state.pop / 15), label: () => `${state.pop}/15 Colonists` }
 ];
+
+// 4x4 Land Plot Sectors across 224x192 Utopia Planitia
+const ROW_LETTERS = ['A', 'B', 'C', 'D'];
+const LAND_PLOTS = [];
+for (let r = 0; r < 4; r++) {
+  for (let c = 0; c < 4; c++) {
+    const id = `${ROW_LETTERS[r]}${c + 1}`;
+    const x0 = -112 + c * 56, x1 = x0 + 56;
+    const z0 = -96 + r * 48, z1 = z0 + 48;
+    const isCore = (r === 1 || r === 2) && (c === 1 || c === 2);
+    let req = 'None', cost = isCore ? 0 : (r === 0 || r === 3 || c === 0 || c === 3 ? 90 : 50);
+    if (!isCore) {
+      if (r === 0 || r === 3) req = 'Rover Garage (Long Range Expedition)';
+      else if (c === 0 || c === 3) req = 'Radar / Comms Dish (Satellite Survey)';
+      else req = 'Drone Scan';
+    }
+    const slope = r === 0 ? 'Steep (1.1m)' : ((r === 3 && c === 0) ? 'Crater Rim (0.8m)' : 'Gentle (0.2m)');
+    const hazard = r === 0 ? 'High (Rockfalls)' : (r === 3 ? 'Moderate (Dust Traps)' : 'Low (Stable)');
+    let name = `SECTOR ${id}`;
+    if (isCore) name += ` (CORE BASE)`;
+    else if (r === 0) name += ` (NORTH RIDGE)`;
+    else if (r === 3) name += ` (SOUTH CRATER)`;
+    else if (c === 0) name += ` (WEST DUNE)`;
+    else name += ` (EAST BASIN)`;
+    LAND_PLOTS.push({ id, r, c, x0, x1, z0, z1, cx: (x0 + x1) / 2, cz: (z0 + z1) / 2, isCore, cost, req, slope, hazard, name });
+  }
+}
+function getPlotAt(x, z) {
+  const c = clamp(Math.floor((x + 112) / 56), 0, 3);
+  const r = clamp(Math.floor((z + 96) / 48), 0, 3);
+  return LAND_PLOTS[r * 4 + c];
+}
+
+// Procedural Ore Deposits across Utopia Planitia
+const ORE_DEPOSITS = [
+  { id: 'ice_1', type: 'ice', name: 'Polar Aquifer α', symbol: 'W↓', color: 0x6ad5ff, colorHex: '#6ad5ff', x: -65, z: -52, r: 22, richness: 1.0 },
+  { id: 'ice_2', type: 'ice', name: 'Permafrost Glade β', symbol: 'W↓', color: 0x6ad5ff, colorHex: '#6ad5ff', x: 28, z: -22, r: 19, richness: 0.9 },
+  { id: 'ice_3', type: 'ice', name: 'Glacial Basin γ', symbol: 'W↓', color: 0x6ad5ff, colorHex: '#6ad5ff', x: 68, z: 58, r: 24, richness: 1.0 },
+  { id: 'iron_1', type: 'iron', name: 'Basalt Ridge Fe-1', symbol: 'Fe↓', color: 0xe88548, colorHex: '#e88548', x: -35, z: 28, r: 20, richness: 0.95 },
+  { id: 'iron_2', type: 'iron', name: 'Hematite Deposit Fe-2', symbol: 'Fe↓', color: 0xe88548, colorHex: '#e88548', x: 72, z: -42, r: 23, richness: 1.0 },
+  { id: 'iron_3', type: 'iron', name: 'Crater Smeltfield Fe-3', symbol: 'Fe↓', color: 0xe88548, colorHex: '#e88548', x: -62, z: 52, r: 21, richness: 0.9 },
+  { id: 'co2_1', type: 'co2', name: 'Thermal Vent V-1', symbol: 'CO₂', color: 0xc988e8, colorHex: '#c988e8', x: -16, z: -38, r: 19, richness: 0.95 },
+  { id: 'co2_2', type: 'co2', name: 'Sublimation Fissure V-2', symbol: 'CO₂', color: 0xc988e8, colorHex: '#c988e8', x: 62, z: 10, r: 21, richness: 1.0 },
+  { id: 'co2_3', type: 'co2', name: 'Southern Gas Vent V-3', symbol: 'CO₂', color: 0xc988e8, colorHex: '#c988e8', x: 12, z: 65, r: 22, richness: 0.9 }
+];
+function getDepositBonus(buildingType, x, z) {
+  let needed = null;
+  if (buildingType === 'miner') needed = 'ice';
+  else if (buildingType === 'drill_iron') needed = 'iron';
+  else if (buildingType === 'drill_co2') needed = 'co2';
+  if (!needed) return 1.0;
+  for (const dep of ORE_DEPOSITS) {
+    if (dep.type === needed) {
+      const d = Math.hypot(x - dep.x, z - dep.z);
+      if (d <= dep.r) {
+        return clamp(1 - (d / dep.r) * 0.35, 0.65, 1.0);
+      }
+    }
+  }
+  return 0.40; // Reduced rate off-deposit
+}
+
 let buildings=[],nextId=1,undoStack=[],redoStack=[],terrainMesh,ghost=null,ghostValid=false,ghostPos=V3(),connectionGroup,coreId=0;
 let roverRoute,rovers=[],agents=[],drones=[],meteors=[],rocket=null,eventId=0;
 const keys={};
@@ -830,7 +1047,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0xbd8067);scene.f
 const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.15,900);
 camera.position.set(68,57,76);
 const controls=new OrbitControls(camera,canvas);controls.target.set(0,3,0);controls.enableDamping=true;controls.dampingFactor=.075;
-controls.minDistance=12;controls.maxDistance=190;controls.maxPolarAngle=Math.PI*.485;controls.minPolarAngle=.12;controls.panSpeed=.65;controls.rotateSpeed=.55;
+controls.minDistance=12;controls.maxDistance=360;controls.maxPolarAngle=Math.PI*.485;controls.minPolarAngle=.12;controls.panSpeed=.65;controls.rotateSpeed=.55;
 const pmrem=new THREE.PMREMGenerator(renderer);const roomEnv=new RoomEnvironment();scene.environment=pmrem.fromScene(roomEnv,.04).texture;scene.environmentIntensity=.62;roomEnv.dispose();pmrem.dispose();
 const hemi=new THREE.HemisphereLight(0xffdfcb,0x68382c,1.55);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xfff3e2,3.5);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-72;sun.shadow.camera.right=72;sun.shadow.camera.top=64;sun.shadow.camera.bottom=-64;sun.shadow.camera.near=1;sun.shadow.camera.far=260;sun.shadow.bias=-.00025;sun.shadow.normalBias=.055;scene.add(sun,sun.target);
@@ -867,17 +1084,65 @@ function antenna(parent,x,y,z,h=2){cyl(parent,MAT.metal,x,y+h/2,z,.06,h,8);light
 
 // ---------- Procedural terrain: dunes, fBm regolith, crater and rear ridge ----------
 function terrainHeight(x,z){
- let h=(fbm(x*.045+4,z*.045-3)-.48)*2.1+(noise(x*.15,z*.15)-.5)*.28;
- h+=Math.sin(x*.115+z*.035)*.24*smooth((Math.abs(x)-25)/20);
- const cd=Math.hypot(x-30,z+23)/14;
- if(cd<1)h-=4.6*Math.pow(1-cd*cd,1.45);
- if(cd>.72&&cd<1.32)h+=1.3*(1-Math.abs(cd-1.02)/.3);
- if(z<-32)h+=Math.pow((-32-z)/12,1.7)*(2.8+2*fbm(x*.09,z*.09));
+ let h=(fbm(x*.035+4,z*.035-3)-.48)*2.4+(noise(x*.12,z*.12)-.5)*.28;
+ h+=Math.sin(x*.08+z*.025)*.28*smooth((Math.abs(x)-25)/20);
+ const cd=Math.hypot(x-30,z+23)/16;
+ if(cd<1)h-=4.8*Math.pow(1-cd*cd,1.45);
+ if(cd>.72&&cd<1.32)h+=1.4*(1-Math.abs(cd-1.02)/.3);
+ const cd2=Math.hypot(x+62,z-48)/20;
+ if(cd2<1)h-=3.8*Math.pow(1-cd2*cd2,1.4);
+ if(cd2>.75&&cd2<1.3)h+=1.1*(1-Math.abs(cd2-1.02)/.28);
+ if(z<-70)h+=Math.pow((-70-z)/14,1.7)*(3.2+2.2*fbm(x*.08,z*.08));
  return h;
 }
 function regolithTexture(){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d'),im=g.createImageData(256,256);for(let y=0;y<256;y++)for(let x=0;x<256;x++){const n=fbm(x*.045,y*.045,4),grain=hash(x,y)*18,i=(y*256+x)*4;im.data[i]=126+n*62+grain;im.data[i+1]=59+n*40+grain*.45;im.data[i+2]=35+n*25+grain*.25;im.data[i+3]=255}g.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(8,8);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return t}
+let plotBordersGroup=null,heatmapGroup=null;
+function buildPlotBorders(){
+ if(plotBordersGroup){scene.remove(plotBordersGroup);disposeGroup(plotBordersGroup)}
+ plotBordersGroup=new THREE.Group();
+ const borderMat=new THREE.LineBasicMaterial({color:0xf2a65a,transparent:true,opacity:.38});
+ const lockedHatchMat=new THREE.LineBasicMaterial({color:0xf07062,transparent:true,opacity:.22});
+ for(const x of[-56,0,56]){
+  const pts=[];
+  for(let z=-96;z<=96;z+=4)pts.push(new THREE.Vector3(x,terrainHeight(x,z)+.14,z));
+  plotBordersGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),borderMat));
+ }
+ for(const z of[-48,0,48]){
+  const pts=[];
+  for(let x=-112;x<=112;x+=4)pts.push(new THREE.Vector3(x,terrainHeight(x,z)+.14,z));
+  plotBordersGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),borderMat));
+ }
+ for(const p of LAND_PLOTS){
+  if(!state.unlockedPlots.has(p.id)){
+   const pts=[
+    new THREE.Vector3(p.x0+2,terrainHeight(p.x0+2,p.z0+2)+.12,p.z0+2),
+    new THREE.Vector3(p.x1-2,terrainHeight(p.x1-2,p.z1-2)+.12,p.z1-2),
+    new THREE.Vector3(p.x0+2,terrainHeight(p.x0+2,p.z1-2)+.12,p.z1-2),
+    new THREE.Vector3(p.x1-2,terrainHeight(p.x1-2,p.z0+2)+.12,p.z0+2)
+   ];
+   plotBordersGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),lockedHatchMat));
+  }
+ }
+ scene.add(plotBordersGroup);
+}
+function buildHeatmapOverlay(){
+ if(heatmapGroup){scene.remove(heatmapGroup);disposeGroup(heatmapGroup)}
+ heatmapGroup=new THREE.Group();
+ heatmapGroup.visible=state.heatmap;
+ for(const dep of ORE_DEPOSITS){
+  const ringGeo=new THREE.RingGeometry(dep.r*.35,dep.r,32);
+  ringGeo.rotateX(-Math.PI/2);
+  const ringMat=new THREE.MeshBasicMaterial({color:dep.color,transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false});
+  const m=new THREE.Mesh(ringGeo,ringMat);
+  m.position.set(dep.x,terrainHeight(dep.x,dep.z)+.22,dep.z);
+  heatmapGroup.add(m);
+  cyl(heatmapGroup,MAT.metal,dep.x,terrainHeight(dep.x,dep.z)+2.2,dep.z,.1,4.4,8);
+  const orb=mesh(new THREE.SphereGeometry(1.2,16,8),new THREE.MeshStandardMaterial({color:dep.color,emissive:dep.color,emissiveIntensity:1.8}),heatmapGroup,dep.x,terrainHeight(dep.x,dep.z)+4.4,dep.z);
+ }
+ scene.add(heatmapGroup);
+}
 function buildTerrain(){
- const tex=regolithTexture();const geo=new THREE.PlaneGeometry(WORLD.w,WORLD.d,112,96);geo.rotateX(-Math.PI/2);
+ const tex=regolithTexture();const geo=new THREE.PlaneGeometry(WORLD.w,WORLD.d,144,128);geo.rotateX(-Math.PI/2);
  const pos=geo.attributes.position,colors=[];const c=new THREE.Color();
  for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),h=terrainHeight(x,z);pos.setY(i,h);const tint=.82+noise(x*.3,z*.3)*.18;c.setRGB(tint,tint,tint);colors.push(c.r,c.g,c.b)}
  geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
@@ -885,16 +1150,14 @@ function buildTerrain(){
  terrainMesh=mesh(geo,mat,scene);terrainMesh.castShadow=false;terrainMesh.name='Mars terrain';
  const sideMat=new THREE.MeshStandardMaterial({color:0x5e2f22,roughness:1,map:tex});
  box(scene,sideMat,0,-3.2,0,WORLD.w+1,5.6,WORLD.d+1);box(scene,new THREE.MeshStandardMaterial({color:0x39231e,roughness:1}),0,-6.25,0,WORLD.w-1,.7,WORLD.d-1);
- // Fine sedimentary layers around the exposed floating slab.
  for(let i=0;i<4;i++){const band=box(scene,new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(.045,.38,.17+i*.022),roughness:1}),0,-1.25-i*1.15,0,WORLD.w+1.04,.12,WORLD.d+1.04);band.castShadow=false}
- // Distant ridge is part of the diorama silhouette, built as a coherent mass family.
  const ridgeMat=new THREE.MeshStandardMaterial({color:0x81513d,roughness:1,flatShading:true});
- for(let i=0;i<15;i++){const x=-54+i*7.7,z=-43+rr(-1.8,1.8),h=rr(3,8),r=rr(5,10),rg=new THREE.ConeGeometry(r,h,9,3),rp=rg.attributes.position;for(let j=0;j<rp.count;j++){const px=rp.getX(j),py=rp.getY(j),pz=rp.getZ(j),rough=1+(noise(px*.7+i,pz*.7)-.5)*.28;rp.setXYZ(j,px*rough,py+noise(px+i,pz)*.35,pz*rough)}rg.computeVertexNormals();const m=mesh(rg,ridgeMat,scene,x,terrainHeight(x,z)+h*.34,z);m.scale.z=.55;m.rotation.y=rr(-.5,.5)}
- // Instanced basalt and regolith rocks, kept away from the central building field.
- const rockGeo=new THREE.DodecahedronGeometry(1,0);rockGeo.scale(1,.65,.85);const rocks=new THREE.InstancedMesh(rockGeo,MAT.rock,150);rocks.castShadow=true;rocks.receiveShadow=true;
- for(let i=0;i<150;i++){let x,z;do{x=rr(-53,53);z=rr(-44,44)}while(Math.abs(x)<35&&Math.abs(z)<28);const s=rr(.18,1.05);tempObj.position.set(x,terrainHeight(x,z)+s*.25,z);tempObj.scale.set(s*rr(.8,1.4),s,s*rr(.75,1.3));tempObj.rotation.set(rr(-.2,.2),rr(0,6.28),rr(-.15,.15));tempObj.updateMatrix();rocks.setMatrixAt(i,tempObj.matrix);rocks.setColorAt(i,new THREE.Color().setHSL(rr(.035,.065),rr(.32,.52),rr(.24,.4)))}scene.add(rocks);
- // Dark neutral receiver under the miniature makes its thickness legible.
- const floor=mesh(new THREE.PlaneGeometry(900,900),new THREE.MeshStandardMaterial({color:0x251c1a,roughness:1}),scene,0,-6.7,0);floor.rotation.x=-Math.PI/2;floor.castShadow=false;
+ for(let i=0;i<24;i++){const x=-106+i*9.2,z=-88+rr(-2,2),h=rr(4,10),r=rr(6,12),rg=new THREE.ConeGeometry(r,h,9,3),rp=rg.attributes.position;for(let j=0;j<rp.count;j++){const px=rp.getX(j),py=rp.getY(j),pz=rp.getZ(j),rough=1+(noise(px*.7+i,pz*.7)-.5)*.28;rp.setXYZ(j,px*rough,py+noise(px+i,pz)*.35,pz*rough)}rg.computeVertexNormals();const m=mesh(rg,ridgeMat,scene,x,terrainHeight(x,z)+h*.34,z);m.scale.z=.55;m.rotation.y=rr(-.5,.5)}
+ const rockGeo=new THREE.DodecahedronGeometry(1,0);rockGeo.scale(1,.65,.85);const rocks=new THREE.InstancedMesh(rockGeo,MAT.rock,260);rocks.castShadow=true;rocks.receiveShadow=true;
+ for(let i=0;i<260;i++){let x,z;do{x=rr(-105,105);z=rr(-88,88)}while(Math.abs(x)<36&&Math.abs(z)<28);const s=rr(.18,1.15);tempObj.position.set(x,terrainHeight(x,z)+s*.25,z);tempObj.scale.set(s*rr(.8,1.4),s,s*rr(.75,1.3));tempObj.rotation.set(rr(-.2,.2),rr(0,6.28),rr(-.15,.15));tempObj.updateMatrix();rocks.setMatrixAt(i,tempObj.matrix);rocks.setColorAt(i,new THREE.Color().setHSL(rr(.035,.065),rr(.32,.52),rr(.24,.4)))}scene.add(rocks);
+ const floor=mesh(new THREE.PlaneGeometry(1200,1200),new THREE.MeshStandardMaterial({color:0x251c1a,roughness:1}),scene,0,-6.7,0);floor.rotation.x=-Math.PI/2;floor.castShadow=false;
+ buildPlotBorders();
+ buildHeatmapOverlay();
  buildSky();
 }
 let sky,stars,sunDirection=V3();
@@ -987,6 +1250,15 @@ function makeBuilding(type,ghostMode=false){
   box(g,MAT.ivory,0,2.2,0,9.6,3.6,6);box(g,MAT.orange,0,3.85,0,9.8,.25,6.2);for(const x of[-3,0,3])lightMesh(g,x,2.35,3.05,1.7,.8,.12);const skylight=mesh(new THREE.SphereGeometry(2.1,20,10,0,Math.PI*2,0,Math.PI/2),MAT.glass,g,0,4,0);skylight.scale.z=1.25;box(g,MAT.dark,4.8,1.6,0,.35,2.4,2);antenna(g,-3.8,4,0,3.2);
  }else if(type==='storage'){
   for(const [x,z,y,c] of[[-2,-1.8,1.25,MAT.orange],[2,-1.8,1.25,MAT.ivory],[0,1.8,1.25,MAT.panel],[-2,-1.8,3.65,MAT.ivory]]){box(g,c,x,y,z,3.5,2.2,3);for(const xx of[-1.4,1.4])box(g,MAT.dark,x+xx,y,z+1.52,.12,1.9,.08)}lightMesh(g,3.4,2,2.5,.2,1.2,.2,MAT.cyan);
+ }else if(type==='pylon'){
+  cyl(g,MAT.dark,0,.3,0,1.8,.4,8);
+  for(const x of[-.8,.8])for(const z of[-.8,.8])cylinderBetween(g,MAT.metal,V3(x,0,z),V3(x*.3,6.8,z*.3),.06);
+  for(const y of[2.2,4.4])box(g,MAT.dark,0,y,0,1.2,.12,1.2);
+  cylinderBetween(g,MAT.orange,V3(-1.8,5.4,0),V3(1.8,5.4,0),.08);
+  lightMesh(g,-1.8,5.3,0,.22,.3,.22,MAT.cyan);
+  lightMesh(g,1.8,5.3,0,.22,.3,.22,MAT.cyan);
+  const orb=mesh(new THREE.SphereGeometry(.42,12,8),MAT.cyan,g,0,7.1,0);
+  orb.userData.isLight=true;
  }else if(type==='tunnel'){
   const tube=mesh(new THREE.CylinderGeometry(1.18,1.18,4,16,1,true),MAT.ivory,g,0,1.45,0);tube.rotation.z=Math.PI/2;for(const x of[-2,2]){const r=ring(g,MAT.dark,x,1.45,0,1.2,.13,0);r.rotation.y=Math.PI/2}lightMesh(g,0,2.6,0,1.6,.1,.2,MAT.cyan);
  }
@@ -1006,6 +1278,8 @@ function clearBuildings(){for(const b of buildings){scene.remove(b.mesh);dispose
 function overlap(a,b){const ad=dims(a),bd=dims(b);return Math.abs(a.x-b.x)<(ad.w+bd.w)/2-.15&&Math.abs(a.z-b.z)<(ad.d+bd.d)/2-.15}
 function validPlacement(type,x,z,rotation=0,ignoreId=-1){
  const probe={type,x,z,rotation},d=dims(probe);if(x-d.w/2<WORLD.minX||x+d.w/2>WORLD.maxX||z-d.d/2<WORLD.minZ||z+d.d/2>WORLD.maxZ)return{ok:false,reason:'Outside construction zone'};
+ const plot=getPlotAt(x,z);
+ if(!state.sandbox&&plot&&!state.unlockedPlots.has(plot.id))return{ok:false,reason:`Sector ${plot.id} locked · Unlock in Radar`};
  const h=terrainHeight(x,z),slope=Math.max(Math.abs(terrainHeight(x-d.w*.42,z)-h),Math.abs(terrainHeight(x+d.w*.42,z)-h),Math.abs(terrainHeight(x,z-d.d*.42)-h),Math.abs(terrainHeight(x,z+d.d*.42)-h));if(slope>1.45)return{ok:false,reason:'Terrain too steep'};
  if(buildings.some(b=>b.id!==ignoreId&&overlap(probe,b)))return{ok:false,reason:'Footprint obstructed'};
  if(!state.sandbox&&state.res.materials<TYPES[type].cost)return{ok:false,reason:'Insufficient materials'};return{ok:true,reason:'Valid deployment site'};
@@ -1017,23 +1291,72 @@ function placeGhost(){if(!ghost||!ghost.visible)return;const v=validPlacement(st
 function afterBaseChange(){computeNetwork();syncVehicles();syncAgents();updateHUD();updateInfo();updateLabels()}
 function isNetworkNode(b){return TYPES[b.type].pressurized}
 function computeNetwork(){
- for(const b of buildings){b.connected=false;b.pressurized=false}
- const nodes=buildings.filter(isNetworkNode),adj=new Map(nodes.map(b=>[b.id,[]]));
- for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
-  const a=nodes[i],b=nodes[j],dist=Math.hypot(a.x-b.x,a.z-b.z),ad=dims(a),bd=dims(b);let linked=false;
+ for(const b of buildings){b.connected=false;b.pressurized=false;b.powered=false}
+ const pressNodes=buildings.filter(isNetworkNode),adjPress=new Map(pressNodes.map(b=>[b.id,[]]));
+ for(let i=0;i<pressNodes.length;i++)for(let j=i+1;j<pressNodes.length;j++){
+  const a=pressNodes[i],b=pressNodes[j],dist=Math.hypot(a.x-b.x,a.z-b.z),ad=dims(a),bd=dims(b);let linked=false;
   if(a.type==='tunnel'||b.type==='tunnel')linked=dist<=10.2;
   else{const gapX=Math.max(0,Math.abs(a.x-b.x)-(ad.w+bd.w)/2),gapZ=Math.max(0,Math.abs(a.z-b.z)-(ad.d+bd.d)/2);linked=Math.hypot(gapX,gapZ)<=2.25&&dist<17}
-  if(linked){adj.get(a.id).push(b.id);adj.get(b.id).push(a.id)}
+  if(linked){adjPress.get(a.id).push(b.id);adjPress.get(b.id).push(a.id)}
  }
- const core=buildings.find(b=>b.id===coreId&&isNetworkNode(b));if(core){const q=[core.id],seen=new Set(q);while(q.length){const id=q.shift(),b=buildings.find(v=>v.id===id);b.connected=true;b.pressurized=true;for(const n of adj.get(id)||[])if(!seen.has(n)){seen.add(n);q.push(n)}}}
- if(connectionGroup){scene.remove(connectionGroup);disposeGroup(connectionGroup)}connectionGroup=new THREE.Group();scene.add(connectionGroup);
- // Short automatic airlocks visualize direct links; placed tunnel pieces remain independent.
- for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];if(a.type==='tunnel'||b.type==='tunnel')continue;if(!adj.get(a.id).includes(b.id))continue;const ay=terrainHeight(a.x,a.z)+1.35,by=terrainHeight(b.x,b.z)+1.35;cylinderBetween(connectionGroup,MAT.ivory,V3(a.x,ay,a.z),V3(b.x,by,b.z),.82);const len=Math.hypot(a.x-b.x,a.z-b.z);if(len>11){for(const f of[.32,.68]){const p=V3(lerp(a.x,b.x,f),lerp(ay,by,f),lerp(a.z,b.z,f));ring(connectionGroup,MAT.dark,p.x,p.y,p.z,.84,.08,0)}}}
+ const core=buildings.find(b=>b.id===coreId&&isNetworkNode(b));
+ if(core){
+  const q=[core.id],seen=new Set(q);
+  while(q.length){
+   const id=q.shift(),b=buildings.find(v=>v.id===id);
+   b.connected=true;b.pressurized=true;
+   for(const n of adjPress.get(id)||[])if(!seen.has(n)){seen.add(n);q.push(n)}
+  }
+ }
+ // Dual Graph: Electrical Power Grid (14m module adjacency, 32m power pylon reach)
+ const adjPower=new Map(buildings.map(b=>[b.id,[]]));
+ const powerLines=[];
+ for(let i=0;i<buildings.length;i++)for(let j=i+1;j<buildings.length;j++){
+  const a=buildings[i],b=buildings[j];
+  const dist=Math.hypot(a.x-b.x,a.z-b.z);
+  const maxReach=(a.type==='pylon'||b.type==='pylon')?32.0:14.0;
+  if(dist<=maxReach){
+   adjPower.get(a.id).push(b.id);
+   adjPower.get(b.id).push(a.id);
+   if(a.type==='pylon'||b.type==='pylon')powerLines.push([a,b]);
+  }
+ }
+ const powerSources=buildings.filter(b=>(b.type==='solar'||b.type==='reactor'||b.type==='battery')&&b.operational&&b.health>15);
+ const pq=powerSources.map(b=>b.id),pSeen=new Set(pq);
+ while(pq.length){
+  const id=pq.shift(),b=buildings.find(v=>v.id===id);
+  b.powered=true;
+  for(const n of adjPower.get(id)||[])if(!pSeen.has(n)){pSeen.add(n);pq.push(n)}
+ }
+ if(connectionGroup){scene.remove(connectionGroup);disposeGroup(connectionGroup)}
+ connectionGroup=new THREE.Group();scene.add(connectionGroup);
+ for(let i=0;i<pressNodes.length;i++)for(let j=i+1;j<pressNodes.length;j++){
+  const a=pressNodes[i],b=pressNodes[j];
+  if(a.type==='tunnel'||b.type==='tunnel')continue;
+  if(!adjPress.get(a.id).includes(b.id))continue;
+  const ay=terrainHeight(a.x,a.z)+1.35,by=terrainHeight(b.x,b.z)+1.35;
+  cylinderBetween(connectionGroup,MAT.ivory,V3(a.x,ay,a.z),V3(b.x,by,b.z),.82);
+  const len=Math.hypot(a.x-b.x,a.z-b.z);
+  if(len>11){for(const f of[.32,.68]){const p=V3(lerp(a.x,b.x,f),lerp(ay,by,f),lerp(a.z,b.z,f));ring(connectionGroup,MAT.dark,p.x,p.y,p.z,.84,.08,0)}}
+ }
+ for(const [a,b] of powerLines){
+  const ay=terrainHeight(a.x,a.z)+(a.type==='pylon'?6.8:2.2);
+  const by=terrainHeight(b.x,b.z)+(b.type==='pylon'?6.8:2.2);
+  const isGridActive=a.powered||b.powered;
+  const lineMat=new THREE.LineBasicMaterial({color:isGridActive?0x6ae0cc:0x553322,transparent:true,opacity:isGridActive?.65:.25});
+  const mid=V3(lerp(a.x,b.x,.5),lerp(ay,by,.5)-.75,lerp(a.z,b.z,.5));
+  const pts=new THREE.QuadraticBezierCurve3(V3(a.x,ay,a.z),mid,V3(b.x,by,b.z)).getPoints(12);
+  connectionGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat));
+ }
 }
-function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
+function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won,unlockedPlots:Array.from(state.unlockedPlots),selectedPlot:state.selectedPlot},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
 function restore(s){
  if(!s||s.version!==2||!Array.isArray(s.buildings)||!s.state)throw new Error('Invalid ARES-1 save');
- clearBuildings();Object.assign(state,{sandbox:!!s.state.sandbox,phase:clamp(+s.state.phase||0,0,1),sol:Math.max(1,+s.state.sol||1),solFraction:clamp(+s.state.solFraction||0,0,1),simTime:Math.max(0,+s.state.simTime||0),pop:clamp(+s.state.pop||1,1,50),growth:0,stormUntil:0,nextEvent:55,won:!!s.state.won});Object.assign(state.res,s.state.res);for(const k of Object.keys(state.res))state.res[k]=clamp(+state.res[k]||0,0,99999);nextId=Math.max(1,+s.nextId||1);coreId=+s.coreId||0;
+ clearBuildings();if(s.state.unlockedPlots&&Array.isArray(s.state.unlockedPlots))state.unlockedPlots=new Set(s.state.unlockedPlots);
+  if(s.state.selectedPlot)state.selectedPlot=s.state.selectedPlot;
+  buildPlotBorders();
+  updateSectorCardUI();
+  Object.assign(state,{sandbox:!!s.state.sandbox,phase:clamp(+s.state.phase||0,0,1),sol:Math.max(1,+s.state.sol||1),solFraction:clamp(+s.state.solFraction||0,0,1),simTime:Math.max(0,+s.state.simTime||0),pop:clamp(+s.state.pop||1,1,50),growth:0,stormUntil:0,nextEvent:55,won:!!s.state.won});Object.assign(state.res,s.state.res);for(const k of Object.keys(state.res))state.res[k]=clamp(+state.res[k]||0,0,99999);nextId=Math.max(1,+s.nextId||1);coreId=+s.coreId||0;
  for(const b of s.buildings){if(!TYPES[b.type]||!Number.isFinite(b.x)||!Number.isFinite(b.z))continue;addBuilding(b.type,clamp(b.x,-50,50),clamp(b.z,-42,42),+b.rotation||0,{...b,defer:true})}afterBaseChange();updateModeUI();updateSun();
 }
 function pushUndo(){undoStack.push(snapshot());if(undoStack.length>35)undoStack.shift();redoStack=[]}
@@ -1091,7 +1414,7 @@ function calculateRates(){
  const hasPower = state.res.power > 0 || state.rates.power >= 0;
  for(const b of buildings){
   const needsPower = (TYPES[b.type].power || 0) > 0;
-  b.isPowered = hasPower && (b.connected || b.type==='solar' || b.type==='reactor' || b.type==='battery');
+  b.isPowered = hasPower && (b.powered || b.type==='solar' || b.type==='reactor' || b.type==='battery');
   if(b.mesh){
    b.mesh.traverse(o=>{
     if(o.userData.isLight){
@@ -1135,7 +1458,14 @@ function updateHUD(){
 function updateBuildCards(){document.querySelectorAll('.buildCard').forEach(el=>{el.disabled=!state.sandbox&&state.res.materials<TYPES[el.dataset.type].cost})}
 function selectBuilding(id){state.selected=id;const b=buildings.find(v=>v.id===id);$('info').classList.toggle('show',!!b);if(b)updateInfo()}
 function updateInfo(){const b=buildings.find(v=>v.id===state.selected);if(!b)return;const t=TYPES[b.type],status=!b.operational?'EQUIPMENT FAILURE':b.health<40?'DAMAGED':b.type==='habitat'&&!b.pressurized?'UNPRESSURIZED':'ONLINE';$('infoName').textContent=t.name;$('infoType').textContent=`${t.short}-${String(b.id).padStart(2,'0')} · ${status}`;$('healthFill').style.width=b.health+'%';$('healthFill').style.background=b.health<40?'var(--red)':'var(--green)';
- let detail=`Integrity <b>${Math.round(b.health)}%</b><br>Power draw <b>${t.power||0} kW</b>`;if(t.powerGen)detail+=`<br>Solar rating <b>${t.powerGen} kW</b>`;if(t.housing)detail+=`<br>Berths <b>${b.pressurized?t.housing:0} / ${t.housing}</b>`;if(t.pressurized)detail+=`<br>Network <b>${b.pressurized?'CORE LINKED':'ISOLATED'}</b>`;$('infoStatus').innerHTML=detail;
+ let detail=`Integrity <b>${Math.round(b.health)}%</b><br>Power draw <b>${t.power||0} kW</b>`;if(t.powerGen)detail+=`<br>Solar rating <b>${t.powerGen} kW</b>`;if(t.housing)detail+=`<br>Berths <b>${b.pressurized?t.housing:0} / ${t.housing}</b>`;if(t.pressurized)detail+=`<br>Pressure <b>${b.pressurized?'CORE LINKED':'ISOLATED'}</b>`;
+ if(t.power)detail+=`<br>Power Grid <b>${b.powered?'CONNECTED':'DISCONNECTED'}</b>`;
+ if(b.type==='miner'||b.type==='drill_iron'||b.type==='drill_co2'){
+  const bonus=getDepositBonus(b.type,b.x,b.z);
+  detail+=`<br>Deposit Yield <b>${Math.round(bonus*100)}% ${bonus>=0.85?'(MATCHING ORE)':bonus>0.5?'(SUB-OPTIMAL)':'(OFF-DEPOSIT)'}</b>`;
+ }
+ if(b.type==='pylon')detail+=`<br>Relay Status <b>${b.powered?'ENERGIZED (32m)':'NO POWER'}</b>`;
+ $('infoStatus').innerHTML=detail;
  const actions=[];if(b.type==='landing')actions.push(['launch','CALL ROCKET']);if(b.type==='garage')actions.push(['patrol','ROVER PATROL']);if(b.type==='radar')actions.push(['drone','DRONE FLIGHT']);if(b.health<100||!b.operational)actions.push(['repair','REPAIR · 15']);actions.push(['lights',b.lights?'LIGHTS OFF':'LIGHTS ON']);if(!b.core)actions.push(['delete','DELETE +50%']);$('infoActions').innerHTML=actions.map(a=>`<button class="actionBtn ${a[0]==='delete'?'delete':''}" data-action="${a[0]}">${a[1]}</button>`).join('');
 }
 function moduleAction(action){const b=buildings.find(v=>v.id===state.selected);if(!b)return;if(action==='delete'){pushUndo();const name=TYPES[b.type].name;removeBuilding(b.id,true);toast(name+' removed · materials recovered');audio.play('delete')}else if(action==='repair'){if(state.res.materials<15&&!state.sandbox){toast('15 materials required');audio.play('error');return}pushUndo();if(!state.sandbox)state.res.materials-=15;b.health=100;b.operational=true;b.failure=0;toast('Module repaired');audio.play('place');updateHUD()}else if(action==='lights'){b.lights=!b.lights;applyLights();updateInfo()}else if(action==='launch')launchRocket();else if(action==='patrol')spawnPatrol();else if(action==='drone')launchDrone()}
@@ -1175,6 +1505,176 @@ function updateColonistsSim(dtSol){
   });
 
   renderColonistsUI();
+}
+
+
+// ==================== RADAR MINIMAP & SECTOR UNLOCKING ====================
+function updateMinimap(){
+ const cv=$('minimapCanvas');
+ if(!cv||!state.showMinimap)return;
+ const ctx=cv.getContext('2d');
+ const w=cv.width,h=cv.height;
+ ctx.fillStyle='#141110';
+ ctx.fillRect(0,0,w,h);
+ 
+ const toX=x=>((x+112)/224)*w;
+ const toY=z=>((z+96)/192)*h;
+
+ // 1. Render 16 Sectors (4x4)
+ for(const p of LAND_PLOTS){
+  const x0=toX(p.x0),y0=toY(p.z0),pw=toX(p.x1)-x0,ph=toY(p.z1)-y0;
+  const isUnlocked=state.unlockedPlots.has(p.id);
+  const isSel=state.selectedPlot===p.id;
+
+  if(p.isCore){
+   ctx.fillStyle='rgba(85,226,207,0.12)';
+   ctx.strokeStyle='rgba(85,226,207,0.4)';
+  }else if(isUnlocked){
+   ctx.fillStyle='rgba(119,229,170,0.08)';
+   ctx.strokeStyle='rgba(119,229,170,0.3)';
+  }else{
+   ctx.fillStyle='rgba(240,112,98,0.09)';
+   ctx.strokeStyle='rgba(240,112,98,0.35)';
+  }
+  ctx.lineWidth=1;
+  ctx.fillRect(x0,y0,pw,ph);
+  ctx.strokeRect(x0,y0,pw,ph);
+
+  // Hatch locked plots
+  if(!isUnlocked){
+   ctx.strokeStyle='rgba(240,112,98,0.25)';
+   ctx.beginPath();
+   ctx.moveTo(x0,y0);ctx.lineTo(x0+pw,y0+ph);
+   ctx.moveTo(x0,y0+ph);ctx.lineTo(x0+pw,y0);
+   ctx.stroke();
+  }
+
+  // Highlight selected plot
+  if(isSel){
+   ctx.strokeStyle='#f2a65a';
+   ctx.lineWidth=2;
+   ctx.strokeRect(x0+1,y0+1,pw-2,ph-2);
+  }
+
+  // Sector ID label
+  ctx.fillStyle=isUnlocked?'#f3e9d8':'#887770';
+  ctx.font='8px monospace';
+  ctx.fillText(p.id,x0+4,y0+10);
+ }
+
+ // 2. Render Ore Deposits
+ for(const dep of ORE_DEPOSITS){
+  const cx=toX(dep.x),cy=toY(dep.z),cr=(dep.r/224)*w;
+  ctx.beginPath();
+  ctx.arc(cx,cy,Math.max(3,cr),0,Math.PI*2);
+  ctx.fillStyle=dep.colorHex+'33';
+  ctx.fill();
+  ctx.strokeStyle=dep.colorHex+'88';
+  ctx.lineWidth=1;
+  ctx.stroke();
+  ctx.fillStyle=dep.colorHex;
+  ctx.font='7px monospace';
+  ctx.fillText(dep.symbol,cx-4,cy+2.5);
+ }
+
+ // 3. Render Buildings
+ for(const b of buildings){
+  const bx=toX(b.x),by=toY(b.z);
+  if(b.type==='pylon'){
+   ctx.fillStyle=b.powered?'#ffd277':'#665544';
+   ctx.fillRect(bx-1.5,by-1.5,3,3);
+  }else if(b.core){
+   ctx.fillStyle='#55e2cf';
+   ctx.fillRect(bx-3,by-3,6,6);
+  }else{
+   ctx.fillStyle=b.powered?'#77e5aa':'#f07062';
+   ctx.fillRect(bx-2,by-2,4,4);
+  }
+ }
+
+ // 4. Render Rovers
+ ctx.fillStyle='#ffffff';
+ for(const r of rovers){
+  if(r.mesh){
+   const rx=toX(r.mesh.position.x),ry=toY(r.mesh.position.z);
+   ctx.fillRect(rx-1.5,ry-1.5,3,3);
+  }
+ }
+
+ // 5. Render Camera Frustum Dot & Target
+ const camX=toX(controls.target.x),camY=toY(controls.target.z);
+ ctx.strokeStyle='#f2a65a';
+ ctx.lineWidth=1;
+ ctx.beginPath();
+ ctx.arc(camX,camY,3,0,Math.PI*2);
+ ctx.stroke();
+
+ // 6. Storm Direction Vector
+ if(state.storm>0.05){
+  ctx.strokeStyle='rgba(242,166,90,0.6)';
+  ctx.lineWidth=1.5;
+  const off=(state.simTime*20)%20;
+  for(let sy=20;sy<h;sy+=35){
+   ctx.beginPath();
+   ctx.moveTo(10+off,sy);ctx.lineTo(26+off,sy);
+   ctx.lineTo(22+off,sy-3);ctx.moveTo(26+off,sy);ctx.lineTo(22+off,sy+3);
+   ctx.stroke();
+  }
+ }
+}
+
+function updateSectorCardUI(){
+ const p=LAND_PLOTS.find(v=>v.id===state.selectedPlot)||LAND_PLOTS[5];
+ const nameEl=$('secName'),badgeEl=$('secBadge'),detailsEl=$('secDetails'),btnEl=$('secUnlockBtn');
+ if(!nameEl)return;
+ const isUnlocked=state.unlockedPlots.has(p.id);
+ nameEl.textContent=p.name;
+ badgeEl.textContent=isUnlocked?'UNLOCKED':'LOCKED';
+ badgeEl.className='sector-badge '+(isUnlocked?'unlocked':'locked');
+ 
+ let info=`Slope: ${p.slope}<br>Hazard: ${p.hazard}<br>`;
+ const nearDeps=ORE_DEPOSITS.filter(d=>Math.hypot(d.x-p.cx,d.z-p.cz)<38);
+ if(nearDeps.length){
+  info+='Ore: '+nearDeps.map(d=>`${d.type.toUpperCase()} (${d.name})`).join(', ');
+ }else{
+  info+='Ore: Trace deposits';
+ }
+ detailsEl.innerHTML=info;
+
+ if(isUnlocked){
+  btnEl.style.display='none';
+ }else{
+  btnEl.style.display='block';
+  btnEl.textContent=`UNLOCK (${p.cost} MAT)`;
+  const canAfford=state.sandbox||state.res.materials>=p.cost;
+  btnEl.disabled=!canAfford;
+  btnEl.title=p.req!=='None'?'Req: '+p.req:'Cost: '+p.cost+' Materials';
+ }
+}
+
+function selectPlot(id){
+ state.selectedPlot=id;
+ updateSectorCardUI();
+ updateMinimap();
+}
+
+function unlockPlot(id){
+ const p=LAND_PLOTS.find(v=>v.id===id);
+ if(!p||state.unlockedPlots.has(id))return;
+ if(!state.sandbox&&state.res.materials<p.cost){
+  toast(`${p.cost} Materials required to survey sector ${id}`);
+  audio.play('error');
+  return;
+ }
+ if(!state.sandbox)state.res.materials-=p.cost;
+ state.unlockedPlots.add(id);
+ buildPlotBorders();
+ updateSectorCardUI();
+ updateMinimap();
+ updateHUD();
+ toast(`Sector ${id} Unlocked · Territory Expanded!`);
+ logEvent(`Sector ${p.name} surveyed & open for deployment`,'EXPANSION');
+ audio.play('supply');
 }
 
 function renderColonistsUI(){
@@ -1299,11 +1799,11 @@ function updateSun(){
  const total=state.phase*24,hh=Math.floor(total)%24,mm=Math.floor((total-Math.floor(total))*60);$('clock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');if(document.activeElement!==$('timeSlider'))$('timeSlider').value=Math.round(state.phase*1000);applyLights();
 }
 const PRESETS={
- '1':()=>setView(V3(0,3,0),V3(68,57,76)),
+ '1':()=>setView(V3(0,3,0),V3(105,88,115)),
  '2':()=>setView(V3(-2,3,5),V3(25,24,34)),
- '3':()=>setView(V3(-22,2,-13),V3(-48,23,16)),
- '4':()=>setView(V3(28,4,22),V3(57,28,53)),
- '5':()=>setView(V3(0,0,0),V3(.1,112,.1))
+ '3':()=>setView(V3(-58,2,10),V3(-96,36,44)),
+ '4':()=>setView(V3(58,2,10),V3(98,36,44)),
+ '5':()=>setView(V3(0,0,0),V3(.1,220,.1))
 };
 function setView(target,pos){if(walkMode)exitWalk();controls.target.copy(target);camera.position.copy(pos);controls.update()}
 function resetView(){PRESETS['1']();toast('Overview camera')}
@@ -1318,11 +1818,30 @@ function screenToGround(x,y){pointer.set(x/innerWidth*2-1,-y/innerHeight*2+1);ra
 function pickBuilding(x,y){pointer.set(x/innerWidth*2-1,-y/innerHeight*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(buildings.map(b=>b.mesh),true);for(const h of hits){const id=h.object.userData.buildingId;if(id)return buildings.find(b=>b.id===id)}return null}
 let downX=0,downY=0,downTime=0,pointerButton=0;
 canvas.addEventListener('pointerdown',e=>{audio.init();downX=e.clientX;downY=e.clientY;downTime=performance.now();pointerButton=e.button;if(walkMode){walkDragging=true;lastWalkX=e.clientX;lastWalkY=e.clientY;canvas.setPointerCapture(e.pointerId)}});
-canvas.addEventListener('pointermove',e=>{if(walkMode&&walkDragging){walkYaw-=(e.clientX-lastWalkX)*.0045;walkPitch=clamp(walkPitch-(e.clientY-lastWalkY)*.004,-1.15,1.15);lastWalkX=e.clientX;lastWalkY=e.clientY}else updateGhost(e.clientX,e.clientY)});
+canvas.addEventListener('pointermove',e=>{
+  if(walkMode&&walkDragging){
+    walkYaw-=(e.clientX-lastWalkX)*.0045;
+    walkPitch=clamp(walkPitch-(e.clientY-lastWalkY)*.004,-1.15,1.15);
+    lastWalkX=e.clientX;lastWalkY=e.clientY;
+  }else{
+    if(state.buildType)updateGhost(e.clientX,e.clientY);
+    const p=screenToGround(e.clientX,e.clientY);
+    if(p){
+      const pl=getPlotAt(p.x,p.z);
+      if(pl&&pl.id!==state.selectedPlot){
+        state.selectedPlot=pl.id;
+        updateSectorCardUI();
+        updateMinimap();
+      }
+    }
+  }
+});
 canvas.addEventListener('pointerup',e=>{if(walkMode){walkDragging=false;return}const moved=Math.hypot(e.clientX-downX,e.clientY-downY);if(pointerButton===0&&moved<6&&performance.now()-downTime<600){if(state.buildType){updateGhost(e.clientX,e.clientY);placeGhost()}else{const b=pickBuilding(e.clientX,e.clientY);selectBuilding(b?b.id:null);if(b)audio.play('select')}}});
 canvas.addEventListener('pointercancel',()=>{walkDragging=false});canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('dblclick',e=>{if(!state.buildType){resetView();e.preventDefault()}});
 function togglePause(){if(state.mode!=='play'&&state.mode!=='paused')return;state.paused=!state.paused;state.mode=state.paused?'paused':'play';$('pauseBtn').textContent=state.paused?'RESUME':'PAUSE';$('pauseBtn').classList.toggle('on',state.paused);toast(state.paused?'Simulation paused':'Simulation resumed')}
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;keys[e.code]=true;if((e.ctrlKey||e.metaKey)&&e.code==='KeyZ'){e.preventDefault();e.shiftKey?redo():undo();return}if((e.ctrlKey||e.metaKey)&&e.code==='KeyY'){e.preventDefault();redo();return}if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='KeyR'&&state.buildType){state.buildRotation=(state.buildRotation+90)%360;if(ghost)ghost.rotation.y=THREE.MathUtils.degToRad(state.buildRotation);toast('Rotation '+state.buildRotation+'°')}else if(e.code==='KeyX'){if(state.selected)moduleAction('delete')}else if(e.code==='KeyF'){walkMode?exitWalk():enterWalk()}else if(e.key==='?'||e.code==='KeyH')toggleHelp();else if(PRESETS[e.key])PRESETS[e.key]();else if(e.code==='Escape'){if($('help').classList.contains('show'))toggleHelp(false);else if(state.buildType)selectBuild(state.buildType);else selectBuilding(null)}});
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;keys[e.code]=true;if((e.ctrlKey||e.metaKey)&&e.code==='KeyZ'){e.preventDefault();e.shiftKey?redo():undo();return}if((e.ctrlKey||e.metaKey)&&e.code==='KeyY'){e.preventDefault();redo();return}if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='KeyR'&&state.buildType){state.buildRotation=(state.buildRotation+90)%360;if(ghost)ghost.rotation.y=THREE.MathUtils.degToRad(state.buildRotation);toast('Rotation '+state.buildRotation+'°')}else if(e.code==='KeyX'){if(state.selected)moduleAction('delete')}else if(e.code==='KeyF'){walkMode?exitWalk():enterWalk()}else if(e.key==='?'||e.code==='KeyF1')toggleHelp();
+  else if(e.code==='KeyM'){$('mapBtn').click();}
+  else if(e.code==='KeyH'){$('heatmapBtn').click();}else if(PRESETS[e.key])PRESETS[e.key]();else if(e.code==='Escape'){if($('help').classList.contains('show'))toggleHelp(false);else if(state.buildType)selectBuild(state.buildType);else selectBuilding(null)}});
 addEventListener('keyup',e=>{keys[e.code]=false});addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;if(state.mode==='play')togglePause()});
 for(const b of document.querySelectorAll('[data-move]')){const code={forward:'KeyW',back:'KeyS',left:'KeyA',right:'KeyD'}[b.dataset.move];b.addEventListener('pointerdown',e=>{e.preventDefault();keys[code]=true;b.setPointerCapture(e.pointerId)});for(const ev of['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>keys[code]=false)}
 
@@ -1342,6 +1861,30 @@ window.switchGuideTab=function(tab){
  if(tab==='missions'){p.style.display='none';m.style.display='block';tbP.classList.remove('on');tbM.classList.add('on');}
  else{p.style.display='block';m.style.display='none';tbP.classList.add('on');tbM.classList.remove('on');}
 };
+
+ $('mapBtn').onclick=()=>{
+  state.showMinimap=!state.showMinimap;
+  $('mapBtn').classList.toggle('on',state.showMinimap);
+  $('minimapCard').classList.toggle('hidden',!state.showMinimap);
+  toast(state.showMinimap?'Radar minimap enabled':'Radar minimap hidden');
+ };
+ $('heatmapBtn').onclick=()=>{
+  state.heatmap=!state.heatmap;
+  $('heatmapBtn').classList.toggle('on',state.heatmap);
+  if(heatmapGroup)heatmapGroup.visible=state.heatmap;
+  toast(state.heatmap?'Resource heatmap active':'Resource heatmap hidden');
+ };
+ $('secUnlockBtn').onclick=()=>{
+  if(state.selectedPlot)unlockPlot(state.selectedPlot);
+ };
+ $('minimapCanvas').onclick=e=>{
+  const rect=$('minimapCanvas').getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const wx=(mx/rect.width)*224-112,wz=(my/rect.height)*192-96;
+  const plot=getPlotAt(wx,wz);
+  if(plot)selectPlot(plot.id);
+ };
+
 $('saveBtn').onclick=saveGame;$('loadBtn').onclick=loadGame;$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;$('sandboxBtn').onclick=toggleSandbox;$('modeBtn').onclick=toggleSandbox;
 $('resetBtn').onclick=()=>{if(confirm('Reset ARES-1 and abandon the current base?'))resetGame()};$('cancelBuild').onclick=()=>{if(state.buildType)selectBuild(state.buildType)};$('infoClose').onclick=()=>selectBuilding(null);$('infoActions').onclick=e=>{const a=e.target.dataset.action;if(a)moduleAction(a)};
 $('toolsToggle').onclick=()=>$('tools').classList.toggle('expanded');
@@ -1355,23 +1898,23 @@ function initialBase(){
  clearBuildings();for(const r of rovers){scene.remove(r.mesh);disposeGroup(r.mesh)}rovers=[];for(const d of drones){scene.remove(d.mesh);disposeGroup(d.mesh)}drones=[];for(const a of agents){scene.remove(a.mesh);disposeGroup(a.mesh)}agents=[];if(rocket){scene.remove(rocket.mesh);disposeGroup(rocket.mesh);rocket=null}nextId=1;coreId=0;undoStack=[];redoStack=[];
  const initial=[['habitat',-8,4,0,{core:true}],['habitat',4,4,0],['tunnel',-2,4,0],['greenhouse',16,4,0],['isru',-4,-14,0],['battery',10,-14,0],['solar',-24,-10,0],['solar',-24,-20,0],['garage',-32,22,0],['landing',30,24,0],['storage',20,-16,0],['radar',-2,26,0]];
  for(const [type,x,z,rot,opt]of initial)addBuilding(type,x,z,rot,{...opt,defer:true});
- roverRoute=new THREE.CatmullRomCurve3([V3(-38,0,16),V3(-28,0,-25),V3(4,0,-31),V3(35,0,-12),V3(43,0,14),V3(22,0,36),V3(-12,0,34)],true,'catmullrom',.35);
+ roverRoute=new THREE.CatmullRomCurve3([V3(-65,0,25),V3(-45,0,-55),V3(15,0,-65),V3(75,0,-20),V3(80,0,35),V3(35,0,65),V3(-25,0,55)],true,'catmullrom',.35);
  afterBaseChange();applyLights();updateSun();
 }
-function resetGame(){Object.assign(state,{mode:'play',sandbox:false,paused:false,speed:1,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,selected:null,buildType:null,critical:0,won:false});Object.assign(state.res,{power:130,oxygen:180,water:140,food:150,materials:320});if(ghost){scene.remove(ghost);disposeGroup(ghost);ghost.userData.ghostMat.dispose();ghost=null}selectBuilding(null);selectBuild(null);initialBase();$('speedBtn').textContent='1×';$('pauseBtn').textContent='PAUSE';$('pauseBtn').classList.remove('on');updateModeUI();resetView();toast('New ARES-1 mission established');logEvent('Base systems restarted','SYSTEM')}
+function resetGame(){Object.assign(state,{mode:'play',sandbox:false,paused:false,speed:1,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,selected:null,buildType:null,critical:0,won:false});Object.assign(state.res,{power:130,oxygen:180,water:140,food:150,materials:320});state.unlockedPlots=new Set(['B2','B3','C2','C3']);state.selectedPlot='B2';buildPlotBorders();updateSectorCardUI();updateMinimap();if(ghost){scene.remove(ghost);disposeGroup(ghost);ghost.userData.ghostMat.dispose();ghost=null}selectBuilding(null);selectBuild(null);initialBase();$('speedBtn').textContent='1×';$('pauseBtn').textContent='PAUSE';$('pauseBtn').classList.remove('on');updateModeUI();resetView();toast('New ARES-1 mission established');logEvent('Base systems restarted','SYSTEM')}
 async function init(){
  try{
   $('loadStatus').textContent='SCULPTING UTOPIA PLANITIA';$('loadFill').style.width='14%';await frame();buildTerrain();
   $('loadStatus').textContent='ASSEMBLING PRESSURE NETWORK';$('loadFill').style.width='42%';await frame();makeBuildMenu();initialBase();
   $('loadStatus').textContent='WAKING CREW & AUTONOMOUS VEHICLES';$('loadFill').style.width='72%';await frame();syncAgents();syncVehicles();
-  for(let i=0;i<40;i++)updateDrones(.03);updateRovers(.1);updateHUD();
+  for(let i=0;i<40;i++)updateDrones(.03);updateRovers(.1);updateHUD();updateSectorCardUI();updateMinimap();
   $('loadStatus').textContent='ALL SYSTEMS NOMINAL';$('loadFill').style.width='100%';$('beginBtn').disabled=false;
   window.__SCENE_READY__=true;window.__GAME_READY__=true;lastTime=performance.now();requestAnimationFrame(loop);
  }catch(e){console.error(e);$('loadStatus').textContent='STARTUP FAULT · '+e.message;$('beginBtn').textContent='Reload to retry';$('beginBtn').disabled=false;$('beginBtn').onclick=()=>location.reload()}
 }
 let lastTime=0,hudTimer=0,frameEMA=16,qualityTimer=0;
 function loop(now){requestAnimationFrame(loop);let dt=Math.min(.05,Math.max(0,(now-lastTime)/1000));lastTime=now;frameEMA=lerp(frameEMA,dt*1000,.025);qualityTimer+=dt;
- if(state.mode==='play'&&!state.paused){const sdt=dt*state.speed;state.simTime+=sdt;state.sol=1+Math.floor(state.simTime/DAY_SECONDS);if(state.autoCycle)state.phase=(state.phase+sdt/DAY_SECONDS)%1;state.solFraction=state.phase;simulate(sdt/DAY_SECONDS);for(const a of agents)updateAgent(a,sdt);updateRovers(sdt);updateDrones(sdt);updateRocket(sdt);updateMeteors(sdt);updateWeather(sdt);updateParticles(sdt);updateSun();audio.update();hudTimer+=dt;if(hudTimer>.25){hudTimer=0;updateHUD()}}
+ if(state.mode==='play'&&!state.paused){const sdt=dt*state.speed;state.simTime+=sdt;state.sol=1+Math.floor(state.simTime/DAY_SECONDS);if(state.autoCycle)state.phase=(state.phase+sdt/DAY_SECONDS)%1;state.solFraction=state.phase;simulate(sdt/DAY_SECONDS);for(const a of agents)updateAgent(a,sdt);updateRovers(sdt);updateDrones(sdt);updateRocket(sdt);updateMeteors(sdt);updateWeather(sdt);updateParticles(sdt);updateSun();audio.update();hudTimer+=dt;if(hudTimer>.25){hudTimer=0;updateHUD();updateMinimap()}}
  if(walkMode)updateWalk(dt);else controls.update();
  // A single conservative quality step protects fill rate on dense mobile screens.
  if(qualityTimer>8&&frameEMA>31&&renderer.getPixelRatio()>1.3){renderer.setPixelRatio(1.25);composer.setPixelRatio(1.25);sun.shadow.mapSize.set(1024,1024);sun.shadow.map?.dispose();qualityTimer=-9999}
