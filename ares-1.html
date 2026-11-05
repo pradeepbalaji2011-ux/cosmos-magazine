@@ -1720,9 +1720,7 @@ function updateLabels(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userDa
 let toastTimer;function toast(msg){const e=$('toast');e.textContent=msg;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),2600)}
 function logEvent(msg,tag='MISSION'){const e=document.createElement('div');e.className='event';e.innerHTML=`<b>${tag}</b> · ${msg}`;$('events').prepend(e);while($('events').children.length>4)$('events').lastChild.remove();setTimeout(()=>{e.style.opacity='0';setTimeout(()=>e.remove(),400)},9000)}
 
-// ---------- Astronauts, rovers, drones and reusable supply rocket ----------
-function astronautModel(accent=MAT.orange){const g=new THREE.Group();box(g,MAT.white,0,1.12,0,.62,.75,.42);box(g,accent,0,1.22,.23,.5,.18,.06);const helmet=mesh(new THREE.SphereGeometry(.34,12,8),MAT.white,g,0,1.78,0);const visor=mesh(new THREE.SphereGeometry(.29,12,8,0,Math.PI*2,0,Math.PI*.55),MAT.solar,g,0,1.8,.07);visor.rotation.x=Math.PI*.45;box(g,MAT.panel,0,1.18,-.32,.52,.68,.28);const limbs=[];for(const [x,z,isArm] of[[-.22,0,false],[.22,0,false],[-.43,0,true],[.43,0,true]]){const pivot=new THREE.Group();pivot.position.set(x,isArm?1.43:.78,z);g.add(pivot);box(pivot,MAT.white,0,-(isArm?.27:.36),0,isArm?.2:.24,isArm?.62:.75,isArm?.2:.25);limbs.push(pivot)}g.userData.limbs=limbs;g.scale.setScalar(.78);return g}
-function spawnAgent(){if(agents.length>=24)return;const homes=buildings.filter(b=>b.type==='habitat');if(!homes.length)return;const home=pick(homes),g=astronautModel(pick([MAT.orange,MAT.panel,MAT.ivory]));g.position.set(home.x+rr(-2,2),terrainHeight(home.x,home.z),home.z+4);scene.add(g);agents.push({mesh:g,at:home.id,target:null,t:rr(1,5),state:'idle',speed:rr(1.4,2.1),phase:rr(0,6.28),home:home.id})}
+
 
 // ==================== COLONIST AI & OBJECTIVES LOGIC ====================
 function updateColonistsSim(dtSol){
