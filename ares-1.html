@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1034,6 +1034,29 @@
       </div>
     </div>
 
+      <div class="guide-block">
+        <h3>NEW MODULES -- PHASE II EXPANSION</h3>
+        <ul>
+          <li><b>Hydroponic Tower (H+):</b> Vertical grow rings produce 32 food/sol. Pressurized -- connect via tunnel.</li>
+          <li><b>Medical Bay (M+):</b> Heals colonist health and boosts morale. Requires pressure network link.</li>
+          <li><b>Recreation Dome (RC):</b> Geodesic dome for crew rest and morale. Pressurized.</li>
+          <li><b>Water Recycler (WR):</b> Recovers +14 water/sol from grey water. Pressurized.</li>
+          <li><b>Regolith Processor (RG):</b> Crushes raw regolith into +5 materials/sol. No pressure needed.</li>
+          <li><b>Iron Refinery (FE):</b> Smelts 8 iron ore/sol into +8 materials.</li>
+          <li><b>Plasma Furnace (PF):</b> High-power smelter: 12 ore/sol -- +14 materials. Needs 18 kW.</li>
+          <li><b>Wind Turbine (W~):</b> Generates 8 kW passively. Mars thin atmosphere = low but free power.</li>
+          <li><b>Power Substation (PS):</b> Extends power relay range to 40m (vs 32m for pylon).</li>
+          <li><b>Geothermal Tap (GT):</b> Drills into Martian crust for 28 kW continuous, storm-immune power.</li>
+          <li><b>Frontier Outpost (FO):</b> Cheap pressurized pod with 4 colonist berths.</li>
+          <li><b>Crew Canteen (CC):</b> Communal dining module: +12 food/sol and morale boost.</li>
+          <li><b>Research Observatory (OB):</b> Atmospheric survey yields +1.2 materials/sol. Pressurized.</li>
+          <li><b>Deep Space Antenna (DA):</b> Extends quiet period between random events by 25 sol.</li>
+          <li><b>Cargo Depot (CD):</b> Large warehouse with +280 storage for all resource types.</li>
+          <li><b>Storm Shield Array (SS):</b> Absorbs dust storm energy in a 24m radius zone. Needs 6 kW.</li>
+        </ul>
+      </div>
+    </div>
+
     <!-- Section 2: How to complete missions -->
     <div id="guideSectionMissions" class="guide-section" style="display:none">
       <div class="guide-block">
@@ -1175,7 +1198,23 @@ const TYPES={
  radar:{name:'Radar / comms dish',short:'COM',icon:'C◝',cost:70,w:8,d:8,power:4,desc:'Survey drones & planetary beacon link'},
  lab:{name:'Research lab',short:'LAB',icon:'L+',cost:95,w:12,d:8,power:7,materials:.8,pressurized:true,desc:'Analysis yields 0.8 materials'},
  storage:{name:'Storage depot',short:'STO',icon:'S▦',cost:45,w:8,d:8,power:1,storage:180,desc:'Expands resource capacity'},
- tunnel:{name:'Connecting tunnel',short:'TUN',icon:'T═',cost:12,w:4,d:4,power:.2,pressurized:true,desc:'Links pressurized modules'}
+ tunnel:{name:'Connecting tunnel',short:'TUN',icon:'T═',cost:12,w:4,d:4,power:.2,pressurized:true,desc:'Links pressurized modules'},
+  hydro:{name:'Hydroponic Tower',short:'HYD',icon:'H+',cost:90,w:8,d:8,power:8,food:32,waterUse:4,pressurized:true,desc:'Vertical grow rings yield 32 food/sol'},
+  medical:{name:'Medical Bay',short:'MED',icon:'M+',cost:80,w:8,d:8,power:5,pressurized:true,desc:'Heals crew, boosts morale'},
+  rec:{name:'Recreation Dome',short:'REC',icon:'RC',cost:70,w:12,d:12,power:4,pressurized:true,desc:'Morale boost dome'},
+  recycler:{name:'Water Recycler',short:'RCY',icon:'WR',cost:65,w:8,d:8,power:5,water:14,pressurized:true,desc:'Recycles greywater'},
+  regolith:{name:'Regolith Processor',short:'REG',icon:'RG',cost:75,w:12,d:8,power:9,materials:5,desc:'Crushes regolith into materials'},
+  processor:{name:'Iron Refinery',short:'REF',icon:'FE',cost:95,w:12,d:8,power:10,materials:8,ironOreUse:8,desc:'Smelts iron ore into materials'},
+  furnace:{name:'Plasma Furnace',short:'PLF',icon:'PF',cost:120,w:12,d:12,power:18,materials:14,ironOreUse:12,desc:'High-throughput ore smelter'},
+  wind:{name:'Wind Turbine',short:'WND',icon:'W~',cost:35,w:4,d:4,power:0,powerGen:8,desc:'Low-output wind power'},
+  substation:{name:'Power Substation',short:'SUB',icon:'PS',cost:55,w:8,d:8,power:2,desc:'Extends power relay 40m'},
+  thermal:{name:'Geothermal Tap',short:'GEO',icon:'GT',cost:130,w:8,d:8,power:2,powerGen:28,desc:'Steady baseline power from Mars interior'},
+  outpost:{name:'Frontier Outpost',short:'OUT',icon:'FO',cost:45,w:8,d:8,power:3,housing:4,pressurized:true,desc:'Cheap 4-berth pressure pod'},
+  canteen:{name:'Crew Canteen',short:'CAN',icon:'CC',cost:60,w:8,d:8,power:4,food:12,pressurized:true,desc:'Meal prep raises morale'},
+  observatory:{name:'Research Observatory',short:'OBS',icon:'OB',cost:110,w:8,d:12,power:6,materials:1.2,pressurized:true,desc:'Deep-sky survey yields bonus materials'},
+  antenna:{name:'Deep Space Antenna',short:'ANT',icon:'DA',cost:80,w:8,d:8,power:5,desc:'Boosts comms, reduces event intervals'},
+  depot:{name:'Cargo Depot',short:'DEP',icon:'CD',cost:50,w:12,d:8,power:1,storage:280,desc:'Oversized materials warehouse'},
+  shield:{name:'Storm Shield Array',short:'SHD',icon:'SS',cost:85,w:8,d:8,power:6,desc:'Reduces local storm severity'}
 };
 const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false,unlockedPlots:new Set(['B1','B2','B3','B4','C1','C2','C3','C4']),heatmap:false,showMinimap:true,selectedPlot:'B2'};
 
@@ -1606,6 +1645,121 @@ function makeBuilding(type,ghostMode=false){
   lightMesh(g,1.8,5.3,0,.22,.3,.22,MAT.cyan);
   const orb=mesh(new THREE.SphereGeometry(.42,12,8),MAT.cyan,g,0,7.1,0);
   orb.userData.isLight=true;
+ }else if(type==='hydro'){
+  cyl(g,MAT.ivory,0,2,0,2.5,4,20);
+  for(const ry of[1,2,3]){const r=ring(g,MAT.green,0,ry,0,2.8,.18,0);r.rotation.x=Math.PI/2}
+  box(g,MAT.dark,0,.18,0,5,0.18,5);
+  lightMesh(g,0,4.1,0,1,.2,1,MAT.cyan);
+ }else if(type==='medical'){
+  box(g,MAT.white,0,2,0,7,3.5,6);
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  box(g,MAT.redLight,0,3.6,3.06,2,.4,.1);
+  box(g,MAT.redLight,0,3.6,3.06,.4,2,.1);
+  for(const xo of[-2.5,2.5])lightMesh(g,xo,2.2,3.06,.8,.8,.1,MAT.window);
+  lightMesh(g,0,2.2,-3.06,.8,.8,.1,MAT.window);
+ }else if(type==='rec'){
+  box(g,MAT.dark,0,.18,0,12,0.18,12);
+  box(g,MAT.ivory,0,1.2,0,10,2.4,10);
+  const domeGeo=new THREE.SphereGeometry(5.5,20,10,0,Math.PI*2,0,Math.PI/2);
+  mesh(domeGeo,MAT.glass,g,0,2.4,0);
+  for(const xo of[-2,0,2])for(const zo of[-2,0,2])if(Math.abs(xo)+Math.abs(zo)<4)cyl(g,MAT.green,xo,.8,zo,.4,1.6,8);
+ }else if(type==='recycler'){
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  cyl(g,MAT.ivory,-2,2.5,0,1.4,5,12);
+  cyl(g,MAT.panel,2,2,0,1.1,4,12);
+  box(g,MAT.metal,0,1.8,0,1,.3,1.8);
+  cyl(g,MAT.orange,-2,5.3,0,.5,.6,8);
+  cyl(g,MAT.orange,2,4.3,0,.4,.5,8);
+  lightMesh(g,-2,2.5,-1.45,.8,.5,.1,MAT.cyan);
+ }else if(type==='regolith'){
+  box(g,MAT.dark,0,.18,0,12,0.18,8);
+  box(g,MAT.metal,-2,1.8,0,6,3.2,5);
+  box(g,MAT.panel,3.5,1.5,0,4,2.4,4);
+  const hopperGeo=new THREE.ConeGeometry(1.2,2,6);
+  mesh(hopperGeo,MAT.orange,g,-2,3.5,0);
+  box(g,MAT.dark,-2,.5,0,5.5,.8,2.5);
+  lightMesh(g,-2,3.4,-2.6,2,.3,.1,MAT.amberLight);
+ }else if(type==='processor'){
+  box(g,MAT.dark,0,.18,0,12,0.18,8);
+  cyl(g,MAT.metal,0,3.5,0,2.5,7,12);
+  cyl(g,MAT.glow,0,2,0,1.2,2.5,12);
+  box(g,MAT.panel,-4,2,0,3,3.5,5);
+  box(g,MAT.panel,4,2,0,3,3.5,5);
+  lightMesh(g,0,2,-2.55,1.4,1.2,.1,MAT.amberLight);
+  cyl(g,MAT.orange,0,7.2,0,.4,.8,8);
+ }else if(type==='furnace'){
+  box(g,MAT.dark,0,.18,0,12,0.18,12);
+  cyl(g,MAT.metal,0,4,0,3.5,8,14);
+  cyl(g,MAT.cyan,0,2.5,0,2,3.5,12);
+  box(g,MAT.panel,-4.5,2.5,0,3,4,6);
+  box(g,MAT.panel,4.5,2.5,0,3,4,6);
+  lightMesh(g,0,4,-3.55,2,1.5,.1,MAT.cyan);
+  lightMesh(g,0,4,3.55,2,1.5,.1,MAT.cyan);
+  cyl(g,MAT.orange,0,8.5,0,.5,1.2,8);
+ }else if(type==='wind'){
+  box(g,MAT.dark,0,.18,0,4,0.18,4);
+  cyl(g,MAT.ivory,0,4,0,.22,8,8);
+  for(let i=0;i<3;i++){const blade=box(g,MAT.panel,0,8.1,.9,.14,2.4,.55);blade.rotation.z=i*(Math.PI*2/3);}
+  cyl(g,MAT.dark,0,8,0,.35,.4,8);
+ }else if(type==='substation'){
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  box(g,MAT.metal,0,2,0,5,3.5,4);
+  box(g,MAT.panel,0,3.9,0,4,.5,3);
+  for(const xo of[-1.5,1.5]){cyl(g,MAT.orange,xo,4.9,0,.12,2,6);lightMesh(g,xo,6,.5,.25,.25,.25,MAT.amberLight);}
+  cylinderBetween(g,MAT.metal,V3(-3.5,3.5,0),V3(-3.5,3.5,3.5),.08);
+  cylinderBetween(g,MAT.metal,V3(3.5,3.5,0),V3(3.5,3.5,3.5),.08);
+ }else if(type==='thermal'){
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  cyl(g,MAT.metal,0,4,0,1.2,8,10);
+  cyl(g,MAT.orange,0,.5,0,3.5,.8,16);
+  box(g,MAT.panel,-3,2.5,0,2,4,2);
+  box(g,MAT.panel,3,2.5,0,2,4,2);
+  for(const a of[0,1.2,-1.2]){mesh(new THREE.ConeGeometry(.3,.8,6),MAT.glow,g,Math.sin(a)*2.2,8.5,Math.cos(a)*2.2);}
+  lightMesh(g,0,8,0,.5,.5,.5,MAT.cyan);
+ }else if(type==='outpost'){
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  cyl(g,MAT.ivory,0,2.2,0,3.2,4,16);
+  const domeGeo2=new THREE.SphereGeometry(3.3,16,8,0,Math.PI*2,0,Math.PI/2);
+  mesh(domeGeo2,MAT.ivory,g,0,4.2,0);
+  lightMesh(g,0,4.2,3.3,.6,.6,.1,MAT.window);
+  box(g,MAT.metal,0,1.4,-3.5,1.4,2,.8);
+ }else if(type==='canteen'){
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  box(g,MAT.ivory,0,2,0,7,3.5,6);
+  for(const xo of[-2,0,2])lightMesh(g,xo,2.2,3.06,.9,.9,.1,MAT.window);
+  cyl(g,MAT.metal,2,4.5,2,.25,2,8);
+  cyl(g,MAT.orange,2,5.6,2,.4,.4,8);
+  lightMesh(g,-2.5,3.3,0,.5,2,.1,MAT.amberLight);
+ }else if(type==='observatory'){
+  box(g,MAT.dark,0,.18,0,8,0.18,12);
+  box(g,MAT.ivory,0,2,0,7,3.5,6);
+  const dome3=new THREE.SphereGeometry(3,16,8,0,Math.PI*2,0,Math.PI/2);
+  mesh(dome3,MAT.glass,g,0,3.5,0);
+  cyl(g,MAT.dark,0,3.5,0,.3,4,8);
+  box(g,MAT.metal,0,5.8,0,2.5,.2,2);
+  lightMesh(g,0,5.9,0,1.2,.2,1,MAT.cyan);
+ }else if(type==='antenna'){
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  cyl(g,MAT.metal,0,4,0,.25,8,8);
+  const dishGeo=new THREE.SphereGeometry(3,12,8,0,Math.PI*2,0,Math.PI/2);
+  const dish=mesh(dishGeo,MAT.panel,g,0,8,0);dish.rotation.x=Math.PI;
+  cyl(g,MAT.orange,0,8.5,0,.15,1,6);
+  lightMesh(g,0,9.6,0,.3,.3,.3,MAT.cyan);
+  for(const xo of[-2.5,2.5])cylinderBetween(g,MAT.metal,V3(0,1,0),V3(xo,2.5,0),.06);
+ }else if(type==='depot'){
+  box(g,MAT.dark,0,.18,0,12,0.18,8);
+  box(g,MAT.metal,0,2,0,11,3.8,7);
+  for(const xo of[-3,0,3]){box(g,MAT.dark,xo,1.5,3.55,2,2.8,.1);}
+  for(const xo of[-4.5,4.5])box(g,MAT.panel,xo,2.2,0,.4,4.2,6.5);
+  lightMesh(g,0,3.9,0,9,.2,.5,MAT.amberLight);
+ }else if(type==='shield'){
+  box(g,MAT.dark,0,.18,0,8,0.18,8);
+  for(const [sx,sz,ry] of[[-3,0,0],[3,0,Math.PI],[0,-3,Math.PI/2],[0,3,-Math.PI/2]]){
+   const pole=cyl(g,MAT.metal,sx,2.5,sz,.18,5,6);
+   const panel=box(g,MAT.panel,sx,4,sz,.2,3.5,2.2);panel.rotation.y=ry;
+   lightMesh(g,sx,5.2,sz,.4,.4,.1,MAT.cyan);
+  }
+  cyl(g,MAT.orange,0,1,0,.5,2,8);
  }else if(type==='tunnel'){
   const tube=mesh(new THREE.CylinderGeometry(1.18,1.18,4,16,1,true),MAT.ivory,g,0,1.45,0);tube.rotation.z=Math.PI/2;for(const x of[-2,2]){const r=ring(g,MAT.dark,x,1.45,0,1.2,.13,0);r.rotation.y=Math.PI/2}lightMesh(g,0,2.6,0,1.6,.1,.2,MAT.cyan);
  }
@@ -1682,14 +1836,14 @@ function computeNetwork(){
  for(let i=0;i<buildings.length;i++)for(let j=i+1;j<buildings.length;j++){
   const a=buildings[i],b=buildings[j];
   const dist=Math.hypot(a.x-b.x,a.z-b.z);
-  const maxReach=(a.type==='pylon'||b.type==='pylon')?32.0:14.0;
+  const maxReach=(a.type==='pylon'||b.type==='pylon'||a.type==='substation'||b.type==='substation')?40.0:14.0;
   if(dist<=maxReach){
    adjPower.get(a.id).push(b.id);
    adjPower.get(b.id).push(a.id);
-   if(a.type==='pylon'||b.type==='pylon')powerLines.push([a,b]);
+   if(a.type==='pylon'||b.type==='pylon'||a.type==='substation'||b.type==='substation')powerLines.push([a,b]);
   }
  }
- const powerSources=buildings.filter(b=>(b.type==='solar'||b.type==='reactor'||b.type==='battery')&&b.operational&&b.health>15);
+ const powerSources=buildings.filter(b=>(b.type==='solar'||b.type==='reactor'||b.type==='battery'||b.type==='wind'||b.type==='thermal')&&b.operational&&b.health>15);
  const pq=powerSources.map(b=>b.id),pSeen=new Set(pq);
  while(pq.length){
   const id=pq.shift(),b=buildings.find(v=>v.id===id);
@@ -1743,7 +1897,7 @@ function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot())
 function loadGame(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw){toast('No saved base in this browser');return}pushUndo();restore(JSON.parse(raw));toast('Saved base restored');logEvent('Local save loaded','SYSTEM')}catch(e){toast('Load failed: '+e.message)}}
 
 // ---------- Resource model: one sol integrates production, storage and life support ----------
-function capacities(){let power=150,other=240,materials=500,ores=350;for(const b of buildings){if(b.type==='battery')power+=TYPES.battery.powerCap;if(b.type==='storage'){other+=TYPES.storage.storage;materials+=TYPES.storage.storage*2;ores+=200}}return{power,oxygen:other,water:other,food:other,materials,waterIce:ores,ironOre:ores,co2:ores}}
+function capacities(){let power=150,other=240,materials=500,ores=350;for(const b of buildings){if(b.type==='battery')power+=TYPES.battery.powerCap;if(b.type==='storage'){other+=TYPES.storage.storage;materials+=TYPES.storage.storage*2;ores+=200}if(b.type==='depot'){other+=TYPES.depot.storage;materials+=TYPES.depot.storage;ores+=200}}return{power,oxygen:other,water:other,food:other,materials,waterIce:ores,ironOre:ores,co2:ores}}
 function pressurizedHousing(){return buildings.reduce((n,b)=>n+(b.type==='habitat'&&b.pressurized?TYPES.habitat.housing:0),0)}
 function daylight(){return Math.max(0,Math.sin((state.phase-.25)*Math.PI*2))}
 function calculateRates(){
@@ -1755,6 +1909,8 @@ function calculateRates(){
   use+=t.power||0;
   if(b.type==='solar') solar+=t.powerGen;
   if(b.type==='reactor') nuclear+=t.powerGen;
+  if(b.type==='wind') nuclear+=t.powerGen;
+  if(b.type==='thermal') nuclear+=t.powerGen;
   if(active&&scale>.2){
    oxygen+=t.oxygen||0;
    water+=(t.water||0)-(t.waterUse||0);
@@ -1763,6 +1919,7 @@ function calculateRates(){
    waterIce+=t.waterIce||0;
    ironOre+=t.ironOre||0;
    co2+=t.co2||0;
+   ironOre-=(t.ironOreUse||0);
   }else{
    water-=(t.waterUse||0)*scale;
    food+=(t.food||0)*scale;
@@ -1854,6 +2011,15 @@ function updateInfo(){const b=buildings.find(v=>v.id===state.selected);if(!b)ret
   detail+=`<br>Deposit Yield <b>${Math.round(bonus*100)}% ${bonus>=0.85?'(MATCHING ORE)':bonus>0.5?'(SUB-OPTIMAL)':'(OFF-DEPOSIT)'}</b>`;
  }
  if(b.type==='pylon')detail+=`<br>Relay Status <b>${b.powered?'ENERGIZED (32m)':'NO POWER'}</b>`;
+ if(b.type==='substation')detail+=`<br>Relay Status <b>${b.powered?'ENERGIZED (40m)':'NO POWER'}</b>`;
+ if(b.type==='wind')detail+=`<br>Output <b>8 kW</b> - Passive (no fuel)`;
+ if(b.type==='thermal')detail+=`<br>Output <b>28 kW continuous</b> - Storm-immune`;
+ if(b.type==='processor')detail+=`<br>Consumes <b>8 Iron Ore/sol</b> - Yields +8 Materials`;
+ if(b.type==='furnace')detail+=`<br>Consumes <b>12 Iron Ore/sol</b> - Yields +14 Materials`;
+ if(b.type==='shield')detail+=`<br>Storm Radius <b>24m protection zone</b>`;
+ if(b.type==='antenna')detail+=`<br>Event Interval <b>+25 sol suppression</b>`;
+ if(b.type==='medical')detail+=`<br>Crew Healing <b>Active - +HP/sol</b>`;
+ if(b.type==='rec')detail+=`<br>Morale Boost <b>Active - +MOR/sol</b>`;
  $('infoStatus').innerHTML=detail;
  const actions=[];if(b.type==='landing')actions.push(['launch','CALL ROCKET']);if(b.type==='garage')actions.push(['patrol','ROVER PATROL']);if(b.type==='radar')actions.push(['drone','DRONE FLIGHT']);if(b.health<100||!b.operational)actions.push(['repair','REPAIR · 15']);actions.push(['lights',b.lights?'LIGHTS OFF':'LIGHTS ON']);if(!b.core)actions.push(['delete','DELETE +50%']);$('infoActions').innerHTML=actions.map(a=>`<button class="actionBtn ${a[0]==='delete'?'delete':''}" data-action="${a[0]}">${a[1]}</button>`).join('');
 }
@@ -2007,7 +2173,8 @@ function updateMinimap(){
    ctx.fillStyle='#55e2cf';
    ctx.fillRect(bx-3,by-3,6,6);
   }else{
-   ctx.fillStyle=b.powered?'#77e5aa':'#f07062';
+   const mmTypeColor={hydro:'#8ed6ad',medical:'#f07090',rec:'#c988e8',recycler:'#55e2cf',regolith:'#d4a84b',processor:'#e8884d',furnace:'#ff6633',wind:'#aaccee',substation:'#ffd277',thermal:'#ff9944',outpost:'#aaffcc',canteen:'#ffcc88',observatory:'#cc88ff',antenna:'#88ccff',depot:'#cc8844',shield:'#ff8888'};
+   ctx.fillStyle=mmTypeColor[b.type]||(b.powered?'#77e5aa':'#f07062');
    ctx.fillRect(bx-2,by-2,4,4);
   }
  }
@@ -3627,7 +3794,15 @@ const PREBUILT_BASE = [
   ['solar', -74, -20, 0, { district: 'POWER' }],
   ['solar', -74, -32, 0, { district: 'POWER' }],
   ['solar', -74, -44, 0, { district: 'POWER' }],
-  ['pylon', -74, -8, 0, { district: 'POWER' }]
+  ['pylon', -74, -8, 0, { district: 'POWER' }],
+  ['wind', -56, -36, 0, { district: 'POWER' }],
+  ['outpost', 8, 28, 0, { district: 'RESIDENTIAL' }],
+  ['recycler', -4, -28, 0, { district: 'LIFE SUPPORT' }],
+  ['antenna', 52, -36, 0, { district: 'TELEMETRY' }],
+  ['thermal', -56, 36, 0, { district: 'POWER' }],
+  ['substation', 36, -52, 0, { district: 'POWER' }],
+  ['depot', 52, 20, 0, { district: 'LOGISTICS' }],
+  ['medical', 28, 52, 0, { district: 'RESIDENTIAL' }]
 ];
 
 const KEEP_TYPES = ['habitat', 'landing', 'solar', 'tunnel'];
