@@ -877,10 +877,10 @@
   <button class="tool wide on" id="toolsToggle" style="display:none">CONTROLS</button>
   <button class="tool" id="pauseBtn" title="Pause / resume (Space)">PAUSE</button><button class="tool" id="speedBtn" title="Simulation speed">1×</button><button class="tool on" id="cycleBtn" title="Automatic day cycle">CYCLE</button><button class="tool" id="walkBtn" title="First-person walk (F)">WALK</button>
   <div id="timeWrap"><span>TIME</span><input id="timeSlider" aria-label="Time of day" type="range" min="0" max="1000" value="320"><span id="clock">07:40</span></div>
-  <button class="tool on" id="mapBtn" title="Toggle Radar Minimap (M)">MAP</button><button class="tool" id="heatmapBtn" title="Toggle Ore Heatmap (H)">HEATMAP</button><button class="tool" id="stormBtn">STORM</button><button class="tool" id="meteorBtn">METEOR</button><button class="tool on" id="lightsBtn">LIGHTS</button><button class="tool" id="labelsBtn">LABELS</button><button class="tool" id="techBtn" title="Research Tech Tree">TECH</button>
+  <button class="tool on" id="mapBtn" title="Toggle Radar Minimap (M)">MAP</button><button class="tool" id="heatmapBtn" title="Toggle Ore Heatmap (H)">HEATMAP</button><button class="tool" id="stormBtn">STORM</button><button class="tool" id="meteorBtn">METEOR</button><button class="tool on" id="lightsBtn">LIGHTS</button><button class="tool" id="labelsBtn">LABELS</button><button class="tool" id="techBtn" title="Research Tech Tree">TECH</button><button class="tool" id="photoBtn" title="Photo Mode (P) — hides UI">PHOTO</button>
   <button class="tool on" id="shadowsBtn">SHADOW</button><button class="tool" id="bloomBtn">BLOOM</button><button class="tool on" id="soundBtn">SOUND</button><button class="tool" id="helpBtn" title="Help (?)">HELP ?</button>
   <button class="tool" id="deployRoverBtn" title="Deploy Rover from Garage">⛟ ROVER</button><button class="tool" id="launchDroneBtn" title="Launch Drone from Radar">⌖ DRONE</button><button class="tool" id="saveBtn">SAVE</button><button class="tool" id="loadBtn">LOAD</button><button class="tool" id="undoBtn" title="Undo (Ctrl+Z)">UNDO</button><button class="tool" id="redoBtn" title="Redo (Ctrl+Y)">REDO</button>
-  <button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
+  <button class="tool" id="difficultyBtn" title="Cycle difficulty: Survival / Normal / Builder">NORMAL</button><button class="tool wide danger" id="resetBtn">RESET BASE</button><button class="tool wide" id="sandboxBtn">SANDBOX: OFF</button>
   <button class="tool danger" id="clearBaseBtn" title="Remove non-core buildings and start from scratch">CLEAR BASE</button>
   <button class="tool" id="restoreMasterPlanBtn" title="Restore pre-built base layout" style="display:none;background:rgba(106,224,204,0.18);border-color:var(--green);color:var(--green);">RESTORE MASTER PLAN</button>
 </nav>
@@ -1229,7 +1229,7 @@ const TYPES={
   shield:{name:'Storm Shield Array',short:'SHD',icon:'SS',cost:85,w:8,d:8,power:6,desc:'Reduces local storm severity'}
 };
 const state={mode:'title',sandbox:false,paused:false,speed:1,autoCycle:true,phase:.32,sol:1,solFraction:.32,simTime:0,pop:6,growth:0,res:{power:130,oxygen:180,water:140,food:150,materials:320,waterIce:45,ironOre:60,co2:50},rates:{power:0,oxygen:0,water:0,food:0,materials:0,waterIce:0,ironOre:0,co2:0},lights:true,labels:false,shadows:true,bloom:false,sound:true,storm:0,stormUntil:0,meteorUntil:0,nextEvent:55,stormIntervalTimer:300,selected:null,buildType:null,buildRotation:0,critical:0,won:false,unlockedPlots:new Set(['B1','B2','B3','B4','C1','C2','C3','C4']),heatmap:false,showMinimap:true,selectedPlot:'B2',
- research:0,terraform:0,techUnlocked:{},milestones:new Set(),expeditionTimer:0,tradeTimer:0};
+ research:0,terraform:0,techUnlocked:{},milestones:new Set(),expeditionTimer:0,tradeTimer:0,_hadStorm:false,_expeditionsDone:0,_tradesDone:0,difficulty:'normal'};
 const TECH_TREE=[
   {id:'efficient_solar',name:'Solar Efficiency',cost:50,desc:'Solar arrays +20% output'},
   {id:'better_food',name:'AgriBoost',cost:40,desc:'Greenhouses +25% food yield'},
@@ -1300,9 +1300,47 @@ const OBJECTIVES = [
   { id: 'food', title: '3. Sustainable Agriculture', desc: 'Harvest 120 Food from Greenhouse', check: () => state.res.food >= 120, prog: () => Math.min(1, state.res.food / 120), label: () => `${Math.floor(state.res.food)}/120 Food` },
   { id: 'power', title: '4. Nuclear Power Grid', desc: 'Deploy a Nuclear Fission Reactor', check: () => buildings.some(b=>b.type==='reactor'&&b.operational), prog: () => buildings.some(b=>b.type==='reactor') ? 1 : 0, label: () => buildings.some(b=>b.type==='reactor') ? '1/1 Reactor' : '0/1 Reactor' },
   { id: 'beacon', title: '5. Deep Space Beacon', desc: 'Build Comms Dish & reach 15 Crew', check: () => buildings.some(b=>b.type==='radar') && state.pop >= 15, prog: () => Math.min(1, state.pop / 15), label: () => `${state.pop}/15 Colonists` },
-  { id: 'fleet', title: '6. Autonomous Fleet', desc: 'Deploy 3 Rovers & 3 Drones', check: () => rovers.length >= 3 && drones.length >= 3, prog: () => Math.min(1, (rovers.length + drones.length) / 6), label: () => `${rovers.length}/3 Rovers · ${drones.length}/3 Drones` }
+  { id: 'fleet', title: '6. Autonomous Fleet', desc: 'Deploy 3 Rovers & 3 Drones', check: () => rovers.length >= 3 && drones.length >= 3, prog: () => Math.min(1, (rovers.length + drones.length) / 6), label: () => `${rovers.length}/3 Rovers · ${drones.length}/3 Drones` },
+  { id: 'research', title: '7. Research Programme', desc: 'Accumulate 100 Research Points', check: () => state.research >= 100 || Object.keys(state.techUnlocked).length >= 3, prog: () => Math.min(1, state.research / 100), label: () => `${Math.floor(state.research)}/100 RP` },
+  { id: 'industry', title: '8. Industrial Scale', desc: 'Build Regolith Factory & Iron Processor', check: () => buildings.some(b=>b.type==='regolith'&&b.operational) && buildings.some(b=>b.type==='processor'&&b.operational), prog: () => Math.min(1, ([buildings.some(b=>b.type==='regolith'),buildings.some(b=>b.type==='processor')].filter(Boolean).length) / 2), label: () => `${[buildings.some(b=>b.type==='regolith'),buildings.some(b=>b.type==='processor')].filter(Boolean).length}/2 Factories` },
+  { id: 'terraform', title: '9. Begin Terraforming', desc: 'Reach 10% Terraforming Index', check: () => state.terraform >= 10, prog: () => Math.min(1, state.terraform / 10), label: () => `${state.terraform.toFixed(1)}/10% TF` },
+  { id: 'citystate', title: '10. City-State', desc: 'Unlock 10 land sectors & populate 40+ crew', check: () => state.unlockedPlots.size >= 10 && state.pop >= 40, prog: () => Math.min(1, (state.unlockedPlots.size/10 + state.pop/40)/2), label: () => `${state.unlockedPlots.size}/10 Sectors · ${state.pop}/40 Pop` }
 ];
 
+// Achievement system
+const ACHIEVEMENTS = [
+  {id:'first_build',name:'Pioneer',desc:'Place your first module',icon:'🏗️',check:()=>buildings.filter(b=>!b.core).length>=1},
+  {id:'powered',name:'Let There Be Light',desc:'Achieve positive power balance',icon:'⚡',check:()=>state.rates.power>0},
+  {id:'habitat_5',name:'Township',desc:'Connect 5 pressurized habitats',icon:'🏠',check:()=>buildings.filter(b=>b.type==='habitat'&&b.pressurized).length>=5},
+  {id:'pop_20',name:'Colony',desc:'Grow crew to 20 colonists',icon:'👥',check:()=>state.pop>=20},
+  {id:'pop_50',name:'City on Mars',desc:'Reach 50 colonists',icon:'🌆',check:()=>state.pop>=50},
+  {id:'storm_survivor',name:'Storm Survivor',desc:'Survive a full dust storm',icon:'🌪️',check:()=>state._hadStorm===true},
+  {id:'tech_3',name:'Researcher',desc:'Unlock 3 technologies',icon:'🔬',check:()=>Object.keys(state.techUnlocked).length>=3},
+  {id:'expedition',name:'Explorer',desc:'Complete a surface expedition',icon:'🏔️',check:()=>state._expeditionsDone>=1},
+  {id:'trade',name:'Trade Route',desc:'Complete an Earth trade',icon:'🚀',check:()=>state._tradesDone>=1},
+  {id:'terraform_10',name:'Terraformer',desc:'Reach 10% terraforming index',icon:'🌱',check:()=>state.terraform>=10},
+  {id:'full_grid',name:'Power Grid',desc:'Have 5+ solar arrays active',icon:'☀️',check:()=>buildings.filter(b=>b.type==='solar'&&b.operational).length>=5},
+  {id:'medic',name:'Field Medic',desc:'Build a Medical Bay',icon:'⚕️',check:()=>buildings.some(b=>b.type==='medical'&&b.operational)}
+];
+const _unlockedAchievements=new Set();
+function checkAchievements(){
+  for(const a of ACHIEVEMENTS){
+    if(_unlockedAchievements.has(a.id))continue;
+    if(a.check()){
+      _unlockedAchievements.add(a.id);
+      showAchievement(a);
+    }
+  }
+}
+function showAchievement(a){
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(20,16,12,0.95);border:1px solid var(--amber);border-radius:4px;padding:10px 18px;font-family:monospace;font-size:11px;color:var(--amber);letter-spacing:.1em;z-index:9999;display:flex;align-items:center;gap:10px;box-shadow:0 0 20px rgba(242,166,90,0.3);';
+  el.innerHTML=`<span style="font-size:20px;">${a.icon}</span><div><div style="font-weight:700;letter-spacing:.15em;">ACHIEVEMENT UNLOCKED</div><div style="color:var(--ink);margin-top:2px;">${a.name} — ${a.desc}</div></div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .6s';el.style.opacity='0';setTimeout(()=>el.remove(),600)},3500);
+  logEvent(`Achievement: ${a.name}`,'ACHIEVEMENT');
+  audio.play('grow');
+}
 // 4x4 Land Plot Sectors across 224x192 Utopia Planitia
 const ROW_LETTERS = ['A', 'B', 'C', 'D'];
 const LAND_PLOTS = [];
@@ -1896,7 +1934,7 @@ function computeNetwork(){
   connectionGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat));
  }
 }
-function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won,unlockedPlots:Array.from(state.unlockedPlots),selectedPlot:state.selectedPlot,startMode:state.startMode||'prebuilt',COLONISTS:COLONISTS.map(c=>({...c})),rovers:rovers.map(r=>({id:r.id,type:r.type,battery:r.battery,task:r.task,cargo:r.cargo,home:r.home})),drones:drones.map(d=>({id:d.id,type:d.type,battery:d.battery,task:d.task,cargo:d.cargo,home:d.home})),research:state.research,terraform:state.terraform,techUnlocked:{...state.techUnlocked},milestones:Array.from(state.milestones),expeditionTimer:state.expeditionTimer,tradeTimer:state.tradeTimer},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
+function snapshot(){return{version:2,seed,state:{sandbox:state.sandbox,phase:state.phase,sol:state.sol,solFraction:state.solFraction,simTime:state.simTime,pop:state.pop,growth:state.growth,res:{...state.res},stormUntil:state.stormUntil,nextEvent:state.nextEvent,won:state.won,unlockedPlots:Array.from(state.unlockedPlots),selectedPlot:state.selectedPlot,startMode:state.startMode||'prebuilt',COLONISTS:COLONISTS.map(c=>({...c})),rovers:rovers.map(r=>({id:r.id,type:r.type,battery:r.battery,task:r.task,cargo:r.cargo,home:r.home})),drones:drones.map(d=>({id:d.id,type:d.type,battery:d.battery,task:d.task,cargo:d.cargo,home:d.home})),research:state.research,terraform:state.terraform,techUnlocked:{...state.techUnlocked},milestones:Array.from(state.milestones),expeditionTimer:state.expeditionTimer,tradeTimer:state.tradeTimer,difficulty:state.difficulty||'normal',expeditionsDone:state._expeditionsDone||0,tradesDone:state._tradesDone||0},nextId,coreId,buildings:buildings.map(b=>({id:b.id,type:b.type,x:b.x,z:b.z,rotation:b.rotation,health:b.health,operational:b.operational,lights:b.lights,core:b.core,failure:b.failure}))}}
 function restore(s){
  if(!s||s.version!==2||!Array.isArray(s.buildings)||!s.state)throw new Error('Invalid ARES-1 save');
  clearBuildings();if(s.state.unlockedPlots&&Array.isArray(s.state.unlockedPlots))state.unlockedPlots=new Set(s.state.unlockedPlots);
@@ -1914,6 +1952,10 @@ function restore(s){
   state.milestones=new Set(s.state.milestones||[]);
   state.expeditionTimer=+s.state.expeditionTimer||0;
   state.tradeTimer=+s.state.tradeTimer||0;
+  state.difficulty=s.state.difficulty||'normal';
+  state._expeditionsDone=+s.state.expeditionsDone||0;
+  state._tradesDone=+s.state.tradesDone||0;
+  if($('difficultyBtn')){const labels={normal:'NORMAL',survival:'SURVIVAL',builder:'BUILDER'};$('difficultyBtn').textContent=labels[state.difficulty]||'NORMAL';}
  for(const b of s.buildings){if(!TYPES[b.type]||!Number.isFinite(b.x)||!Number.isFinite(b.z))continue;addBuilding(b.type,clamp(b.x,-105,105),clamp(b.z,-90,90),+b.rotation||0,{...b,defer:true})}
   state.startMode = s.state.startMode || (s.buildings.length > 15 ? 'prebuilt' : 'scratch');
   if(state.startMode !== 'scratch') buildInfrastructure();
@@ -2018,14 +2060,17 @@ function calculateRates(){
  }
 }
 function simulate(dtSol){
- calculateRates();const cap=capacities();for(const k of Object.keys(state.res))state.res[k]=clamp(state.res[k]+state.rates[k]*dtSol,0,cap[k]);
+ // Difficulty multipliers
+ const diffMult=state.difficulty==='survival'?1.6:state.difficulty==='builder'?0.4:1.0;
+ calculateRates();const cap=capacities();for(const k of Object.keys(state.res))state.res[k]=clamp(state.res[k]+state.rates[k]*dtSol*(k==='power'?1:diffMult<1?diffMult:1),0,cap[k]);
  calculateRates();const balanced=state.rates.oxygen>=-.01&&state.rates.water>=-.01&&state.rates.food>=-.01&&state.res.oxygen>25&&state.res.water>20&&state.res.food>20&&state.res.power>2;
  const housing=pressurizedHousing();if(balanced&&state.pop<housing&&state.pop<50){state.growth+=dtSol*1.55;if(state.growth>=1){state.growth=0;state.pop++;logEvent(`Crew complement increased to ${state.pop}`,'POPULATION');toast('A new colonist joins ARES-1');audio.play('grow');syncAgents();if(state.pop>=50&&!state.sandbox&&!state.won)endGame(true)}}else state.growth=Math.max(0,state.growth-dtSol*.25);
  const depleted=Math.min(state.res.oxygen,state.res.water,state.res.food)<=.01;if(depleted&&!state.sandbox){state.critical+=dtSol;if(state.critical>.09){state.critical=0;state.pop=Math.max(0,state.pop-1);logEvent('Life support loss claimed a colonist','EMERGENCY');audio.play('alarm');syncAgents();if(state.pop<=0)endGame(false)}}else state.critical=Math.max(0,state.critical-dtSol);
  // Maintenance wear
  for(const b of buildings){
   if(b.core||!b.operational)continue;
-  const wearRate=state.storm>0.3?0.18:0.06;
+  const _diff=state.difficulty==='survival'?1.8:state.difficulty==='builder'?0.3:1.0;
+  const wearRate=(state.storm>0.3?0.18:0.06)*_diff;
   b.health=Math.max(0,b.health-wearRate*dtSol);
   if(b.health<15&&b.operational){b.operational=false;b.failure=rr(8,20);logEvent(`${TYPES[b.type].name} critical failure — maintenance required`,'FAILURE');audio.play('alarm');}
  }
@@ -2048,6 +2093,7 @@ function simulate(dtSol){
    Object.keys(gain).forEach(k=>state.res[k]=Math.min((state.res[k]||0)+gain[k],99999));
    toast(`Expedition returned! +${gain.materials} MAT, +${gain.ironOre} ore, +${gain.waterIce} ice`);
    logEvent('Surface expedition completed successfully','EXPEDITION');
+   state._expeditionsDone=(state._expeditionsDone||0)+1;
    audio.play('supply');
   }
  }
@@ -2078,7 +2124,7 @@ function updateHUD(){
  if($('terraformVal'))$('terraformVal').textContent=state.terraform.toFixed(1)+'%';
  if($('rpHud'))$('rpHud').textContent=Math.floor(state.research);
  if($('rpVal'))$('rpVal').textContent=Math.floor(state.research);
- updateBuildCards();if(state.selected)updateInfo();
+ updateBuildCards();if(state.selected)updateInfo();checkAchievements();
 }
 function updateBuildCards(){document.querySelectorAll('.buildCard').forEach(el=>{el.disabled=!state.sandbox&&state.res.materials<TYPES[el.dataset.type].cost})}
 function selectBuilding(id){state.selected=id;const b=buildings.find(v=>v.id===id);$('info').classList.toggle('show',!!b);if(b)updateInfo()}
@@ -2127,6 +2173,7 @@ else if(action==='trade'){
  state.res.oxygen=Math.min(state.res.oxygen+60,99999);
  state.res.water=Math.min(state.res.water+60,99999);
  state.tradeTimer=12;
+ state._tradesDone=(state._tradesDone||0)+1;
  toast('Earth trade: sent 50 MAT → received food, O₂, water');logEvent('Earth trade completed','SUPPLY');audio.play('supply');updateHUD();
 }
 else if(action==='expedition'){
@@ -2136,6 +2183,10 @@ else if(action==='expedition'){
  toast('Expedition launched! Returns in ~3 sols with resources');
  logEvent('Surface expedition team deployed','EXPEDITION');audio.play('select');
 }}
+let photoMode=false;
+function enterPhotoMode(){photoMode=true;document.querySelectorAll('.ui').forEach(el=>el.style.opacity='0');document.querySelectorAll('.ui').forEach(el=>el.style.pointerEvents='none');$('photoBtn').classList.add('on');$('photoBtn').style.opacity='1';$('photoBtn').style.pointerEvents='auto';toast('PHOTO MODE — P to exit · UI hidden');}
+function exitPhotoMode(){photoMode=false;document.querySelectorAll('.ui').forEach(el=>el.style.opacity='');document.querySelectorAll('.ui').forEach(el=>el.style.pointerEvents='');$('photoBtn').classList.remove('on');toast('Photo mode off');}
+function togglePhotoMode(){if(photoMode)exitPhotoMode();else enterPhotoMode();}
 function updateLabels(){for(const b of buildings)b.mesh.traverse(o=>{if(o.userData.label)o.visible=state.labels})}
 function updateTechPanel(){
  const list=$('techList');if(!list)return;
@@ -3623,7 +3674,7 @@ for(let i=0;i<MAX_PARTICLES;i++){particleData.push({life:0,max:1,p:V3(),v:V3(),s
 let particleCursor=0;function spawnParticle(x,y,z,color,size,life,vel){const i=particleCursor++%MAX_PARTICLES,p=particleData[i];p.p.set(x,y,z);p.v.copy(vel||V3());p.life=p.max=life;p.size=size;p.color.setHex(color);particleMesh.setColorAt(i,p.color)}
 function spawnDust(x,y,z,n,color=0xb8734d){for(let i=0;i<n;i++)spawnParticle(x+rr(-2,2),y,z+rr(-2,2),color,rr(.18,.65),rr(.6,1.8),V3(rr(-2,2),rr(.4,2.5),rr(-2,2)))}
 function updateParticles(dt){for(let i=0;i<MAX_PARTICLES;i++){const p=particleData[i];if(p.life>0){p.life-=dt;p.p.addScaledVector(p.v,dt);p.v.y-=dt*.5;const s=p.size*clamp(p.life/p.max,0,1);tempObj.position.copy(p.p);tempObj.scale.setScalar(s)}else tempObj.scale.setScalar(0);tempObj.updateMatrix();particleMesh.setMatrixAt(i,tempObj.matrix)}particleMesh.instanceMatrix.needsUpdate=true;if(particleMesh.instanceColor)particleMesh.instanceColor.needsUpdate=true}
-function triggerStorm(){if(state.stormUntil>state.simTime){state.stormUntil=0;toast('Dust front clearing');return}state.stormUntil=state.simTime+32;logEvent('Dust storm approaching from the west','WEATHER');toast('Storm warning · solar output falling');audio.play('alarm')}
+function triggerStorm(){if(state.stormUntil>state.simTime){state.stormUntil=0;toast('Dust front clearing');return}state.stormUntil=state.simTime+32;logEvent('Dust storm approaching from the west','WEATHER');toast('Storm warning · solar output falling');state._hadStorm=true;audio.play('alarm')}
 function triggerMeteor(){state.meteorUntil=state.simTime+15;logEvent('Meteor shower entering the atmosphere','HAZARD');toast('Impact warning · brace the base');audio.play('alarm')}
 function spawnMeteor(){const tx=rr(-45,45),tz=rr(-37,37),start=V3(tx+70,95,tz-60),end=V3(tx,terrainHeight(tx,tz),tz),m=mesh(new THREE.IcosahedronGeometry(.45,0),new THREE.MeshBasicMaterial({color:0xffd29a}),scene);m.castShadow=false;meteors.push({mesh:m,start,end,t:0,duration:rr(.8,1.4)})}
 function updateMeteors(dt){if(state.simTime<state.meteorUntil&&rnd()<dt*2.8)spawnMeteor();for(let i=meteors.length-1;i>=0;i--){const m=meteors[i];m.t+=dt/m.duration;const f=clamp(m.t,0,1);m.mesh.position.lerpVectors(m.start,m.end,f);spawnParticle(m.mesh.position.x,m.mesh.position.y,m.mesh.position.z,0xffa65c,.22,.25,V3(2,4,-2));if(f>=1){const p=m.end;spawnDust(p.x,p.y,p.z,24,0xe18b54);let nearest=null,dist=1e9;for(const b of buildings){const d=Math.hypot(b.x-p.x,b.z-p.z);if(d<dist){dist=d;nearest=b}}if(nearest&&dist<15){nearest.health=Math.max(0,nearest.health-rr(12,30));if(nearest.health<35)nearest.operational=false;logEvent(`${TYPES[nearest.type].name} suffered impact damage`,'IMPACT');updateHUD()}scene.remove(m.mesh);m.mesh.geometry.dispose();m.mesh.material.dispose();meteors.splice(i,1);audio.play('impact')}}}
@@ -3757,7 +3808,7 @@ canvas.addEventListener('pointercancel',()=>{walkDragging=false});canvas.addEven
 function togglePause(){if(state.mode!=='play'&&state.mode!=='paused')return;state.paused=!state.paused;state.mode=state.paused?'paused':'play';$('pauseBtn').textContent=state.paused?'RESUME':'PAUSE';$('pauseBtn').classList.toggle('on',state.paused);toast(state.paused?'Simulation paused':'Simulation resumed')}
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;keys[e.code]=true;if((e.ctrlKey||e.metaKey)&&e.code==='KeyZ'){e.preventDefault();e.shiftKey?redo():undo();return}if((e.ctrlKey||e.metaKey)&&e.code==='KeyY'){e.preventDefault();redo();return}if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='KeyR'&&state.buildType){state.buildRotation=(state.buildRotation+90)%360;if(ghost)ghost.rotation.y=THREE.MathUtils.degToRad(state.buildRotation);toast('Rotation '+state.buildRotation+'°')}else if(e.code==='KeyX'){if(state.selected)moduleAction('delete')}else if(e.code==='KeyF'){walkMode?exitWalk():enterWalk()}else if(e.key==='?'||e.code==='KeyF1')toggleHelp();
   else if(e.code==='KeyM'){$('mapBtn').click();}
-  else if(e.code==='KeyH'){$('heatmapBtn').click();}else if(PRESETS[e.key])PRESETS[e.key]();else if(e.code==='Escape'){if($('help').classList.contains('show'))toggleHelp(false);else if(state.buildType)selectBuild(state.buildType);else selectBuilding(null)}});
+  else if(e.code==='KeyH'){$('heatmapBtn').click();}else if(e.code==='KeyP'){togglePhotoMode();}else if(PRESETS[e.key])PRESETS[e.key]();else if(e.code==='Escape'){if($('help').classList.contains('show'))toggleHelp(false);else if(state.buildType)selectBuild(state.buildType);else selectBuilding(null)}});
 addEventListener('keyup',e=>{keys[e.code]=false});addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;if(state.mode==='play')togglePause()});
 for(const b of document.querySelectorAll('[data-move]')){const code={forward:'KeyW',back:'KeyS',left:'KeyA',right:'KeyD'}[b.dataset.move];b.addEventListener('pointerdown',e=>{e.preventDefault();keys[code]=true;b.setPointerCapture(e.pointerId)});for(const ev of['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>keys[code]=false)}
 
@@ -3768,6 +3819,9 @@ $('cycleBtn').onclick=()=>{state.autoCycle=!state.autoCycle;$('cycleBtn').classL
 $('walkBtn').onclick=()=>walkMode?exitWalk():enterWalk();$('stormBtn').onclick=triggerStorm;$('meteorBtn').onclick=triggerMeteor;
 $('lightsBtn').onclick=()=>{state.lights=!state.lights;$('lightsBtn').classList.toggle('on',state.lights);applyLights()};$('labelsBtn').onclick=()=>{state.labels=!state.labels;$('labelsBtn').classList.toggle('on',state.labels);if(districtLabelsGroup)districtLabelsGroup.visible=state.labels;updateLabels()};
 $('techBtn').onclick=()=>{const p=$('techPanel');p.style.display=p.style.display==='none'?'block':'none';if(p.style.display!=='none')updateTechPanel();};
+$('photoBtn').onclick=togglePhotoMode;
+function cycleDifficulty(){const modes=['normal','survival','builder'];const i=modes.indexOf(state.difficulty||'normal');state.difficulty=modes[(i+1)%3];const labels={normal:'NORMAL',survival:'SURVIVAL',builder:'BUILDER'};$('difficultyBtn').textContent=labels[state.difficulty];$('difficultyBtn').style.color=state.difficulty==='survival'?'var(--red)':state.difficulty==='builder'?'var(--green)':'var(--amber)';toast('Difficulty: '+state.difficulty.toUpperCase()+(state.difficulty==='survival'?' — Harsh conditions, faster wear':state.difficulty==='builder'?' — Relaxed drain, slower wear':' — Standard mission rules'));}
+$('difficultyBtn').onclick=cycleDifficulty;
 $('shadowsBtn').onclick=()=>{state.shadows=!state.shadows;renderer.shadowMap.enabled=state.shadows;$('shadowsBtn').classList.toggle('on',state.shadows)};$('bloomBtn').onclick=()=>{state.bloom=!state.bloom;$('bloomBtn').classList.toggle('on',state.bloom)};
 $('soundBtn').onclick=()=>{state.sound=!state.sound;audio.set(state.sound);$('soundBtn').classList.toggle('on',state.sound);toast(state.sound?'Procedural audio on':'Audio muted')};
 $('helpBtn').onclick=()=>toggleHelp();$('helpClose').onclick=()=>toggleHelp(false);$('help').addEventListener('click',e=>{if(e.target===$('help'))toggleHelp(false)});
